@@ -620,6 +620,7 @@ void MainWindow::transmitMsg()
             textBr_mess->append(QString("frames count: %1").arg(send_frames_count));
             progressBar->setValue(percent);
             timerout->stop();
+            file_send_count = 0;
         }
     }
 
@@ -648,7 +649,7 @@ void MainWindow::on_File_clicked()
             fileName0 = fileNameList[0];            //取第一个文件名
             fd->close();
             QFile file(fileName0);
-            if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+            if(!file.open(QIODevice::ReadOnly))
             {
                textBr_mess->append("file opne error");
             }
@@ -657,6 +658,13 @@ void MainWindow::on_File_clicked()
 
                 file_send.clear();
                 file_send = file.readAll();
+                file.close();
+
+                QFile fd_creat("readfile.bin");
+                fd_creat.open(QIODevice::WriteOnly);
+                fd_creat.write(file_send);
+                fd_creat.close();
+
                 file_send_count = 0;
                 send_frames_max = file_send.length()/1000;
                 if(file_send.length()%1000)
@@ -669,8 +677,8 @@ void MainWindow::on_File_clicked()
                 }
                 send_frames_count = 0;
 
-
                 textEd_out->clear();
+
                 textEd_out->setPlainText(file_send.toHex());
 
 
@@ -681,6 +689,7 @@ void MainWindow::on_File_clicked()
                 md5_Array.insert(0,"MD5:");
 
                 textBr_mess->append(fileName0);
+                textBr_mess->append(QString("file size: %1").arg(file_send.length()));
                 textBr_mess->append(QString("frames max: %1").arg(send_frames_max));
                 textBr_mess->append(QString("frames count: %1").arg(send_frames_count));
                 textBr_mess->append(md5_Array);
