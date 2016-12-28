@@ -1,9 +1,5 @@
 #include "md5.h"
 
-MD5::MD5()
-{
-
-}
 using namespace std;
 
 /* Constants for MD5Transform routine. */

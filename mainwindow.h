@@ -30,7 +30,10 @@ private:
 	QLabel *labelTransmit;
 	int counter_in,counter_out;
     QByteArray file_send;
-    long file_send_count;
+    QByteArray md5_Array;
+    int file_send_count;
+    unsigned int send_frames_count;
+    unsigned int send_frames_max;
 
 	bool bRTS;
 	bool bDTR;
@@ -51,6 +54,7 @@ private slots:
 	void receiveMsg(const QTime timesl, const unsigned char *data, const int size);
 	void SetCurComboBState();
 	void setTimeoutTimer(bool state);
+    unsigned short int Crc16Bit(const char *ptr, unsigned short int len);
 	void transmitMsg();
 	void intervalChange(int value);
     void on_File_clicked();

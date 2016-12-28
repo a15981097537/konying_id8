@@ -12,6 +12,7 @@
  #include "mainwindow.h"
  #include <threadcomport.h>
  #include "ui_main_window_form.h"
+ #include <md5.h>
 /*
 ==============
 <CONSTRUCTORS>
@@ -510,11 +511,40 @@ QString MainWindow::transformInpData(const unsigned char *data, int size)
 	return res;
 }
 
+unsigned short int MainWindow::Crc16Bit(const char *ptr, unsigned short int len)
+{
+    byte i,j;
+    const char *src = ptr;
+    unsigned short int CRC16 = 0xFFFF;
+
+    for (j = len; j != 0; j--)
+    {
+                CRC16 =CRC16 ^ *src++;
+                for (i = 8; i != 0; i--)
+        {
+            if ((CRC16 & 0x0001) != 0)
+            {
+                CRC16 >>= 1;
+                CRC16 ^= 0xA001;
+            }
+            else
+            {
+                CRC16 >>= 1;
+            }
+        }
+    }
+
+    return (CRC16);
+}
+
 void MainWindow::transmitMsg()
 {
     int count;
     QByteArray data;
+    unsigned short int crc_calculate;
+    unsigned short int count_lenght;
     int percent = 0;
+
     if(File->isChecked() == false)
     {
         getdataout(&data);
@@ -524,25 +554,71 @@ void MainWindow::transmitMsg()
     }
     else
     {
-        if(file_send_count < (file_send.length()-1000))
+        if(file_send_count < file_send.length())
         {
             data = file_send.mid(file_send_count , 1000);
             file_send_count+=1000;
+            send_frames_count = file_send_count/1000;
+
+            data.insert(0,"A5LLSSMM");
+            data.insert(data.length(),"CC");
+            //frames head
+            data[0] = 0xAA;
+            data[1] = 0x55;
+            //lenght
+            data[2] = (data.length()-4)/256;
+            data[3] = (data.length()-4)%256;
+            //frames count
+            data[4] = send_frames_count/256;
+            data[5] = send_frames_count%256;
+            //frames max
+            data[6] = send_frames_max/256;
+            data[7] = send_frames_max%256;
+
+            crc_calculate = Crc16Bit(data , data.length()-2);
+            data[data.length()-2] = (crc_calculate>>8)&0xff;
+            data[data.length()-1] = crc_calculate&0xff;
+
+
             count = port->write(data, data.length());
-            percent = file_send_count*100/file_send.length();
-            textBr_mess->append(QString("transmit %1   finish %2%").arg(1000).arg(percent));
+            percent = send_frames_count*100/send_frames_max;
+            textBr_mess->append(QString("transmit %1 ").arg(data.length()));
+            textBr_mess->append(QString("frames max: %1").arg(send_frames_max));
+            textBr_mess->append(QString("frames count: %1").arg(send_frames_count));
             progressBar->setValue(percent);
             timerout->start(100);
         }
-        else if(file_send_count < file_send.length())
+        else
         {
-            data = file_send.mid(file_send_count);
-            file_send_count += data.length();
+            data = md5_Array;
+            send_frames_count = send_frames_max;
+
+            data.insert(0,"A5LLSSMM");
+            data.insert(data.length(),"CC");
+            //frames head
+            data[0] = 0xAA;
+            data[1] = 0x55;
+            //lenght
+            data[2] = (data.length()-4)/256;
+            data[3] = (data.length()-4)%256;
+            //frames count
+            data[4] = send_frames_count/256;
+            data[5] = send_frames_count%256;
+            //frames max
+            data[6] = send_frames_max/256;
+            data[7] = send_frames_max%256;
+
+            crc_calculate = Crc16Bit(data , data.length()-2);
+            data[data.length()-2] = (crc_calculate>>8)&0xff;
+            data[data.length()-1] = crc_calculate&0xff;
+
+
             count = port->write(data, data.length());
-            percent = file_send_count*100/file_send.length();
-            textBr_mess->append(QString("transmit %1   finish %2%").arg(data.length()).arg(percent));
-            textBr_mess->append("file send finished");
-            progressBar->setValue(progressBar->maximum());
+            percent = send_frames_count*100/send_frames_max;
+            textBr_mess->append(QString("transmit %1 ").arg(data.length()));
+            textBr_mess->append(QString("frames max: %1").arg(send_frames_max));
+            textBr_mess->append(QString("frames count: %1").arg(send_frames_count));
+            progressBar->setValue(percent);
             timerout->stop();
         }
     }
@@ -578,13 +654,36 @@ void MainWindow::on_File_clicked()
             }
             else
             {
-                textBr_mess->append(fileName0);
+
                 file_send.clear();
                 file_send = file.readAll();
                 file_send_count = 0;
+                send_frames_max = file_send.length()/1000;
+                if(file_send.length()%1000)
+                {
+                    send_frames_max +=2;
+                }
+                else
+                {
+                    send_frames_max +=1;
+                }
+                send_frames_count = 0;
+
+
                 textEd_out->clear();
                 textEd_out->setPlainText(file_send.toHex());
 
+
+                MD5 md5;
+                md5.update(file_send,file_send.length());
+                md5_Array.clear();
+                md5_Array = QByteArray::fromStdString(md5.toString());
+                md5_Array.insert(0,"MD5:");
+
+                textBr_mess->append(fileName0);
+                textBr_mess->append(QString("frames max: %1").arg(send_frames_max));
+                textBr_mess->append(QString("frames count: %1").arg(send_frames_count));
+                textBr_mess->append(md5_Array);
             }
         }
         else

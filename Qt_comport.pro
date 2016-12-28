@@ -8,13 +8,15 @@ FORMS += main_window_form.ui
 HEADERS += 	mainwindow.h \
 		threadcomport/threadcomport.h \
 		qextserialport/qextserialbase.h \
-		qextserialport/qextserialport.h
+		qextserialport/qextserialport.h \
+    md5.h
 
 SOURCES += 	main.cpp \
 		mainwindow.cpp \
 		threadcomport/threadcomport.cpp \
 		qextserialport/qextserialbase.cpp \
-		qextserialport/qextserialport.cpp
+		qextserialport/qextserialport.cpp \
+    md5.cpp
 
 RESOURCES     = resources.grc
 
