@@ -56,9 +56,9 @@
 
 	for (minnum; minnum <= maxnum; minnum++)
     {
-//		if (minnum>=10)
-//			comboBox_port->addItem(prefix+portname+QString("%1").arg(minnum));//for windows xp and vista port prefix
-//		else
+        if (minnum>=10)
+            comboBox_port->addItem(prefix+portname+QString("%1").arg(minnum));//for windows xp and vista port prefix
+        else
 			comboBox_port->addItem(portname+QString("%1").arg(minnum));	
     }
 	comboBox_baudrate->addItem("BAUD110",BAUD110);
@@ -513,14 +513,14 @@ QString MainWindow::transformInpData(const unsigned char *data, int size)
 
 unsigned short int MainWindow::Crc16Bit(const char *ptr, unsigned short int len)
 {
-    byte i,j;
+    unsigned short int i,j;
     const char *src = ptr;
     unsigned short int CRC16 = 0xFFFF;
 
     for (j = len; j != 0; j--)
     {
-                CRC16 =CRC16 ^ *src++;
-                for (i = 8; i != 0; i--)
+        CRC16 =CRC16 ^ (0x00ff&(*src++));
+        for (i = 8; i != 0; i--)
         {
             if ((CRC16 & 0x0001) != 0)
             {
@@ -542,7 +542,6 @@ void MainWindow::transmitMsg()
     int count;
     QByteArray data;
     unsigned short int crc_calculate;
-    unsigned short int count_lenght;
     int percent = 0;
 
     if(File->isChecked() == false)

@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+<file alias="resources.grc">E:/project/firmware_update/project/resources.grc</file>
+</qresource>
+</RCC>

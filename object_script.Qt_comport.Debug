@@ -1,0 +1,12 @@
+INPUT(
+./debug\main.o
+./debug\mainwindow.o
+./debug\threadcomport.o
+./debug\qextserialbase.o
+./debug\qextserialport.o
+./debug\md5.o
+./debug\win_qextserialport.o
+./debug\qrc_qmake_qmake_immediate.o
+./debug\moc_mainwindow.o
+./debug\moc_threadcomport.o
+);
