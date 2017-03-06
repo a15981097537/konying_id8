@@ -5,6 +5,8 @@ INPUT(
 ./release\qextserialbase.o
 ./release\qextserialport.o
 ./release\md5.o
+./release\usercmd.o
+./release\user_md5.o
 ./release\win_qextserialport.o
 ./release\qrc_qmake_qmake_immediate.o
 ./release\moc_mainwindow.o

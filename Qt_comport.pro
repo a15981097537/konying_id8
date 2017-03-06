@@ -9,14 +9,18 @@ HEADERS += 	mainwindow.h \
 		threadcomport/threadcomport.h \
 		qextserialport/qextserialbase.h \
 		qextserialport/qextserialport.h \
-    md5.h
+    md5.h \
+    usercmd.h \
+    user_md5.h
 
 SOURCES += 	main.cpp \
 		mainwindow.cpp \
 		threadcomport/threadcomport.cpp \
 		qextserialport/qextserialbase.cpp \
 		qextserialport/qextserialport.cpp \
-    md5.cpp
+    md5.cpp \
+    usercmd.cpp \
+    user_md5.cpp
 
 RESOURCES     = resources.grc
 

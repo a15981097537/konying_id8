@@ -1,5 +1,5 @@
-#ifndef MD5_H
-#define MD5_H
+#ifndef _MD5_H
+#define _MD5_H
 
 #include <string>
 #include <fstream>
@@ -47,4 +47,4 @@ private:
     static const size_t BUFFER_SIZE = 1024;
 };
 
-#endif // MD5_H
+#endif // _MD5_H

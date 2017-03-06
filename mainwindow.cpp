@@ -54,7 +54,7 @@
     statusBar()->addWidget(labelReceive);
     statusBar()->addWidget(labelTransmit);
 
-	for (minnum; minnum <= maxnum; minnum++)
+    for (minnum = 0; minnum <= maxnum; minnum++)
     {
         if (minnum>=10)
             comboBox_port->addItem(prefix+portname+QString("%1").arg(minnum));//for windows xp and vista port prefix
@@ -99,7 +99,7 @@
 	timerout = new QTimer(this);
     receiveTimer = new QTimer(this);
     sendTimer = new QTimer(this);
-    update_init();
+    user_init();
 
 
 
@@ -119,30 +119,53 @@
 	connect(bt_stopsend,SIGNAL(clicked(bool)), this, SLOT(btstopsendClick()));
     connect(timerout, SIGNAL(timeout()), this, SLOT(transmitMsg()));
     connect(receiveTimer, SIGNAL(timeout()), this, SLOT(pressUartData()));
+    connect(sendTimer,SIGNAL(timeout()),this,SLOT(ucmdAutoUpdate()));
 	connect(bt_clear, SIGNAL(clicked(bool)), textBr_inp, SLOT(clear()));
 	connect(bt_clear, SIGNAL(clicked(bool)), textBr_mess, SLOT(clear()));
-	connect(port,SIGNAL(newDataInPortSignal(QTime,const unsigned char *, const int)),this, SLOT(receiveMsg(QTime,const unsigned char *, const int)));
+    connect(port,SIGNAL(newDataInPortSignal(QTime,const unsigned char *, const int)),this, SLOT(receiveMsg(QTime,const unsigned char *, const int)));
     connect(spinBox_Period, SIGNAL(valueChanged(int)), this, SLOT(intervalChange(int)));
 }
 
 
 
- void MainWindow::update_init()
+ void MainWindow::user_init()
  {
      //add by lekee
      updateFileList->setEditable(true);
      readFileList->setEditable(true);
      frimwareVersion->setEditable(true);
-     if(comboBox_updateWay->currentText() == "本地升级")
-     {
-        comboBox_updateMode->setDisabled(true);
-     }
+     packetbyte->setEditable(true);
+
+
+     comboBox_updateMode->setCurrentText("手动升级模式") ;
+     bt_getDeviceInf->setDisabled(false);
+     bt_sendFirInf->setDisabled(false);
+     bt_sendPacket->setDisabled(false);
+     bt_autoUpdate->setDisabled(true);
+     bt_stopAutoUpdate->setDisabled(true);
+     bt_readBoot->setDisabled(true);
+     bt_readFirmware->setDisabled(true);
+     bt_stopRead->setDisabled(true);
+     pushButton_nc0->setDisabled(true);
+     packetbyte->setCurrentText("1000");
+
+
+
+     fir.auto_step = update_step_finish;
 
      shortAddr->addItem(tr("0x0000"));
      shortAddr->addItem(tr("0xFFFF"));
+//     shortAddr->addItem(tr("+++addr+++"));
+     //DisplayWithTime(QString("%1").arg(shortAddr->currentRow()));
+     shortAddr->setCurrentRow(0);
+
 
      usart.r_count = 0;
      usart.s_count = 0;
+
+
+     rf_send.sequence = 0;
+     rf_send.device = dev_gatway;
 
 
  }
@@ -461,17 +484,17 @@ void MainWindow::receiveMsg(const QTime timesl, const unsigned char *data, const
         usart.receive[usart.r_count] = data[i];
         usart.r_count++;
     }
-    receiveTimer->start(50);
+    receiveTimer->start(20);
 }
 
 
 
 void MainWindow::pressUartData()
 {
-    uint8 *ptr;
-    uint16 size;
-    uint16 length;
-    uint16 crc_calculate;
+    uchar *ptr;
+    ushort size;
+    ushort length;
+    ushort crc_calculate;
 
     ptr = usart.receive;
     size = usart.r_count;
@@ -529,28 +552,34 @@ void MainWindow::pressUartData()
     usart.r_count = 0;
 }
 
-void MainWindow::pressCmdData(uint8 *data , uint16 size)
+void MainWindow::pressCmdData(uchar *data , ushort size)
 {
     QByteArray buff;
     QByteArray ptr;
-    QString str;
     UC_PAR uc_par;
-    //UR_PAR ur_par;
+    UR_PAR ur_par;
+    QString str,str0;
+    ushort packet_num;
+    ushort packet_length;
+    int i;
+
 
     buff.clear();
-    for(int i = 0; i < size;i++)
+    for(i = 0; i < size;i++)
     {
         buff.append(data[i]);
     }
-    str = buff.toHex();
-    for(int i =0; i*3<str.length();i++)
+
+    if(rb_displayRawHex->isChecked()==true)
     {
-        str.insert(i*3+2, " ");
+        QString str = buff.toHex();
+        for(i =0; i*3<str.length();i++)
+        {
+            str.insert(i*3+2, " ");
+        }
+        DisplayWithTime(QString("uart receive %1 byte").arg(buff.length()));
+        textBr_mess->append(str.toUpper());
     }
-
-    DisplayWithTime(QString("uart receive %1 byte").arg(buff.length()));
-    textBr_mess->append(str.toUpper());
-
 
     if(data[0] == 0x5A)
     {
@@ -560,100 +589,387 @@ void MainWindow::pressCmdData(uint8 *data , uint16 size)
         uc_par.data = &data[4];
         uc_par.crc = data[size-2]*256+data[size-1];
 
+        if(uc_par.len == 0)
+        {
+            //textBr_mess->append("USART ACK");
+            DisplayWithTime("USART ACK");
+            return;
+        }
+
+        str = "Message from Gatway";
         switch(uc_par.cmd)
         {
 
             case u_getDevNetInf:  //查询/设置网络参数
-                textBr_mess->append("查询网络参数:");
+                DisplayWithTime(str+"/ 查询网络参数:");
             break;
             case u_getDevInf:            //请求设备详细信息
-                textBr_mess->append("请求设备详细信息:");
+                DisplayWithTime(str+"/ 请求设备详细信息:");
             break;
             case u_senFirInf:            //发送固件信息包
-                textBr_mess->append("发送固件信息包:");
+                DisplayWithTime(str+"/ 接收固件信息包:");
+                if(comboBox_updateMode->currentText() == "本地固件读取")
+                {
+                    fir.local_r.total_packet = (uc_par.data[0]<<8)+uc_par.data[1];
+                    fir.local_r.packet_byte = (uc_par.data[2]<<8)+uc_par.data[3];
+                    fir.local_r.total_byte  = uc_par.data[4]<<24;
+                    fir.local_r.total_byte += uc_par.data[5]<<16;
+                    fir.local_r.total_byte += uc_par.data[6]<<8;
+                    fir.local_r.total_byte += uc_par.data[7];
+                    fir.local_r.version = uc_par.data[8];
+                    for(i=0;i<16;i++)
+                    {
+                        fir.local_r.md5[i] = uc_par.data[9+i];
+                    }
+                    fir.local_r.buff.clear();
+                    DisplayWithNoTime(QString("file size: %1").arg(fir.local_r.total_byte));
+                    DisplayWithNoTime(QString("packet byte: %1").arg(fir.local_r.packet_byte));
+                    DisplayWithNoTime(QString("packet total: %1").arg(fir.local_r.total_packet));
+                    DisplayWithNoTime(QString("packet count: %1").arg(fir.local_r.send_cout));
+                    DisplayWithNoTime("MD5:"+fir.local_r.md5.toHex().toUpper());
+                }
             break;
             case u_senPacket:            //发送固件数据包
-                textBr_mess->append("发送固件数据包:");
+                str +="/ 接收固件数据包:";
+                if(comboBox_updateMode->currentText() == "本地固件读取")
+                {
+                    fir.local_r.send_cout = (uc_par.data[0]<<8)+uc_par.data[1];
+                    packet_length = (uc_par.data[2]<<8)+uc_par.data[3];
+                    for(i=0;i<packet_length;i++)
+                    {
+                        fir.local_r.buff.append(uc_par.data[4+i]);
+                    }
+                    str += QString("count:%1  length:%2").arg(fir.local_r.send_cout).arg(packet_length);
+                }
+                DisplayWithTime(str);
             break;
             case u_getBootloader:        //请求回传bootloader
-                textBr_mess->append("请求回传bootloader:");
+                DisplayWithTime(str+"/ 请求回传bootloader:");
             break;
             case u_getFirmware:          //请求回传firmware
-                textBr_mess->append("请求回传firmware:");
+                DisplayWithTime(str+"/ 请求回传firmware:");
             break;
             case u_recDevNetInf:    //返回网络参数
-                textBr_mess->append("返回网络参数:");
-                textBr_mess->append("panID: "+uint16ToHex(uc_par.data[0]*256+uc_par.data[1]));
-                textBr_mess->append("shorID: "+uint16ToHex(uc_par.data[2]*256+uc_par.data[3]));
-                textBr_mess->append("power: "+uint8ToHex(uc_par.data[4]));
-                textBr_mess->append("channel: "+uint8ToHex(uc_par.data[5]));
-                textBr_mess->append("MAC: "+strToHex(&uc_par.data[6],8));
+                DisplayWithTime(str+"/ 返回网络参数:");
+                textBr_mess->append("panID:    "+uint16ToHex(uc_par.data[0]*256+uc_par.data[1]).toUpper());
+                textBr_mess->append("shorID:   "+uint16ToHex(uc_par.data[2]*256+uc_par.data[3]).toUpper());
+                textBr_mess->append("power:    "+uint8ToHex(uc_par.data[4]).toUpper());
+                textBr_mess->append("channel:  "+uint8ToHex(uc_par.data[5]).toUpper());
+                textBr_mess->append("MAC:      "+strToHex(&uc_par.data[6],8).toUpper());
             break;
             case u_recDevInf:            //返回设备详细信息
-                textBr_mess->append("返回设备详细信息:");
-                textBr_mess->append("deviceType: "+uint8ToHex(uc_par.data[0]));
-                textBr_mess->append("MAC: "+strToHex(&uc_par.data[1],8));
-                textBr_mess->append("panID: "+uint16ToHex(uc_par.data[9]*256+uc_par.data[10]));
-                textBr_mess->append("nodeType: "+uint8ToHex(uc_par.data[11]));
-                textBr_mess->append("shorID: "+uint16ToHex(uc_par.data[12]*256+uc_par.data[13]));
-                textBr_mess->append("Firmware version: "+uint8ToHex(uc_par.data[14]));
-                textBr_mess->append("MD5: "+strToHex(&uc_par.data[15],16));
-
+                DisplayWithTime(str+"/ 返回设备详细信息:");
+                textBr_mess->append("deviceType:  "+uint8ToHex(uc_par.data[0]).toUpper());
+                textBr_mess->append("MAC:         "+strToHex(&uc_par.data[1],8).toUpper());
+                textBr_mess->append("panID:       "+uint16ToHex(uc_par.data[9]*256+uc_par.data[10]).toUpper());
+                textBr_mess->append("nodeType:    "+uint8ToHex(uc_par.data[11]).toUpper());
+                textBr_mess->append("shorID:      "+uint16ToHex(uc_par.data[12]*256+uc_par.data[13]).toUpper());
+                textBr_mess->append("Fir version: "+uint8ToHex(uc_par.data[14]).toUpper());
+                textBr_mess->append("MD5:         "+strToHex(&uc_par.data[15],16).toUpper());
+                if(comboBox_updateMode->currentText() == "本地自动升级")
+                {
+                    ucmdSendFirInf();
+                }
             break;
             case u_recUpdSta:            //返回固件升级状态
-                textBr_mess->append("返回固件升级状态:");
+                str+= "/ 返回固件升级状态";
                 switch(uc_par.data[0])
                 {
                     case 0:
-                        textBr_mess->append("返回固件升级状态0：进入固件升级状态");
+                        str+="0：进入固件升级状态";
+                        DisplayWithTime(str);
+                        if(comboBox_updateMode->currentText() == "本地自动升级")
+                        {
+                            ucmdSendsendPacket(fir.local_w.send_cout);
+                        }
                     break;
                     case 1:
-                        textBr_mess->append("返回固件升级状态1：MD5固件校验出错，重新请求升级");
+                        str+="1：MD5固件校验出错，重新请求升级";
+                        DisplayWithTime(str);
                     break;
                     case 2:
-                        textBr_mess->append("返回固件升级状态2：升级成功");
+                        str+="2：升级成功";
+                        DisplayWithTime(str);
                     break;
                     case 3:
-                        textBr_mess->append("返回固件升级状态3：升级超时");
+                        str+="3：升级超时";
+                        DisplayWithTime(str);
                     break;
                     case 4:
-                        textBr_mess->append("返回固件升级状态4：flash写失败");
+                        str+="4：flash写失败";
+                        DisplayWithTime(str);
                     break;
                     default:break;
-
                 }
+
             break;
             case u_recPacSta:             //返回固件数据包接收状态
+
+                str+="/ 返回固件数据包接收状态:";
+                packet_num = uc_par.data[1]*256+uc_par.data[2];
                 if(uc_par.data[0] == 0)
                 {
-                    textBr_mess->append(QString("返回固件数据包接收状态：数据包1%接收成功").arg(uc_par.data[1]*256+uc_par.data[2]));
+
+                    str+=QString("数据包%1接收成功").arg(packet_num);
+                    DisplayWithTime(str);
+                    if(comboBox_updateMode->currentText() == "本地自动升级")
+                    {
+                        fir.local_w.send_cout++;
+                        ucmdSendsendPacket(fir.local_w.send_cout);
+                    }
                 }
                 else
                 {
-                    textBr_mess->append(QString("返回固件数据包接收状态：请求重新发送数据包1%").arg(uc_par.data[1]*256+uc_par.data[2]));
+                    str+=QString("请求重新发送数据包%1").arg(packet_num);
+                    DisplayWithTime(str);
+                    if((comboBox_updateMode->currentText() == "本地自动升级")||
+                       (comboBox_updateMode->currentText() == "本地手动升级"))
+                    {
+                        ucmdSendsendPacket(packet_num);
+                    }
                 }
+
             break;
             default:
-                textBr_mess->append("数据分析错误");
+                DisplayWithTime(str+"/ 数据分析错误");
             break;
 
         }
     }
     else if(data[0] == 0x5F)
     {
+        ur_par.head = data[0];
+        ur_par.len = data[1]*256+data[2];
+        ur_par.dstAddr = data[3]*256+data[4];
+        ur_par.srcAddr = data[5]*256+data[6];
+        ur_par.rssi = data[7];
+        ur_par.rf.sequence = data[8];
+        ur_par.rf.deviceType = data[9];
+        ur_par.rf.cmd = data[10];
+        ur_par.rf.data = &data[11];
+        if(ur_par.len == 0)
+        {
+            DisplayWithTime("USART ACK");
+            return;
+        }
+        str = "message from node";
+        str0 = "0x" + uint16ToHex(ur_par.srcAddr).toUpper();
+        str += str0;
 
 
+        if(shortAddr->findItems(str0 , Qt::MatchExactly).isEmpty())
+        {
+            shortAddr->insertItem(0,tr(""));
+            shortAddr->item(0)->setText(str0);
+        }
+
+
+
+
+
+
+
+        str += QString("/ rssi:%1dBm").arg(ur_par.rssi);
+        str += QString("/ sequence:%1").arg(ur_par.rf.sequence);
+        str += "/ device type:";
+        switch(ur_par.rf.deviceType)
+        {
+        case dev_gatway:
+            str += "gatway";
+            break;
+        case dev_adultSpireLamella:
+            str += "adultSpireLamella";
+            break;
+        case dev_childSpireLamella:
+            str += "childSpireLamella";
+            break;
+        case dev_patientSpireLamella:
+            str += "gatway";
+            break;
+        case dev_sosPanic:
+            str += "tempreture";
+            break;
+        case dev_plug:
+            str += "tempreture";
+            break;
+        case dev_tempreture:
+            str += "tempreture";
+            break;
+        case dev_humidity:
+            str += "humidity";
+            break;
+        case dev_multileSensor:
+            str += "multileSensor";
+            break;
+        default:
+            str += "unkown device";
+            break;
+
+        }
+
+        switch(ur_par.rf.cmd)
+        {
+
+            case r_getDevNetInf:  //查询/设置网络参数
+                DisplayWithTime(str+"/ 查询网络参数:");
+            break;
+            case r_getDevInf:            //请求设备详细信息
+                DisplayWithTime(str+"/ 请求设备详细信息:");
+            break;
+            case r_senFirInf:            //发送固件信息包
+                DisplayWithTime(str+"/ 接收固件信息包:");
+                if(comboBox_updateMode->currentText() == "OTA固件读取")
+                {
+                    fir.ota_r.mode = ur_par.rf.data[0];
+                    fir.ota_r.device_type = ur_par.rf.data[1];
+                    fir.ota_r.total_packet = (ur_par.rf.data[2]<<8)+ur_par.rf.data[3];
+                    fir.ota_r.packet_byte = ur_par.rf.data[4];
+                    fir.ota_r.total_byte  = ur_par.rf.data[5]<<24;
+                    fir.ota_r.total_byte += ur_par.rf.data[6]<<16;
+                    fir.ota_r.total_byte += ur_par.rf.data[7]<<8;
+                    fir.ota_r.total_byte += ur_par.rf.data[8];
+                    fir.ota_r.version = ur_par.rf.data[9];
+                    for(i=0;i<16;i++)
+                    {
+                        fir.ota_r.md5[i] = ur_par.rf.data[10+i];
+                    }
+                    fir.ota_r.buff.clear();
+                    DisplayWithNoTime(QString("file size: %1").arg(fir.ota_r.total_byte));
+                    DisplayWithNoTime(QString("packet byte: %1").arg(fir.ota_r.packet_byte));
+                    DisplayWithNoTime(QString("packet total: %1").arg(fir.ota_r.total_packet));
+                    DisplayWithNoTime(QString("packet count: %1").arg(fir.ota_r.send_cout));
+                    DisplayWithNoTime("MD5:"+fir.ota_r.md5.toHex().toUpper());
+                }
+            break;
+            case r_senPacket:            //发送固件数据包
+                str +="/ 接收固件数据包:";
+                if(comboBox_updateMode->currentText() == "OTA固件读取")
+                {
+                    fir.ota_r.send_cout = (ur_par.rf.data[0]<<8)+ur_par.rf.data[1];
+                    packet_length = (ur_par.rf.data[2]<<8)+ur_par.rf.data[3];
+                    for(i=0;i<packet_length;i++)
+                    {
+                        fir.ota_r.buff.append(ur_par.rf.data[4+i]);
+                    }
+                    str += QString("count:%1  length:%2").arg(fir.ota_r.send_cout).arg(packet_length);
+                }
+                DisplayWithTime(str);
+            break;
+            case r_getDevCap:            //查询设备所具备的功能
+                DisplayWithTime(str+"/ 查询设备所具备的功能:");
+            break;
+            case r_getDevCapDat:         //查询设备功能数据
+                DisplayWithTime(str+"/ 查询设备功能数据:");
+            break;
+            case r_setDevCapDat:         //设置设备功能
+                DisplayWithTime(str+"/ 设置设备功能:");
+            break;
+            case r_setGetRepDat:         //查询/设置设备自动回传功能数据参数
+                DisplayWithTime(str+"/ 查询/设置设备自动回传功能数据参数:");
+            break;
+            case r_getBootloader:        //请求回传bootloader
+                DisplayWithTime(str+"/ 请求回传bootloader:");
+            break;
+            case r_getFirmware:          //请求回传firmware
+                DisplayWithTime(str+"/ 请求回传firmware:");
+            break;
+            case r_recDevNetInf:    //返回网络参数
+                DisplayWithTime(str+"/ 返回网络参数:");
+                textBr_mess->append("panID:    "+uint16ToHex(ur_par.rf.data[0]*256+ur_par.rf.data[1]).toUpper());
+                textBr_mess->append("shorID:   "+uint16ToHex(ur_par.rf.data[2]*256+ur_par.rf.data[3]).toUpper());
+                textBr_mess->append("power:    "+uint8ToHex(ur_par.rf.data[4]).toUpper());
+                textBr_mess->append("channel:  "+uint8ToHex(ur_par.rf.data[5]).toUpper());
+                textBr_mess->append("MAC:      "+strToHex(&ur_par.rf.data[6],8).toUpper());
+            break;
+            case r_recDevInf:            //返回设备详细信息
+                DisplayWithTime(str+"/ 返回设备详细信息:");
+                textBr_mess->append("MAC:         "+strToHex(&ur_par.rf.data[0],8).toUpper());
+                textBr_mess->append("panID:       "+uint16ToHex(ur_par.rf.data[8]*256+ur_par.rf.data[9]).toUpper());
+                textBr_mess->append("nodeType:    "+uint8ToHex(ur_par.rf.data[10]).toUpper());
+                textBr_mess->append("Fir version: "+uint8ToHex(ur_par.rf.data[11]).toUpper());
+                textBr_mess->append("MD5:         "+strToHex(&ur_par.rf.data[12],16).toUpper());
+                if((comboBox_updateMode->currentText() == "OTA单独升级")||
+                   (comboBox_updateMode->currentText() == "OTA批量升级"))
+                {
+                    rcmdSendFirInf();
+                }
+            break;
+            case r_recUpdSta:            //返回固件升级状态
+                str+= "/ 返回固件升级状态";
+                switch(ur_par.rf.data[0])
+                {
+                    case 0:
+                        str+="0：进入固件升级状态";
+                        DisplayWithTime(str);
+                        if(comboBox_updateMode->currentText() == "OTA单独升级")
+                        {
+                            rcmdSendsendPacket(fir.ota_w.send_cout);
+                        }
+                    break;
+                    case 1:
+                        str+="1：MD5固件校验出错，重新请求升级";
+                        DisplayWithTime(str);
+                    break;
+                    case 2:
+                        str+="2：升级成功";
+                        DisplayWithTime(str);
+                    break;
+                    case 3:
+                        str+="3：升级超时";
+                        DisplayWithTime(str);
+                    break;
+                    case 4:
+                        str+="4：flash写失败";
+                        DisplayWithTime(str);
+                    break;
+                    default:break;
+                }
+
+            break;
+            case r_recPacSta:             //返回固件数据包接收状态
+
+                str+="/ 返回固件数据包接收状态:";
+                packet_num = ur_par.rf.data[1]*256+ur_par.rf.data[2];
+                if(ur_par.rf.data[0] == 0)
+                {
+
+                    str+=QString("数据包%1接收成功").arg(packet_num);
+                    DisplayWithTime(str);
+                    if((comboBox_updateMode->currentText() == "OTA单独升级")||
+                       (comboBox_updateMode->currentText() == "OTA批量升级"))
+                    {
+                        fir.ota_w.send_cout = packet_num+1;
+                        rcmdSendsendPacket(fir.ota_w.send_cout);
+                    }
+                }
+                else
+                {
+                    str+=QString("请求重新发送数据包%1").arg(packet_num);
+                    DisplayWithTime(str);
+                    if((comboBox_updateMode->currentText() == "OTA单独升级")||
+                       (comboBox_updateMode->currentText() == "OTA批量升级"))
+                    {
+                        fir.ota_w.send_cout = packet_num;
+                        rcmdSendsendPacket(fir.ota_w.send_cout);
+                    }
+                }
+
+            break;
+            default:
+                DisplayWithTime(str+"/ 数据分析错误");
+            break;
+
+        }
     }
-
 }
-QString MainWindow::uint8ToHex(uint8 data)
+QString MainWindow::uint8ToHex(uchar data)
 {
     QByteArray buff;
     buff[0] = data;
     return buff.toHex();
 }
 
-QString MainWindow::uint16ToHex(uint16 data)
+QString MainWindow::uint16ToHex(ushort data)
 {
     QByteArray buff;
     buff[0] = (data>>8)&0xFF;
@@ -661,7 +977,7 @@ QString MainWindow::uint16ToHex(uint16 data)
     return buff.toHex();
 }
 
-QString MainWindow::uint32ToHex(uint32 data)
+QString MainWindow::uint32ToHex(uint data)
 {
     QByteArray buff;
     buff[0] = (data>>24)&0xFF;
@@ -671,7 +987,7 @@ QString MainWindow::uint32ToHex(uint32 data)
     return buff.toHex();
 }
 
-QString MainWindow::strToHex(uint8 *data , uint16 len)
+QString MainWindow::strToHex(uchar *data , ushort len)
 {
     QByteArray buff;
     for(int i = 0 ; i<len;i++)
@@ -686,10 +1002,19 @@ void MainWindow::DisplayWithTime(const QString &text)
 {
     QDateTime datTime = QDateTime::currentDateTime();
     QTime qTime = QTime::currentTime();
-    textBr_mess->append(datTime.toString("yyyy/MM/dd hh:mm:ss")+
-                        QString(" %1 mS       ").arg(qTime.msec())+
-                        text
-                        );
+    if(false)
+    {
+        textBr_mess->append(datTime.toString("yyyy/MM/dd hh:mm:ss")+
+                            QString(" %1 mS     ").arg(qTime.msec())+
+                            text
+                            );
+    }
+    else
+    {
+        textBr_mess->append(datTime.toString("yyyy/MM/dd hh:mm:ss    ")+text);
+    }
+
+
 }
 
 void MainWindow::DisplayWithNoTime(const QString &text)
@@ -751,7 +1076,9 @@ QString MainWindow::transformInpData(const unsigned char *data, const int size)
 	if (rbt_HEXin->isChecked())
 	{
         for (int i = 0;i < size;i++)
-            res = res+QString("%1").arg((int)data[i],0,16)+tab;
+            //res = res+QString("%1").arg((int)data[i],0,16)+tab;
+            res = res+uint8ToHex(data[i])+" ";
+            res = res.toUpper();
 	}
 	return res;
 }
@@ -782,6 +1109,11 @@ unsigned short int MainWindow::Crc16Bit(const char *ptr, unsigned short int len)
     return (CRC16);
 }
 
+
+
+//*****************************************
+//usart transimit layer
+//*****************************************
 void MainWindow::transmitMsg()
 {
     int count;
@@ -789,84 +1121,9 @@ void MainWindow::transmitMsg()
     //unsigned short int crc_calculate;
     //int percent = 0;
 
-    if(true)
-    {
-        getdataout(&data);
-        count = port->write(data, data.length());
-        textBr_mess->append(QString("uart transmited %1").arg(count));
-
-    }
-    else
-    {
-//        if(file_send_count < file_send.length())
-//        {
-//            data = file_send.mid(file_send_count , 1000);
-//            file_send_count+=1000;
-//            send_frames_count = file_send_count/1000;
-
-//            data.insert(0,"A5LLSSMM");
-//            data.insert(data.length(),"CC");
-//            //frames head
-//            data[0] = 0xAA;
-//            data[1] = 0x55;
-//            //lenght
-//            data[2] = (data.length()-4)/256;
-//            data[3] = (data.length()-4)%256;
-//            //frames count
-//            data[4] = send_frames_count/256;
-//            data[5] = send_frames_count%256;
-//            //frames max
-//            data[6] = send_frames_max/256;
-//            data[7] = send_frames_max%256;
-
-//            crc_calculate = Crc16Bit(data , data.length()-2);
-//            data[data.length()-2] = (crc_calculate>>8)&0xff;
-//            data[data.length()-1] = crc_calculate&0xff;
-
-
-//            count = port->write(data, data.length());
-//            percent = send_frames_count*100/send_frames_max;
-//            textBr_mess->append(QString("transmit %1 ").arg(data.length()));
-//            textBr_mess->append(QString("frames max: %1").arg(send_frames_max));
-//            textBr_mess->append(QString("frames count: %1").arg(send_frames_count));
-//            progressBar->setValue(percent);
-//            timerout->start(100);
-//        }
-//        else
-//        {
-//            data = md5_Array;
-//            send_frames_count = send_frames_max;
-
-//            data.insert(0,"A5LLSSMM");
-//            data.insert(data.length(),"CC");
-//            //frames head
-//            data[0] = 0xAA;
-//            data[1] = 0x55;
-//            //lenght
-//            data[2] = (data.length()-4)/256;
-//            data[3] = (data.length()-4)%256;
-//            //frames count
-//            data[4] = send_frames_count/256;
-//            data[5] = send_frames_count%256;
-//            //frames max
-//            data[6] = send_frames_max/256;
-//            data[7] = send_frames_max%256;
-
-//            crc_calculate = Crc16Bit(data , data.length()-2);
-//            data[data.length()-2] = (crc_calculate>>8)&0xff;
-//            data[data.length()-1] = crc_calculate&0xff;
-
-
-//            count = port->write(data, data.length());
-//            percent = send_frames_count*100/send_frames_max;
-//            textBr_mess->append(QString("transmit %1 ").arg(data.length()));
-//            textBr_mess->append(QString("frames max: %1").arg(send_frames_max));
-//            textBr_mess->append(QString("frames count: %1").arg(send_frames_count));
-//            progressBar->setValue(percent);
-//            timerout->stop();
-//            file_send_count = 0;
-//        }
-    }
+    getdataout(&data);
+    count = port->write(data, data.length());
+    //textBr_mess->append(QString("uart transmited %1").arg(count));
 
     if (count == -1) count = 0;
     counter_out += count;
@@ -888,37 +1145,581 @@ char MainWindow::u_sendMessage(unsigned char cmd,QByteArray *data)
     send_buff[send_buff.length()] = crc_calculate/256;
     send_buff[send_buff.length()] = crc_calculate%256;
     status = port->write(send_buff, send_buff.length());
+    if(rb_displayRawHex->isChecked()==true)
+    {
+
+        QString str = send_buff.toHex();
+        for(ushort i =0; i*3<str.length();i++)
+        {
+            str.insert(i*3+2, " ");
+        }
+        DisplayWithTime(QString("uart send %1 byte").arg(send_buff.length()));
+        textBr_mess->append(str.toUpper());
+    }
+
     return status;
 }
 
 
-char MainWindow::r_sendMessage(unsigned short dest_addr,
-                               unsigned char sequence,
-                               unsigned char device_type,
-                               unsigned char cmd,
-                               QByteArray *data)
+char MainWindow::r_sendMessage(unsigned char cmd,QByteArray *data)
 {
     unsigned short crc_calculate;
     char status;
     QByteArray send_buff;
+    QString str;
+
+    if(rf_send.sequence==255)rf_send.sequence=0;
+    else rf_send.sequence++;
+
+
+    if(shortAddr->currentRow()<0)
+    {
+        DisplayWithTime("please select addr ");
+    }
+
+
+
     send_buff.clear();
     send_buff = *data;
     send_buff.insert(0,0x5F);
     send_buff.insert(1,(data->length()+8)/256);
     send_buff.insert(2,(data->length()+8)%256);
-    send_buff.insert(3,dest_addr/256);
-    send_buff.insert(4,dest_addr%256);
-    send_buff.insert(5,"");
-    send_buff.insert(6,"");
-    send_buff.insert(7,"");
-    send_buff.insert(8,sequence);
-    send_buff.insert(9,device_type);
+    send_buff.insert(3,rf_send.dest_addr/256);
+    send_buff.insert(4,rf_send.dest_addr%256);
+    send_buff.insert(5,rf_send.src_addr);
+    send_buff.insert(6,rf_send.src_addr);
+    send_buff.insert(7,rf_send.rssi);
+    send_buff.insert(8,rf_send.sequence);
+    send_buff.insert(9,rf_send.device);
     send_buff.insert(10,cmd);
     crc_calculate = Crc16Bit(send_buff,send_buff.length());
     send_buff[send_buff.length()] = crc_calculate/256;
     send_buff[send_buff.length()] = crc_calculate%256;
     status = port->write(send_buff, send_buff.length());
+    if(rb_displayRawHex->isChecked()==true)
+    {
+
+        str = send_buff.toHex();
+        for(int i =0; i*3<str.length();i++)
+        {
+            str.insert(i*3+2, " ");
+        }
+        DisplayWithTime(QString("uart send %1 byte").arg(send_buff.length()));
+        textBr_mess->append(str.toUpper());
+    }
+
+
+
     return status;
+}
+
+
+
+
+
+void MainWindow::usartAck(uchar head)
+{
+    unsigned short crc_calculate;
+    QByteArray send_buff;
+    send_buff.clear();
+    send_buff[0] = head;
+    send_buff[1] = 0;
+    send_buff[2] = 0;
+    crc_calculate = Crc16Bit(send_buff,send_buff.length());
+    send_buff[send_buff.length()] = crc_calculate/256;
+    send_buff[send_buff.length()] = crc_calculate%256;
+    port->write(send_buff, send_buff.length());
+    if(rb_displayRawHex->isChecked()==true)
+    {
+        QString str;
+        str = send_buff.toHex();
+        for(int i =0; i*3<str.length();i++)
+        {
+            str.insert(i*3+2, " ");
+        }
+        DisplayWithTime(QString("uart send %1 byte").arg(send_buff.length()));
+        textBr_mess->append(str.toUpper());
+    }
+}
+
+//*****************************************
+//usart transimit layer end
+//*****************************************
+
+
+
+//*****************************************
+//ucmd start
+//*****************************************
+
+void MainWindow::ucmdGetDeviceInf()
+{
+    QByteArray buff;
+    buff.clear();
+    u_sendMessage(u_getDevInf,&buff);
+    DisplayWithTime("get device information");
+}
+
+void MainWindow::ucmdSendFirInf()
+{
+    QByteArray buff;
+    unsigned short i = 0;
+    if(fir.local_w.buff.isEmpty() == true)
+    {
+        DisplayWithTime("please open the file xxx.bin");
+        return;
+    }
+    buff.clear();
+    buff[i++] = (fir.local_w.total_packet>>8)&0xFF;
+    buff[i++] = (fir.local_w.total_packet>>0)&0xFF;
+    buff[i++] = (fir.local_w.packet_byte>>8)&0xFF;
+    buff[i++] = (fir.local_w.packet_byte>>0)&0xFF;
+    buff[i++] = (fir.local_w.total_byte>>24)&0xFF;
+    buff[i++] = (fir.local_w.total_byte>>16)&0xFF;
+    buff[i++] = (fir.local_w.total_byte>>8)&0xFF;
+    buff[i++] = (fir.local_w.total_byte>>0)&0xFF;
+    buff[i++] = fir.local_w.version;
+    for(int j = 0;j<16 ; j++)
+    {
+        buff[i++] = fir.local_w.md5[j];
+    }
+    u_sendMessage(u_senFirInf,&buff);
+    DisplayWithTime("send firmware information");
+}
+
+void MainWindow::ucmdSendsendPacket(ushort packet)
+{
+    QByteArray buff;
+    unsigned short i = 0;
+    unsigned int ptr;
+    unsigned int byte_count;
+
+    if(fir.local_w.buff.isEmpty() == true)
+    {
+        DisplayWithTime("please open the file xxx.bin");
+        return;
+    }
+    else if(packet>=fir.local_w.total_packet)
+    {
+        DisplayWithTime("固件发送完成");
+        progressBar->setValue(100);
+        return;
+    }
+
+
+
+    buff.clear();
+
+    buff[i++] = (packet>>8)&0xFF;
+    buff[i++] = (packet>>0)&0xFF;
+
+
+    ptr = packet*fir.local_w.packet_byte;
+    if(packet<(fir.local_w.total_packet-1))
+    {
+        byte_count = fir.local_w.packet_byte;
+    }
+    else
+    {
+        byte_count = fir.local_w.total_byte%fir.local_w.packet_byte;
+        if(byte_count == 0)byte_count = fir.local_w.packet_byte;
+    }
+
+    buff[i++] = (byte_count>>8)&0xFF;
+    buff[i++] = (byte_count>>0)&0xFF;
+
+    for(uint j = 0;j<byte_count ; j++)
+    {
+        buff[i++] = fir.local_w.buff[ptr+j];
+    }
+    u_sendMessage(u_senPacket,&buff);
+
+    DisplayWithTime(QString("send_packet:%1  packet byte:%2").arg(packet).arg(byte_count));
+    progressBar->setValue(packet*100/fir.local_w.total_packet);
+}
+
+
+void MainWindow::ucmdAutoUpdate(uchar step)
+{
+    sendTimer->stop();
+    switch(step)
+    {
+    case update_step_getDevInf:
+        ucmdGetDeviceInf();
+        break;
+    case update_step_senFirInf:
+        ucmdSendFirInf();
+        break;
+    case update_step_senPacket:
+        ucmdSendsendPacket(fir.local_w.send_cout);
+        fir.local_w.send_cout++;
+        sendTimer->start(100);
+        break;
+    case update_step_finish:
+        DisplayWithTime("finish");
+        break;
+    default:break;
+    }
+}
+
+
+
+//*****************************************
+//ucmd end
+//*****************************************
+
+
+
+
+
+//*****************************************
+//rcmd start
+//*****************************************
+
+void MainWindow::rcmdGetDeviceInf()
+{
+    QByteArray buff;
+    buff.clear();
+    r_sendMessage(r_getDevInf,&buff);
+    DisplayWithTime("get device information");
+}
+
+void MainWindow::rcmdSendFirInf()
+{
+    QByteArray buff;
+    unsigned short i = 0;
+    if(fir.ota_w.buff.isEmpty() == true)
+    {
+        DisplayWithTime("please open the file xxx.bin");
+        return;
+    }
+    buff.clear();
+    buff[i++] = fir.ota_w.mode;
+    buff[i++] = fir.ota_w.device_type;
+    buff[i++] = (fir.ota_w.total_packet>>8)&0xFF;
+    buff[i++] = (fir.ota_w.total_packet>>0)&0xFF;
+    buff[i++] = fir.ota_w.packet_byte;
+    buff[i++] = (fir.ota_w.total_byte>>24)&0xFF;
+    buff[i++] = (fir.ota_w.total_byte>>16)&0xFF;
+    buff[i++] = (fir.ota_w.total_byte>>8)&0xFF;
+    buff[i++] = (fir.ota_w.total_byte>>0)&0xFF;
+    buff[i++] = fir.ota_w.version;
+    for(int j = 0;j<16 ; j++)
+    {
+        buff[i++] = fir.ota_w.md5[j];
+    }
+    r_sendMessage(r_senFirInf,&buff);
+    DisplayWithTime("send firmware information");
+}
+
+void MainWindow::rcmdSendsendPacket(ushort packet)
+{
+    QByteArray buff;
+    ushort i = 0;
+    uint ptr;
+    uchar  byte_count;
+
+    if(fir.ota_w.buff.isEmpty() == true)
+    {
+        DisplayWithTime("please open the file xxx.bin");
+        return;
+    }
+    else if(packet>=fir.ota_w.total_packet)
+    {
+        DisplayWithTime("固件发送完成");
+        progressBar->setValue(100);
+        return;
+    }
+
+
+
+    buff.clear();
+    buff[i++] = (packet>>8)&0xFF;
+    buff[i++] = (packet>>0)&0xFF;
+    buff[i++] = fir.ota_w.mode;
+    ptr = packet*fir.ota_w.packet_byte;
+    if(packet<(fir.ota_w.total_packet-1))
+    {
+        byte_count = fir.ota_w.packet_byte;
+    }
+    else
+    {
+        byte_count = fir.ota_w.total_byte%fir.ota_w.packet_byte;
+        if(byte_count == 0)byte_count = fir.ota_w.packet_byte;
+    }
+
+    buff[i++] = byte_count;
+
+
+    for(uint j = 0;j<byte_count ; j++)
+    {
+        buff[i++] = fir.ota_w.buff[ptr+j];
+    }
+    r_sendMessage(r_senPacket,&buff);
+
+    DisplayWithTime(QString("send_packet:%1  packet byte:%2").arg(packet).arg(byte_count));
+    progressBar->setValue(packet*100/fir.ota_w.total_packet);
+}
+
+
+//*****************************************
+//rcmd end
+//*****************************************
+
+
+
+
+//*****************************************
+//控件事件
+//*****************************************
+
+
+void MainWindow::on_File_clicked()
+{
+
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+
+}
+
+void MainWindow::on_bt_getDeviceInf_clicked()
+{
+
+    if(comboBox_updateMode->currentText() == "本地手动升级")
+    {
+        ucmdGetDeviceInf();
+    }
+    else if(comboBox_updateMode->currentText() == "OTA手动升级")
+    {
+        rcmdGetDeviceInf();
+    }
+    else
+    {
+        DisplayWithTime("error:the update mode is " + comboBox_updateMode->currentText());
+    }
+
+}
+
+void MainWindow::on_bt_sendFirInf_clicked()
+{
+
+    if(comboBox_updateMode->currentText() == "本地手动升级")
+    {
+        ucmdSendFirInf();
+    }
+    else if(comboBox_updateMode->currentText() == "OTA手动升级")
+    {
+        rcmdSendFirInf();
+    }
+    else
+    {
+        DisplayWithTime("error:the update mode is " + comboBox_updateMode->currentText());
+    }
+
+}
+
+void MainWindow::on_bt_sendPacket_clicked()
+{
+    if(comboBox_updateMode->currentText() == "本地手动升级")
+    {
+        ucmdSendsendPacket(fir.local_w.send_cout);
+        fir.local_w.send_cout++;
+    }
+    else if(comboBox_updateMode->currentText() == "OTA手动升级")
+    {
+        rcmdSendsendPacket(fir.ota_w.send_cout);
+        fir.ota_w.send_cout++;
+    }
+    else
+    {
+        DisplayWithTime("error:the update mode is " + comboBox_updateMode->currentText());
+    }
+
+
+
+}
+
+void MainWindow::on_bt_autoUpdate_clicked()
+{
+
+    if(comboBox_updateMode->currentText() == "本地自动升级")
+    {
+        fir.local_w.send_cout=0;
+        ucmdGetDeviceInf();
+    }
+    else if(comboBox_updateMode->currentText() == "OTA单独升级")
+    {
+        fir.ota_w.send_cout=0;
+        rcmdGetDeviceInf();
+    }
+    else
+    {
+        DisplayWithTime("error:the update mode is " + comboBox_updateMode->currentText());
+    }
+}
+
+void MainWindow::on_bt_stopAutoUpdate_clicked()
+{
+
+    fir.auto_step = update_step_finish;
+}
+
+void MainWindow::on_bt_readBoot_clicked()
+{
+
+}
+
+void MainWindow::on_bt_readFirmware_clicked()
+{
+
+}
+
+void MainWindow::on_bt_stopRead_clicked()
+{
+
+}
+
+void MainWindow::on_bt_storeFile_clicked()
+{
+    user_MD5 md5;
+    QString str = "update mode error";
+    if(comboBox_updateMode->currentText() == "本地固件读取")
+    {
+        md5.CalcFileMD5(fir.local_r.buff, fir.local_r.buff.length());
+        if(memcmp(fir.local_r.md5 , md5.buffer,16) == 0)
+        {
+            QFile fd_creat(readFileList->currentText());
+            fd_creat.open(QIODevice::WriteOnly);
+            fd_creat.write(fir.local_r.buff);
+            fd_creat.close();
+            str = "固件保存到："+readFileList->currentText();
+        }
+        else
+        {
+            str = "md5 error";
+        }
+    }
+    else if(comboBox_updateMode->currentText() == "OTA固件读取")
+    {
+        md5.CalcFileMD5(fir.ota_w.buff, fir.ota_w.buff.length());
+        if(memcmp(fir.ota_w.md5 , md5.buffer,16) == 0)
+        {
+            QFile fd_creat(readFileList->currentText());
+            fd_creat.open(QIODevice::WriteOnly);
+            fd_creat.write(fir.ota_r.buff);
+            fd_creat.close();
+            str = "固件保存到："+readFileList->currentText();
+        }
+        else
+        {
+            str = "md5 error";
+        }
+    }
+    DisplayWithTime(str);
+
+}
+
+void MainWindow::on_comboBox_updateMode_currentTextChanged(const QString &arg1)
+{
+    if(arg1 == "本地手动升级")
+    {
+        packetbyte->setCurrentText("1000");
+        bt_getDeviceInf->setDisabled(false);
+        bt_sendFirInf->setDisabled(false);
+        bt_sendPacket->setDisabled(false);
+        bt_autoUpdate->setDisabled(true);
+        bt_stopAutoUpdate->setDisabled(true);
+        bt_readBoot->setDisabled(true);
+        bt_readFirmware->setDisabled(true);
+        bt_stopRead->setDisabled(true);
+    }
+    else if(arg1 == "本地自动升级")
+    {
+        packetbyte->setCurrentText("1000");
+        bt_getDeviceInf->setDisabled(true);
+        bt_sendFirInf->setDisabled(true);
+        bt_sendPacket->setDisabled(true);
+        bt_autoUpdate->setDisabled(false);
+        bt_stopAutoUpdate->setDisabled(false);
+        bt_readBoot->setDisabled(true);
+        bt_readFirmware->setDisabled(true);
+        bt_stopRead->setDisabled(true);
+    }
+    else if(arg1 == "本地固件读取")
+    {
+        packetbyte->setCurrentText("1000");
+        bt_getDeviceInf->setDisabled(true);
+        bt_sendFirInf->setDisabled(true);
+        bt_sendPacket->setDisabled(true);
+        bt_autoUpdate->setDisabled(true);
+        bt_stopAutoUpdate->setDisabled(true);
+        bt_readBoot->setDisabled(false);
+        bt_readFirmware->setDisabled(false);
+        bt_stopRead->setDisabled(false);
+    }
+    else if(arg1 == "OTA手动升级")
+    {
+        packetbyte->setCurrentText("91");
+        bt_getDeviceInf->setDisabled(false);
+        bt_sendFirInf->setDisabled(false);
+        bt_sendPacket->setDisabled(false);
+        bt_autoUpdate->setDisabled(true);
+        bt_stopAutoUpdate->setDisabled(true);
+        bt_readBoot->setDisabled(true);
+        bt_readFirmware->setDisabled(true);
+        bt_stopRead->setDisabled(true);
+    }
+    else if(arg1 == "OTA单独升级")
+    {
+        packetbyte->setCurrentText("91");
+        bt_getDeviceInf->setDisabled(true);
+        bt_sendFirInf->setDisabled(true);
+        bt_sendPacket->setDisabled(true);
+        bt_autoUpdate->setDisabled(false);
+        bt_stopAutoUpdate->setDisabled(false);
+        bt_readBoot->setDisabled(true);
+        bt_readFirmware->setDisabled(true);
+        bt_stopRead->setDisabled(true);
+    }
+    else if(arg1 == "OTA批量升级")
+    {
+        packetbyte->setCurrentText("91");
+        bt_getDeviceInf->setDisabled(true);
+        bt_sendFirInf->setDisabled(true);
+        bt_sendPacket->setDisabled(true);
+        bt_autoUpdate->setDisabled(false);
+        bt_stopAutoUpdate->setDisabled(false);
+        bt_readBoot->setDisabled(true);
+        bt_readFirmware->setDisabled(true);
+        bt_stopRead->setDisabled(true);
+    }
+    else if(arg1 == "OTA固件读取")
+    {
+        packetbyte->setCurrentText("91");
+        bt_getDeviceInf->setDisabled(true);
+        bt_sendFirInf->setDisabled(true);
+        bt_sendPacket->setDisabled(true);
+        bt_autoUpdate->setDisabled(true);
+        bt_stopAutoUpdate->setDisabled(true);
+        bt_readBoot->setDisabled(false);
+        bt_readFirmware->setDisabled(false);
+        bt_stopRead->setDisabled(false);
+    }
+    else
+    {
+
+        bt_getDeviceInf->setDisabled(true);
+        bt_sendFirInf->setDisabled(true);
+        bt_sendPacket->setDisabled(true);
+        bt_autoUpdate->setDisabled(true);
+        bt_stopAutoUpdate->setDisabled(true);
+        bt_readBoot->setDisabled(true);
+        bt_readFirmware->setDisabled(true);
+        bt_stopRead->setDisabled(true);
+    }
+    DisplayWithTime(comboBox_updateMode->currentText());
 }
 
 
@@ -928,6 +1729,8 @@ void MainWindow::on_bt_openFile_clicked()
     QStringList fileNameList;
     QString fileName0;
     QString str;
+    user_MD5 md5;
+
 
     //creat a dialog
     QFileDialog* fd = new QFileDialog(this);
@@ -955,34 +1758,110 @@ void MainWindow::on_bt_openFile_clicked()
         }
         else
         {
-
-            fir.local_w.buff.clear();
-            fir.local_w.buff = file.readAll();
-            file.close();
-
-            fir.local_w.send_cout = 0;
-            fir.local_w.total_packet = fir.local_w.buff.length()/1000;
-            if(fir.local_w.buff.length()%1000)
+            if((comboBox_updateMode->currentText() == "本地手动升级")||
+               (comboBox_updateMode->currentText() == "本地自动升级")||
+               (comboBox_updateMode->currentText() == "本地固件读取"))
             {
-                fir.local_w.total_packet++;
+
+                fir.local_w.buff.clear();
+                fir.local_w.buff = file.readAll();
+                file.close();
+                str = packetbyte->currentText();
+                fir.local_w.packet_byte = str.toUShort(0,10);
+
+                fir.local_w.version = frimwareVersion->currentText().toUShort(0,10);
+
+
+
+                fir.local_w.send_cout = 0;
+                fir.local_w.total_byte = fir.local_w.buff.length();
+                fir.local_w.total_packet = fir.local_w.total_byte/fir.local_w.packet_byte;
+                if(fir.local_w.total_byte%fir.local_w.packet_byte != 0)
+                {
+                    fir.local_w.total_packet++;
+                }
+
+
+
+
+                md5.CalcFileMD5(fir.local_w.buff, fir.local_w.buff.length());
+                fir.local_w.md5.clear();
+                const byte* ptr = md5.buffer;
+                for(uchar i=0;i<16;i++)
+                {
+                    fir.local_w.md5[i] = ptr[i];
+                }
+
+
+
+                updateFileList->insertItem(0,fileName0);
+                updateFileList->setCurrentText(fileName0);
+                textBr_mess->append(fileName0);
+                textBr_mess->append(QString("file size: %1").arg(fir.local_w.buff.length()));
+                textBr_mess->append(QString("packet byte: %1").arg(fir.local_w.packet_byte));
+                textBr_mess->append(QString("packet total: %1").arg(fir.local_w.total_packet));
+                textBr_mess->append(QString("packet count: %1").arg(fir.local_w.send_cout));
+                textBr_mess->append(QString("firmware version: %1").arg(fir.local_w.version));
+                textBr_mess->append("MD5:"+fir.local_w.md5.toHex().toUpper());
             }
-            fir.local_w.send_max = fir.local_w.total_packet;
+            else
+            {
+
+                fir.ota_w.buff.clear();
+                fir.ota_w.buff = file.readAll();
+                file.close();
+
+                str = packetbyte->currentText();
+                if(str.toUShort(0,10)>91)fir.ota_w.packet_byte = 91;
+                else fir.ota_w.packet_byte = str.toUShort(0,10);
+
+                fir.ota_w.version = frimwareVersion->currentText().toUShort(0,10);
 
 
-            MD5 md5;
-            md5.update(fir.local_w.buff,fir.local_w.buff.length());
-            str = QString::fromStdString(md5.toString());
-            fir.local_w.md5.clear();
-            fir.local_w.md5.append(str);
+                fir.ota_w.device_type = cb_deviceType->currentIndex();
+
+                if(comboBox_updateMode->currentText() == "OTA批量升级")
+                {
+                    shortAddr->setCurrentRow(1);
+                    fir.ota_w.mode = 0x01;
+                }
+                else
+                {
+                    fir.ota_w.mode = 0x00;
+                }
 
 
-            updateFileList->insertItem(0,fileName0);
-            updateFileList->setCurrentText(fileName0);
-            textBr_mess->append(fileName0);
-            textBr_mess->append(QString("file size: %1").arg(fir.local_w.buff.length()));
-            textBr_mess->append(QString("packet max: %1").arg(fir.local_w.send_max));
-            textBr_mess->append(QString("packet count: %1").arg(fir.local_w.send_cout));
-            textBr_mess->append("MD5:"+str);
+                fir.ota_w.send_cout = 0;
+                fir.ota_w.total_byte = fir.ota_w.buff.length();
+                fir.ota_w.total_packet = fir.ota_w.total_byte/fir.ota_w.packet_byte;
+                if(fir.ota_w.total_byte%fir.ota_w.packet_byte != 0)
+                {
+                    fir.ota_w.total_packet++;
+                }
+
+
+
+
+                md5.CalcFileMD5(fir.ota_w.buff, fir.ota_w.buff.length());
+                fir.ota_w.md5.clear();
+                const byte* ptr = md5.buffer;
+                for(uchar i=0;i<16;i++)
+                {
+                    fir.ota_w.md5[i] = ptr[i];
+                }
+
+
+
+                updateFileList->insertItem(0,fileName0);
+                updateFileList->setCurrentText(fileName0);
+                textBr_mess->append(fileName0);
+                textBr_mess->append(QString("file size: %1").arg(fir.ota_w.buff.length()));
+                textBr_mess->append(QString("packet byte: %1").arg(fir.ota_w.packet_byte));
+                textBr_mess->append(QString("packet total: %1").arg(fir.ota_w.total_packet));
+                textBr_mess->append(QString("packet count: %1").arg(fir.ota_w.send_cout));
+                textBr_mess->append(QString("firmware version: %1").arg(fir.ota_w.version));
+                textBr_mess->append("MD5:"+fir.ota_w.md5.toHex().toUpper());
+            }
         }
     }
     else
@@ -990,95 +1869,62 @@ void MainWindow::on_bt_openFile_clicked()
         fd->close();
     }
 }
-
 void MainWindow::on_comboBox_updateWay_currentIndexChanged(const QString &arg1)
 {
-    if(arg1 == "本地升级")
+    DisplayWithTime(arg1);
+}
+
+void MainWindow::on_shortAddr_itemSelectionChanged()
+{
+    QString str = shortAddr->currentItem()->text();
+    rf_send.dest_addr = str.toUShort(0,16);
+    DisplayWithTime(QString("Dest addr: ")+str);
+}
+
+void MainWindow::on_frimwareVersion_3_currentTextChanged(const QString &arg1)
+{
+    DisplayWithTime(arg1);
+}
+
+void MainWindow::on_cb_deviceType_currentTextChanged(const QString &arg1)
+{
+    DisplayWithTime(arg1);
+}
+
+void MainWindow::on_cb_deviceType_currentIndexChanged(int index)
+{
+    //rf_send.device = index;
+    fir.ota_w.device_type = index;
+}
+
+void MainWindow::on_shortAddr_doubleClicked(const QModelIndex &index)
+{
+    ushort i = index.row();
+    te_addrEdit->setText(shortAddr->item(i)->text());
+}
+
+void MainWindow::on_pb_addAddr_clicked()
+{
+    //ushort i = shortAddr->currentRow();
+    QString str = te_addrEdit->toPlainText();
+
+    if(shortAddr->findItems(str , Qt::MatchExactly).isEmpty())
     {
-        textBr_mess->append("升级方式："+arg1);
-        comboBox_updateMode->setDisabled(true);
-    }
-    else if(arg1 == "OTA升级")
-    {
-        textBr_mess->append("升级方式："+arg1);
-        comboBox_updateMode->setDisabled(false);
+        shortAddr->insertItem(0,tr(""));
+        shortAddr->item(0)->setText(str);
+        DisplayWithTime("add addr:" + str);
     }
     else
     {
-        textBr_mess->append("升级方式： ERROR");
-        comboBox_updateMode->setDisabled(true);
+        DisplayWithTime("error：已经存在" + str);
     }
-}
-
-void MainWindow::usartAck()
-{
-    unsigned short crc_calculate;
-    QByteArray send_buff;
-    send_buff.clear();
-    send_buff[0] = 0x5A;
-    send_buff[1] = 0;
-    send_buff[2] = 0;
-    crc_calculate = Crc16Bit(send_buff,send_buff.length());
-    send_buff[send_buff.length()] = crc_calculate/256;
-    send_buff[send_buff.length()] = crc_calculate%256;
-    port->write(send_buff, send_buff.length());
-}
-
-void MainWindow::on_File_clicked()
-{
 
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_pb_deleteAddr_clicked()
 {
-
-}
-
-void MainWindow::on_bt_getDeviceInf_clicked()
-{
-    QByteArray buff;
-    buff.clear();
-    u_sendMessage(u_getDevNetInf,&buff);
-}
-
-void MainWindow::on_bt_sendFirInf_clicked()
-{
-    QByteArray buff;
-    buff.clear();
-    u_sendMessage(u_senFirInf,&buff);
-}
-
-void MainWindow::on_bt_sendPacket_clicked()
-{
-
-}
-
-void MainWindow::on_bt_autoUpdate_clicked()
-{
-
-}
-
-void MainWindow::on_bt_stopAutoUpdate_clicked()
-{
-
-}
-
-void MainWindow::on_bt_readBoot_clicked()
-{
-
-}
-
-void MainWindow::on_bt_readFirmware_clicked()
-{
-
-}
-
-void MainWindow::on_bt_stopRead_clicked()
-{
-
-}
-
-void MainWindow::on_bt_storeFile_clicked()
-{
-
+    ushort i = shortAddr->currentRow();
+    QString str = te_addrEdit->toPlainText();
+    DisplayWithTime("change addr:" +shortAddr->item(i)->text()+" to "+str);
+    shortAddr->item(i)->setText(str);
 }

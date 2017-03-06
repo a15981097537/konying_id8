@@ -5,17 +5,20 @@
 #include "ui_main_window_form.h"
 #include <threadcomport.h>
 #include <md5.h>
+#include "usercmd.h"
+#include "user_md5.h"
 
 #define Q_WS_WIN 1
 enum TypeDataInOut {DEC_, ASCII_, HEX_, BIN_};
 
-
-
-#define uint8 unsigned char
-#define uint16 unsigned short
-#define uint32 unsigned int
-
-
+//update step
+enum
+{
+    update_step_getDevInf = 0x00,
+    update_step_senFirInf,
+    update_step_senPacket,
+    update_step_finish
+};
 
 //uart cmd
 enum
@@ -55,8 +58,18 @@ enum
 };
 
 //device type
-#define DEVICE_GATWAY               0x00
-#define DEVICE_SPIRE_LAMELLA        0x01
+enum
+{
+    dev_gatway = 0x00,      //网关
+    dev_adultSpireLamella,  //成人腕带
+    dev_patientSpireLamella,//精神病腕带
+    dev_childSpireLamella,  //婴儿腕带
+    dev_sosPanic,           //SOS按键（胸牌）
+    dev_plug,               //插座
+    dev_tempreture,         //温度传感器
+    dev_humidity,           //湿度传感器
+    dev_multileSensor       //多功能传感器
+};
 
 
 
@@ -64,63 +77,73 @@ enum
 
 struct UC_PAR
 {
-    uint8 head;
-    uint16 len;
-    uint8 cmd;
-    uint8 *data;
-    uint16 crc;
+    uchar head;
+    uchar len;
+    uchar cmd;
+    uchar *data;
+    ushort crc;
 };
 
 struct RF_PAR
 {
-    uint8 sequence;
-    uint8 deviceType;
-    uint8 cmd;
-    uint8 *data;
+    uchar sequence;
+    uchar deviceType;
+    uchar cmd;
+    uchar *data;
 };
 
 struct UR_PAR
 {
-    uint8 head;
-    uint16 len;
-    uint16 dstAddr;
-    uint16 srcAddr;
-    uint8 rssi;
+    uchar head;
+    ushort len;
+    ushort dstAddr;
+    ushort srcAddr;
+    signed char rssi;
     RF_PAR rf;
-    uint16 crc;
+    ushort crc;
 };
 
+
+struct RF_SEND
+{
+    ushort dest_addr;
+    ushort src_addr;
+    uchar rssi;
+    uchar sequence;
+    uchar device;
+};
 
 
 struct local_firmwares
 {
-    unsigned short total_packet;
-    unsigned short packet_byte;
-    unsigned int total_byte;
-    unsigned char version;
+    ushort total_packet;
+    ushort packet_byte;
+    uint total_byte;
+    uchar version;
     QByteArray md5;
     QByteArray buff;
-    unsigned int send_cout;
-    unsigned int send_max;
+    ushort send_cout;
+    ushort send_max;
 };
 
 struct ota_firmwares
 {
-    unsigned char mode;
-    unsigned char device_type;
-    unsigned short total_packet;
-    unsigned char packet_byte;
-    unsigned int total_byte;
-    unsigned char version;
+    uchar mode;
+    uchar device_type;
+    ushort total_packet;
+    uchar packet_byte;
+    uint total_byte;
+    uchar version;
     QByteArray md5;
     QByteArray buff;
-    unsigned int send_cout;
-    unsigned int send_max;
+    ushort send_cout;
+    ushort send_max;
 };
 
 
 struct firmwares
 {
+    uchar auto_step;
     local_firmwares local_w;
     local_firmwares local_r;
     ota_firmwares ota_w;
@@ -130,10 +153,10 @@ struct firmwares
 
 struct USART
 {
-    uint8 send[65535];
-    uint16 s_count;
-    uint8 receive[65535];
-    uint16 r_count;
+    uchar send[65535];
+    ushort s_count;
+    uchar receive[65535];
+    ushort r_count;
 };
 
 class MainWindow : public QMainWindow, private Ui::MainWindow {
@@ -141,6 +164,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow {
 public:
     MainWindow();
     ~MainWindow();
+
 protected:
      void closeEvent(QCloseEvent *event);
 
@@ -162,6 +186,9 @@ private:
     USART usart;
     QTimer *receiveTimer;
     QTimer *sendTimer;
+    RF_SEND rf_send;
+
+
 
 
 	bool bRTS;
@@ -180,7 +207,7 @@ private slots:
 	void closePort();
 	void enabledPortBt();
 	void openPort();
-	void receiveMsg(const QTime timesl, const unsigned char *data, const int size);
+    void receiveMsg(const QTime timesl, const unsigned char *data, const int size);
 	void SetCurComboBState();
     unsigned short int Crc16Bit(const char *ptr, unsigned short int len);
 	void transmitMsg();
@@ -190,22 +217,26 @@ private slots:
     void on_bt_openFile_clicked();
     void on_comboBox_updateWay_currentIndexChanged(const QString &arg1);
     //add bye lekee
-    void update_init();
+    void user_init();
     void pressUartData();
     char u_sendMessage(unsigned char cmd,QByteArray *data);
-    char r_sendMessage(unsigned short dest_addr,
-                                   unsigned char sequence,
-                                   unsigned char device_type,
-                                   unsigned char cmd,
-                                   QByteArray *data);
-    void usartAck();
-    void pressCmdData(uint8 *data , uint16 size);
+    char r_sendMessage(unsigned char cmd,QByteArray *data);
+    void usartAck(uchar head);
+    void pressCmdData(uchar *data , ushort size);
     void DisplayWithTime(const QString &text);
     void DisplayWithNoTime(const QString &text);
-    QString uint8ToHex(uint8 data);
-    QString uint16ToHex(uint16 data);
-    QString uint32ToHex(uint32 data);
-    QString strToHex(uint8 *data , uint16 len);
+    QString uint8ToHex(uchar data);
+    QString uint16ToHex(ushort data);
+    QString uint32ToHex(uint data);
+    QString strToHex(uchar *data , ushort len);
+    void ucmdGetDeviceInf();
+    void ucmdSendFirInf();
+    void ucmdSendsendPacket(ushort packet);
+    void ucmdAutoUpdate(uchar step);
+    void rcmdSendsendPacket(ushort packet);
+    void rcmdSendFirInf();
+    void rcmdGetDeviceInf();
+
     void on_bt_getDeviceInf_clicked();
     void on_bt_sendFirInf_clicked();
     void on_bt_sendPacket_clicked();
@@ -215,6 +246,14 @@ private slots:
     void on_bt_readFirmware_clicked();
     void on_bt_stopRead_clicked();
     void on_bt_storeFile_clicked();
+    void on_comboBox_updateMode_currentTextChanged(const QString &arg1);
+    void on_shortAddr_itemSelectionChanged();
+    void on_frimwareVersion_3_currentTextChanged(const QString &arg1);
+    void on_cb_deviceType_currentTextChanged(const QString &arg1);
+    void on_cb_deviceType_currentIndexChanged(int index);
+    void on_shortAddr_doubleClicked(const QModelIndex &index);
+    void on_pb_addAddr_clicked();
+    void on_pb_deleteAddr_clicked();
 };
 
  #endif
