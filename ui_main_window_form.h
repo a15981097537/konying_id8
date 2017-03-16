@@ -45,33 +45,40 @@ public:
     QHBoxLayout *horizontalLayout_12;
     QGroupBox *groupBox;
     QVBoxLayout *verticalLayout_3;
-    QHBoxLayout *horizontalLayout_5;
-    QLabel *label_2;
-    QComboBox *comboBox_port;
-    QHBoxLayout *horizontalLayout_7;
-    QPushButton *bt_openport;
-    QPushButton *bt_closeport;
-    QVBoxLayout *verticalLayout_17;
-    QLabel *label_3;
-    QComboBox *comboBox_baudrate;
-    QVBoxLayout *verticalLayout_16;
-    QLabel *label_5;
-    QComboBox *comboBox_parity;
-    QVBoxLayout *verticalLayout_15;
-    QLabel *label_6;
-    QComboBox *comboBox_flcntrl;
-    QHBoxLayout *horizontalLayout_10;
-    QPushButton *bt_apply;
-    QPushButton *bt_cancel;
-    QPushButton *bt_clear;
+    QVBoxLayout *verticalLayout_19;
+    QLabel *label_12;
+    QComboBox *comunication_protocal;
     QTextEdit *te_addrEdit;
     QHBoxLayout *horizontalLayout_6;
     QPushButton *pb_addAddr;
     QPushButton *pb_deleteAddr;
     QListWidget *shortAddr;
+    QPushButton *bt_clear;
     QTabWidget *function;
     QWidget *uart;
+    QVBoxLayout *verticalLayout_24;
+    QHBoxLayout *horizontalLayout_7;
+    QVBoxLayout *verticalLayout_17;
+    QHBoxLayout *horizontalLayout_5;
+    QLabel *label_2;
+    QComboBox *comboBox_port;
+    QHBoxLayout *horizontalLayout_22;
+    QLabel *label_6;
+    QComboBox *comboBox_flcntrl;
+    QHBoxLayout *horizontalLayout_23;
+    QLabel *label_3;
+    QComboBox *comboBox_baudrate;
+    QHBoxLayout *horizontalLayout_24;
+    QLabel *label_5;
+    QComboBox *comboBox_parity;
+    QVBoxLayout *verticalLayout_16;
+    QVBoxLayout *verticalLayout_15;
+    QPushButton *bt_apply;
+    QPushButton *bt_cancel;
     QVBoxLayout *verticalLayout_4;
+    QPushButton *bt_openport;
+    QPushButton *bt_closeport;
+    QSpacerItem *horizontalSpacer_7;
     QGroupBox *groupBox_2;
     QVBoxLayout *verticalLayout;
     QHBoxLayout *horizontalLayout_2;
@@ -98,6 +105,48 @@ public:
     QRadioButton *rbt_BINin;
     QRadioButton *rbt_HEXin;
     QTextBrowser *textBr_inp;
+    QWidget *Network;
+    QVBoxLayout *verticalLayout_25;
+    QGroupBox *groupBox_4;
+    QHBoxLayout *horizontalLayout_8;
+    QVBoxLayout *verticalLayout_20;
+    QHBoxLayout *horizontalLayout_16;
+    QLabel *label_17;
+    QTextEdit *textEdit_IP;
+    QPushButton *bt_listen;
+    QHBoxLayout *horizontalLayout_17;
+    QLabel *label_18;
+    QTextEdit *textEdit_Port;
+    QPushButton *bt_stopListen;
+    QHBoxLayout *horizontalLayout_11;
+    QLabel *label_22;
+    QTextEdit *textEdit_ID2;
+    QPushButton *bt_search_net;
+    QSpacerItem *horizontalSpacer_4;
+    QVBoxLayout *verticalLayout_8;
+    QHBoxLayout *horizontalLayout_9;
+    QLabel *label_19;
+    QTextEdit *textEdit_ID;
+    QPushButton *bt_searchId;
+    QPushButton *export_idList;
+    QSpacerItem *horizontalSpacer_9;
+    QSpacerItem *horizontalSpacer_11;
+    QSpacerItem *horizontalSpacer_10;
+    QSpacerItem *horizontalSpacer_8;
+    QSpacerItem *horizontalSpacer_6;
+    QSpacerItem *horizontalSpacer_5;
+    QTextBrowser *infDisplay;
+    QGroupBox *groupBox_6;
+    QVBoxLayout *verticalLayout_23;
+    QHBoxLayout *horizontalLayout_19;
+    QVBoxLayout *verticalLayout_21;
+    QLabel *label_20;
+    QLabel *label_21;
+    QVBoxLayout *verticalLayout_22;
+    QHBoxLayout *horizontalLayout_20;
+    QTextEdit *infEdit;
+    QPushButton *bt_netSend;
+    QTextBrowser *infReceive;
     QWidget *firmware_update;
     QVBoxLayout *verticalLayout_5;
     QGroupBox *groupBox_5;
@@ -138,7 +187,6 @@ public:
     QPushButton *bt_storeFile;
     QProgressBar *progressBar;
     QTextBrowser *textBr_mess;
-    QWidget *CMD;
     QStatusBar *statusbar;
     QMenuBar *menubar;
 
@@ -146,7 +194,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(1097, 714);
+        MainWindow->resize(1054, 593);
         MainWindow->setAutoFillBackground(false);
         MainWindow->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
         MainWindow->setUnifiedTitleAndToolBarOnMac(false);
@@ -170,100 +218,22 @@ public:
         groupBox->setMaximumSize(QSize(150, 16777215));
         verticalLayout_3 = new QVBoxLayout(groupBox);
         verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
-        horizontalLayout_5 = new QHBoxLayout();
-        horizontalLayout_5->setObjectName(QStringLiteral("horizontalLayout_5"));
-        label_2 = new QLabel(groupBox);
-        label_2->setObjectName(QStringLiteral("label_2"));
+        verticalLayout_19 = new QVBoxLayout();
+        verticalLayout_19->setObjectName(QStringLiteral("verticalLayout_19"));
+        label_12 = new QLabel(groupBox);
+        label_12->setObjectName(QStringLiteral("label_12"));
+        label_12->setAlignment(Qt::AlignCenter);
 
-        horizontalLayout_5->addWidget(label_2);
+        verticalLayout_19->addWidget(label_12);
 
-        comboBox_port = new QComboBox(groupBox);
-        comboBox_port->setObjectName(QStringLiteral("comboBox_port"));
+        comunication_protocal = new QComboBox(groupBox);
+        comunication_protocal->setObjectName(QStringLiteral("comunication_protocal"));
+        comunication_protocal->setMinimumSize(QSize(0, 0));
 
-        horizontalLayout_5->addWidget(comboBox_port);
-
-
-        verticalLayout_3->addLayout(horizontalLayout_5);
-
-        horizontalLayout_7 = new QHBoxLayout();
-        horizontalLayout_7->setObjectName(QStringLiteral("horizontalLayout_7"));
-        bt_openport = new QPushButton(groupBox);
-        bt_openport->setObjectName(QStringLiteral("bt_openport"));
-
-        horizontalLayout_7->addWidget(bt_openport);
-
-        bt_closeport = new QPushButton(groupBox);
-        bt_closeport->setObjectName(QStringLiteral("bt_closeport"));
-
-        horizontalLayout_7->addWidget(bt_closeport);
+        verticalLayout_19->addWidget(comunication_protocal);
 
 
-        verticalLayout_3->addLayout(horizontalLayout_7);
-
-        verticalLayout_17 = new QVBoxLayout();
-        verticalLayout_17->setObjectName(QStringLiteral("verticalLayout_17"));
-        label_3 = new QLabel(groupBox);
-        label_3->setObjectName(QStringLiteral("label_3"));
-
-        verticalLayout_17->addWidget(label_3);
-
-        comboBox_baudrate = new QComboBox(groupBox);
-        comboBox_baudrate->setObjectName(QStringLiteral("comboBox_baudrate"));
-
-        verticalLayout_17->addWidget(comboBox_baudrate);
-
-
-        verticalLayout_3->addLayout(verticalLayout_17);
-
-        verticalLayout_16 = new QVBoxLayout();
-        verticalLayout_16->setObjectName(QStringLiteral("verticalLayout_16"));
-        label_5 = new QLabel(groupBox);
-        label_5->setObjectName(QStringLiteral("label_5"));
-
-        verticalLayout_16->addWidget(label_5);
-
-        comboBox_parity = new QComboBox(groupBox);
-        comboBox_parity->setObjectName(QStringLiteral("comboBox_parity"));
-
-        verticalLayout_16->addWidget(comboBox_parity);
-
-
-        verticalLayout_3->addLayout(verticalLayout_16);
-
-        verticalLayout_15 = new QVBoxLayout();
-        verticalLayout_15->setObjectName(QStringLiteral("verticalLayout_15"));
-        label_6 = new QLabel(groupBox);
-        label_6->setObjectName(QStringLiteral("label_6"));
-
-        verticalLayout_15->addWidget(label_6);
-
-        comboBox_flcntrl = new QComboBox(groupBox);
-        comboBox_flcntrl->setObjectName(QStringLiteral("comboBox_flcntrl"));
-
-        verticalLayout_15->addWidget(comboBox_flcntrl);
-
-
-        verticalLayout_3->addLayout(verticalLayout_15);
-
-        horizontalLayout_10 = new QHBoxLayout();
-        horizontalLayout_10->setObjectName(QStringLiteral("horizontalLayout_10"));
-        bt_apply = new QPushButton(groupBox);
-        bt_apply->setObjectName(QStringLiteral("bt_apply"));
-
-        horizontalLayout_10->addWidget(bt_apply);
-
-        bt_cancel = new QPushButton(groupBox);
-        bt_cancel->setObjectName(QStringLiteral("bt_cancel"));
-
-        horizontalLayout_10->addWidget(bt_cancel);
-
-
-        verticalLayout_3->addLayout(horizontalLayout_10);
-
-        bt_clear = new QPushButton(groupBox);
-        bt_clear->setObjectName(QStringLiteral("bt_clear"));
-
-        verticalLayout_3->addWidget(bt_clear);
+        verticalLayout_3->addLayout(verticalLayout_19);
 
         te_addrEdit = new QTextEdit(groupBox);
         te_addrEdit->setObjectName(QStringLiteral("te_addrEdit"));
@@ -291,6 +261,11 @@ public:
 
         verticalLayout_3->addWidget(shortAddr);
 
+        bt_clear = new QPushButton(groupBox);
+        bt_clear->setObjectName(QStringLiteral("bt_clear"));
+
+        verticalLayout_3->addWidget(bt_clear);
+
 
         horizontalLayout_12->addWidget(groupBox);
 
@@ -298,8 +273,125 @@ public:
         function->setObjectName(QStringLiteral("function"));
         uart = new QWidget();
         uart->setObjectName(QStringLiteral("uart"));
-        verticalLayout_4 = new QVBoxLayout(uart);
+        verticalLayout_24 = new QVBoxLayout(uart);
+        verticalLayout_24->setObjectName(QStringLiteral("verticalLayout_24"));
+        horizontalLayout_7 = new QHBoxLayout();
+        horizontalLayout_7->setObjectName(QStringLiteral("horizontalLayout_7"));
+        verticalLayout_17 = new QVBoxLayout();
+        verticalLayout_17->setObjectName(QStringLiteral("verticalLayout_17"));
+        horizontalLayout_5 = new QHBoxLayout();
+        horizontalLayout_5->setObjectName(QStringLiteral("horizontalLayout_5"));
+        label_2 = new QLabel(uart);
+        label_2->setObjectName(QStringLiteral("label_2"));
+
+        horizontalLayout_5->addWidget(label_2);
+
+        comboBox_port = new QComboBox(uart);
+        comboBox_port->setObjectName(QStringLiteral("comboBox_port"));
+        comboBox_port->setMinimumSize(QSize(120, 0));
+        comboBox_port->setMaximumSize(QSize(120, 16777215));
+
+        horizontalLayout_5->addWidget(comboBox_port);
+
+
+        verticalLayout_17->addLayout(horizontalLayout_5);
+
+        horizontalLayout_22 = new QHBoxLayout();
+        horizontalLayout_22->setObjectName(QStringLiteral("horizontalLayout_22"));
+        label_6 = new QLabel(uart);
+        label_6->setObjectName(QStringLiteral("label_6"));
+
+        horizontalLayout_22->addWidget(label_6);
+
+        comboBox_flcntrl = new QComboBox(uart);
+        comboBox_flcntrl->setObjectName(QStringLiteral("comboBox_flcntrl"));
+        comboBox_flcntrl->setMinimumSize(QSize(120, 0));
+        comboBox_flcntrl->setMaximumSize(QSize(120, 16777215));
+
+        horizontalLayout_22->addWidget(comboBox_flcntrl);
+
+
+        verticalLayout_17->addLayout(horizontalLayout_22);
+
+        horizontalLayout_23 = new QHBoxLayout();
+        horizontalLayout_23->setObjectName(QStringLiteral("horizontalLayout_23"));
+        label_3 = new QLabel(uart);
+        label_3->setObjectName(QStringLiteral("label_3"));
+
+        horizontalLayout_23->addWidget(label_3);
+
+        comboBox_baudrate = new QComboBox(uart);
+        comboBox_baudrate->setObjectName(QStringLiteral("comboBox_baudrate"));
+        comboBox_baudrate->setMinimumSize(QSize(120, 0));
+        comboBox_baudrate->setMaximumSize(QSize(120, 16777215));
+
+        horizontalLayout_23->addWidget(comboBox_baudrate);
+
+
+        verticalLayout_17->addLayout(horizontalLayout_23);
+
+        horizontalLayout_24 = new QHBoxLayout();
+        horizontalLayout_24->setObjectName(QStringLiteral("horizontalLayout_24"));
+        label_5 = new QLabel(uart);
+        label_5->setObjectName(QStringLiteral("label_5"));
+
+        horizontalLayout_24->addWidget(label_5);
+
+        comboBox_parity = new QComboBox(uart);
+        comboBox_parity->setObjectName(QStringLiteral("comboBox_parity"));
+        comboBox_parity->setMinimumSize(QSize(120, 0));
+        comboBox_parity->setMaximumSize(QSize(120, 16777215));
+
+        horizontalLayout_24->addWidget(comboBox_parity);
+
+
+        verticalLayout_17->addLayout(horizontalLayout_24);
+
+
+        horizontalLayout_7->addLayout(verticalLayout_17);
+
+        verticalLayout_16 = new QVBoxLayout();
+        verticalLayout_16->setObjectName(QStringLiteral("verticalLayout_16"));
+        verticalLayout_15 = new QVBoxLayout();
+        verticalLayout_15->setObjectName(QStringLiteral("verticalLayout_15"));
+        bt_apply = new QPushButton(uart);
+        bt_apply->setObjectName(QStringLiteral("bt_apply"));
+
+        verticalLayout_15->addWidget(bt_apply);
+
+        bt_cancel = new QPushButton(uart);
+        bt_cancel->setObjectName(QStringLiteral("bt_cancel"));
+
+        verticalLayout_15->addWidget(bt_cancel);
+
+
+        verticalLayout_16->addLayout(verticalLayout_15);
+
+        verticalLayout_4 = new QVBoxLayout();
         verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
+        bt_openport = new QPushButton(uart);
+        bt_openport->setObjectName(QStringLiteral("bt_openport"));
+
+        verticalLayout_4->addWidget(bt_openport);
+
+        bt_closeport = new QPushButton(uart);
+        bt_closeport->setObjectName(QStringLiteral("bt_closeport"));
+
+        verticalLayout_4->addWidget(bt_closeport);
+
+
+        verticalLayout_16->addLayout(verticalLayout_4);
+
+
+        horizontalLayout_7->addLayout(verticalLayout_16);
+
+        horizontalSpacer_7 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_7->addItem(horizontalSpacer_7);
+
+
+        verticalLayout_24->addLayout(horizontalLayout_7);
+
         groupBox_2 = new QGroupBox(uart);
         groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
         QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -381,7 +473,7 @@ public:
         verticalLayout->addWidget(textEd_out);
 
 
-        verticalLayout_4->addWidget(groupBox_2);
+        verticalLayout_24->addWidget(groupBox_2);
 
         groupBox_3 = new QGroupBox(uart);
         groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
@@ -434,9 +526,217 @@ public:
         verticalLayout_2->addWidget(textBr_inp);
 
 
-        verticalLayout_4->addWidget(groupBox_3);
+        verticalLayout_24->addWidget(groupBox_3);
 
         function->addTab(uart, QString());
+        Network = new QWidget();
+        Network->setObjectName(QStringLiteral("Network"));
+        verticalLayout_25 = new QVBoxLayout(Network);
+        verticalLayout_25->setObjectName(QStringLiteral("verticalLayout_25"));
+        groupBox_4 = new QGroupBox(Network);
+        groupBox_4->setObjectName(QStringLiteral("groupBox_4"));
+        groupBox_4->setMaximumSize(QSize(16777215, 120));
+        horizontalLayout_8 = new QHBoxLayout(groupBox_4);
+        horizontalLayout_8->setObjectName(QStringLiteral("horizontalLayout_8"));
+        verticalLayout_20 = new QVBoxLayout();
+        verticalLayout_20->setObjectName(QStringLiteral("verticalLayout_20"));
+        horizontalLayout_16 = new QHBoxLayout();
+        horizontalLayout_16->setObjectName(QStringLiteral("horizontalLayout_16"));
+        label_17 = new QLabel(groupBox_4);
+        label_17->setObjectName(QStringLiteral("label_17"));
+        label_17->setMaximumSize(QSize(30, 25));
+
+        horizontalLayout_16->addWidget(label_17);
+
+        textEdit_IP = new QTextEdit(groupBox_4);
+        textEdit_IP->setObjectName(QStringLiteral("textEdit_IP"));
+        textEdit_IP->setMaximumSize(QSize(100, 25));
+
+        horizontalLayout_16->addWidget(textEdit_IP);
+
+        bt_listen = new QPushButton(groupBox_4);
+        bt_listen->setObjectName(QStringLiteral("bt_listen"));
+
+        horizontalLayout_16->addWidget(bt_listen);
+
+
+        verticalLayout_20->addLayout(horizontalLayout_16);
+
+        horizontalLayout_17 = new QHBoxLayout();
+        horizontalLayout_17->setObjectName(QStringLiteral("horizontalLayout_17"));
+        label_18 = new QLabel(groupBox_4);
+        label_18->setObjectName(QStringLiteral("label_18"));
+        label_18->setMaximumSize(QSize(30, 25));
+
+        horizontalLayout_17->addWidget(label_18);
+
+        textEdit_Port = new QTextEdit(groupBox_4);
+        textEdit_Port->setObjectName(QStringLiteral("textEdit_Port"));
+        textEdit_Port->setMaximumSize(QSize(100, 25));
+
+        horizontalLayout_17->addWidget(textEdit_Port);
+
+        bt_stopListen = new QPushButton(groupBox_4);
+        bt_stopListen->setObjectName(QStringLiteral("bt_stopListen"));
+
+        horizontalLayout_17->addWidget(bt_stopListen);
+
+
+        verticalLayout_20->addLayout(horizontalLayout_17);
+
+        horizontalLayout_11 = new QHBoxLayout();
+        horizontalLayout_11->setObjectName(QStringLiteral("horizontalLayout_11"));
+        label_22 = new QLabel(groupBox_4);
+        label_22->setObjectName(QStringLiteral("label_22"));
+        label_22->setMaximumSize(QSize(30, 25));
+
+        horizontalLayout_11->addWidget(label_22);
+
+        textEdit_ID2 = new QTextEdit(groupBox_4);
+        textEdit_ID2->setObjectName(QStringLiteral("textEdit_ID2"));
+        textEdit_ID2->setMaximumSize(QSize(100, 25));
+
+        horizontalLayout_11->addWidget(textEdit_ID2);
+
+        bt_search_net = new QPushButton(groupBox_4);
+        bt_search_net->setObjectName(QStringLiteral("bt_search_net"));
+
+        horizontalLayout_11->addWidget(bt_search_net);
+
+
+        verticalLayout_20->addLayout(horizontalLayout_11);
+
+
+        horizontalLayout_8->addLayout(verticalLayout_20);
+
+        horizontalSpacer_4 = new QSpacerItem(49, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_8->addItem(horizontalSpacer_4);
+
+        verticalLayout_8 = new QVBoxLayout();
+        verticalLayout_8->setObjectName(QStringLiteral("verticalLayout_8"));
+        horizontalLayout_9 = new QHBoxLayout();
+        horizontalLayout_9->setObjectName(QStringLiteral("horizontalLayout_9"));
+        label_19 = new QLabel(groupBox_4);
+        label_19->setObjectName(QStringLiteral("label_19"));
+        label_19->setMaximumSize(QSize(30, 25));
+
+        horizontalLayout_9->addWidget(label_19);
+
+        textEdit_ID = new QTextEdit(groupBox_4);
+        textEdit_ID->setObjectName(QStringLiteral("textEdit_ID"));
+        textEdit_ID->setMaximumSize(QSize(100, 25));
+
+        horizontalLayout_9->addWidget(textEdit_ID);
+
+
+        verticalLayout_8->addLayout(horizontalLayout_9);
+
+        bt_searchId = new QPushButton(groupBox_4);
+        bt_searchId->setObjectName(QStringLiteral("bt_searchId"));
+        bt_searchId->setMaximumSize(QSize(16777215, 25));
+
+        verticalLayout_8->addWidget(bt_searchId);
+
+        export_idList = new QPushButton(groupBox_4);
+        export_idList->setObjectName(QStringLiteral("export_idList"));
+
+        verticalLayout_8->addWidget(export_idList);
+
+
+        horizontalLayout_8->addLayout(verticalLayout_8);
+
+        horizontalSpacer_9 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_8->addItem(horizontalSpacer_9);
+
+        horizontalSpacer_11 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_8->addItem(horizontalSpacer_11);
+
+        horizontalSpacer_10 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_8->addItem(horizontalSpacer_10);
+
+        horizontalSpacer_8 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_8->addItem(horizontalSpacer_8);
+
+        horizontalSpacer_6 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_8->addItem(horizontalSpacer_6);
+
+        horizontalSpacer_5 = new QSpacerItem(139, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_8->addItem(horizontalSpacer_5);
+
+
+        verticalLayout_25->addWidget(groupBox_4);
+
+        infDisplay = new QTextBrowser(Network);
+        infDisplay->setObjectName(QStringLiteral("infDisplay"));
+
+        verticalLayout_25->addWidget(infDisplay);
+
+        groupBox_6 = new QGroupBox(Network);
+        groupBox_6->setObjectName(QStringLiteral("groupBox_6"));
+        groupBox_6->setMaximumSize(QSize(16777215, 100));
+        verticalLayout_23 = new QVBoxLayout(groupBox_6);
+        verticalLayout_23->setObjectName(QStringLiteral("verticalLayout_23"));
+        horizontalLayout_19 = new QHBoxLayout();
+        horizontalLayout_19->setObjectName(QStringLiteral("horizontalLayout_19"));
+        verticalLayout_21 = new QVBoxLayout();
+        verticalLayout_21->setObjectName(QStringLiteral("verticalLayout_21"));
+        label_20 = new QLabel(groupBox_6);
+        label_20->setObjectName(QStringLiteral("label_20"));
+        label_20->setMaximumSize(QSize(16777215, 31));
+
+        verticalLayout_21->addWidget(label_20);
+
+        label_21 = new QLabel(groupBox_6);
+        label_21->setObjectName(QStringLiteral("label_21"));
+        label_21->setMaximumSize(QSize(16777215, 31));
+
+        verticalLayout_21->addWidget(label_21);
+
+
+        horizontalLayout_19->addLayout(verticalLayout_21);
+
+        verticalLayout_22 = new QVBoxLayout();
+        verticalLayout_22->setObjectName(QStringLiteral("verticalLayout_22"));
+        horizontalLayout_20 = new QHBoxLayout();
+        horizontalLayout_20->setObjectName(QStringLiteral("horizontalLayout_20"));
+        infEdit = new QTextEdit(groupBox_6);
+        infEdit->setObjectName(QStringLiteral("infEdit"));
+        infEdit->setMaximumSize(QSize(16777215, 25));
+
+        horizontalLayout_20->addWidget(infEdit);
+
+        bt_netSend = new QPushButton(groupBox_6);
+        bt_netSend->setObjectName(QStringLiteral("bt_netSend"));
+        bt_netSend->setMaximumSize(QSize(16777215, 31));
+
+        horizontalLayout_20->addWidget(bt_netSend);
+
+
+        verticalLayout_22->addLayout(horizontalLayout_20);
+
+        infReceive = new QTextBrowser(groupBox_6);
+        infReceive->setObjectName(QStringLiteral("infReceive"));
+        infReceive->setMaximumSize(QSize(16777215, 25));
+
+        verticalLayout_22->addWidget(infReceive);
+
+
+        horizontalLayout_19->addLayout(verticalLayout_22);
+
+
+        verticalLayout_23->addLayout(horizontalLayout_19);
+
+
+        verticalLayout_25->addWidget(groupBox_6);
+
+        function->addTab(Network, QString());
         firmware_update = new QWidget();
         firmware_update->setObjectName(QStringLiteral("firmware_update"));
         verticalLayout_5 = new QVBoxLayout(firmware_update);
@@ -638,9 +938,6 @@ public:
         verticalLayout_5->addWidget(textBr_mess);
 
         function->addTab(firmware_update, QString());
-        CMD = new QWidget();
-        CMD->setObjectName(QStringLiteral("CMD"));
-        function->addTab(CMD, QString());
 
         horizontalLayout_12->addWidget(function);
 
@@ -651,15 +948,11 @@ public:
         MainWindow->setStatusBar(statusbar);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QStringLiteral("menubar"));
-        menubar->setGeometry(QRect(0, 0, 1097, 23));
+        menubar->setGeometry(QRect(0, 0, 1054, 23));
         MainWindow->setMenuBar(menubar);
-        QWidget::setTabOrder(comboBox_port, bt_openport);
-        QWidget::setTabOrder(bt_openport, bt_closeport);
-        QWidget::setTabOrder(bt_closeport, comboBox_baudrate);
-        QWidget::setTabOrder(comboBox_baudrate, comboBox_parity);
+        QWidget::setTabOrder(comboBox_port, comboBox_parity);
         QWidget::setTabOrder(comboBox_parity, comboBox_flcntrl);
-        QWidget::setTabOrder(comboBox_flcntrl, bt_apply);
-        QWidget::setTabOrder(bt_apply, bt_cancel);
+        QWidget::setTabOrder(comboBox_flcntrl, bt_cancel);
         QWidget::setTabOrder(bt_cancel, textEd_out);
         QWidget::setTabOrder(textEd_out, bt_send);
         QWidget::setTabOrder(bt_send, textBr_inp);
@@ -678,18 +971,22 @@ public:
         actionFirmware_update->setText(QApplication::translate("MainWindow", "firmware update", 0));
         actionUart_tool->setText(QApplication::translate("MainWindow", "uart tool", 0));
         groupBox->setTitle(QApplication::translate("MainWindow", "PORT SETTINGS", 0));
+        label_12->setText(QApplication::translate("MainWindow", "\351\200\232\344\277\241\346\216\245\345\217\243", 0));
+        comunication_protocal->clear();
+        comunication_protocal->insertItems(0, QStringList()
+         << QApplication::translate("MainWindow", "Network", 0)
+         << QApplication::translate("MainWindow", "Uart", 0)
+        );
+        pb_addAddr->setText(QApplication::translate("MainWindow", "Add", 0));
+        pb_deleteAddr->setText(QApplication::translate("MainWindow", "Change", 0));
+#ifndef QT_NO_STATUSTIP
+        bt_clear->setStatusTip(QApplication::translate("MainWindow", "Clear input data", 0));
+#endif // QT_NO_STATUSTIP
+        bt_clear->setText(QApplication::translate("MainWindow", "CLEAR", 0));
         label_2->setText(QApplication::translate("MainWindow", "Port", 0));
-#ifndef QT_NO_STATUSTIP
-        bt_openport->setStatusTip(QApplication::translate("MainWindow", "Open port", 0));
-#endif // QT_NO_STATUSTIP
-        bt_openport->setText(QApplication::translate("MainWindow", "OPEN", 0));
-#ifndef QT_NO_STATUSTIP
-        bt_closeport->setStatusTip(QApplication::translate("MainWindow", "Close port", 0));
-#endif // QT_NO_STATUSTIP
-        bt_closeport->setText(QApplication::translate("MainWindow", "CLOSE", 0));
+        label_6->setText(QApplication::translate("MainWindow", "Flowcontrol", 0));
         label_3->setText(QApplication::translate("MainWindow", "Baudrate", 0));
         label_5->setText(QApplication::translate("MainWindow", "Parity", 0));
-        label_6->setText(QApplication::translate("MainWindow", "Flowcontrol", 0));
 #ifndef QT_NO_STATUSTIP
         bt_apply->setStatusTip(QApplication::translate("MainWindow", "Apply port settings", 0));
 #endif // QT_NO_STATUSTIP
@@ -699,11 +996,13 @@ public:
 #endif // QT_NO_STATUSTIP
         bt_cancel->setText(QApplication::translate("MainWindow", "CANCEL", 0));
 #ifndef QT_NO_STATUSTIP
-        bt_clear->setStatusTip(QApplication::translate("MainWindow", "Clear input data", 0));
+        bt_openport->setStatusTip(QApplication::translate("MainWindow", "Open port", 0));
 #endif // QT_NO_STATUSTIP
-        bt_clear->setText(QApplication::translate("MainWindow", "CLEAR", 0));
-        pb_addAddr->setText(QApplication::translate("MainWindow", "Add", 0));
-        pb_deleteAddr->setText(QApplication::translate("MainWindow", "Change", 0));
+        bt_openport->setText(QApplication::translate("MainWindow", "OPEN", 0));
+#ifndef QT_NO_STATUSTIP
+        bt_closeport->setStatusTip(QApplication::translate("MainWindow", "Close port", 0));
+#endif // QT_NO_STATUSTIP
+        bt_closeport->setText(QApplication::translate("MainWindow", "CLOSE", 0));
         groupBox_2->setTitle(QApplication::translate("MainWindow", "OUTPUT DATA", 0));
         label_7->setText(QApplication::translate("MainWindow", "Period", 0));
         spinBox_Period->setSuffix(QApplication::translate("MainWindow", " ms", 0));
@@ -727,6 +1026,21 @@ public:
         rbt_BINin->setText(QApplication::translate("MainWindow", "BIN", 0));
         rbt_HEXin->setText(QApplication::translate("MainWindow", "HEX", 0));
         function->setTabText(function->indexOf(uart), QApplication::translate("MainWindow", "uart", 0));
+        groupBox_4->setTitle(QString());
+        label_17->setText(QApplication::translate("MainWindow", "IP", 0));
+        bt_listen->setText(QApplication::translate("MainWindow", " \347\233\221\345\220\254", 0));
+        label_18->setText(QApplication::translate("MainWindow", "PORT", 0));
+        bt_stopListen->setText(QApplication::translate("MainWindow", " \345\201\234\346\255\242\347\233\221\345\220\254", 0));
+        label_22->setText(QApplication::translate("MainWindow", "ID", 0));
+        bt_search_net->setText(QApplication::translate("MainWindow", "Search NET", 0));
+        label_19->setText(QApplication::translate("MainWindow", "ID", 0));
+        bt_searchId->setText(QApplication::translate("MainWindow", "\346\220\234\347\264\242ID\344\277\241\346\201\257", 0));
+        export_idList->setText(QApplication::translate("MainWindow", "  \345\257\274\345\207\272ID\350\241\250", 0));
+        groupBox_6->setTitle(QString());
+        label_20->setText(QApplication::translate("MainWindow", "send message", 0));
+        label_21->setText(QApplication::translate("MainWindow", "receive message", 0));
+        bt_netSend->setText(QApplication::translate("MainWindow", "send", 0));
+        function->setTabText(function->indexOf(Network), QApplication::translate("MainWindow", "Network", 0));
         groupBox_5->setTitle(QApplication::translate("MainWindow", "   \351\205\215\347\275\256\351\200\211\351\241\271", 0));
         label_8->setText(QApplication::translate("MainWindow", "\346\250\241\345\274\217", 0));
         comboBox_updateMode->clear();
@@ -799,6 +1113,7 @@ public:
          << QApplication::translate("MainWindow", "\346\270\251\345\272\246\344\274\240\346\204\237\345\231\250", 0)
          << QApplication::translate("MainWindow", "\346\271\277\345\272\246\344\274\240\346\204\237\345\231\250", 0)
          << QApplication::translate("MainWindow", "\345\244\232\345\212\237\350\203\275\344\274\240\346\204\237\345\231\250", 0)
+         << QApplication::translate("MainWindow", "\350\265\204\344\272\247\346\240\207\347\255\276", 0)
         );
         bt_getDeviceInf->setText(QApplication::translate("MainWindow", " \350\216\267\345\217\226\351\205\215\344\273\266\350\257\246\347\273\206\344\277\241\346\201\257", 0));
         bt_sendFirInf->setText(QApplication::translate("MainWindow", "\345\217\221\351\200\201\345\233\272\344\273\266\344\277\241\346\201\257", 0));
@@ -813,7 +1128,6 @@ public:
         bt_openFile->setText(QApplication::translate("MainWindow", " \346\211\223\345\274\200\345\233\272\344\273\266", 0));
         bt_storeFile->setText(QApplication::translate("MainWindow", " \345\255\230\345\202\250\345\233\272\344\273\266", 0));
         function->setTabText(function->indexOf(firmware_update), QApplication::translate("MainWindow", "firmware update", 0));
-        function->setTabText(function->indexOf(CMD), QApplication::translate("MainWindow", "CMD", 0));
     } // retranslateUi
 
 };

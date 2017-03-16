@@ -207,6 +207,7 @@ Makefile: Qt_comport.pro D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/win32-g++/qmake.co
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/qtmain.prl \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/Qt5Widgets.prl \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/Qt5Gui.prl \
+		D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/Qt5Network.prl \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/Qt5Core.prl
 	$(QMAKE) -spec win32-g++ -o Makefile Qt_comport.pro
 D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/spec_pre.prf:
@@ -357,6 +358,7 @@ Qt_comport.pro:
 D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/qtmain.prl:
 D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/Qt5Widgets.prl:
 D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/Qt5Gui.prl:
+D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/Qt5Network.prl:
 D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/Qt5Core.prl:
 qmake: FORCE
 	@$(QMAKE) -spec win32-g++ -o Makefile Qt_comport.pro

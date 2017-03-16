@@ -4,9 +4,8 @@ INPUT(
 ./debug\threadcomport.o
 ./debug\qextserialbase.o
 ./debug\qextserialport.o
-./debug\md5.o
-./debug\usercmd.o
 ./debug\user_md5.o
+./debug\mangeid.o
 ./debug\win_qextserialport.o
 ./debug\qrc_qmake_qmake_immediate.o
 ./debug\moc_mainwindow.o

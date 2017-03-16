@@ -9,18 +9,18 @@ HEADERS += 	mainwindow.h \
 		threadcomport/threadcomport.h \
 		qextserialport/qextserialbase.h \
 		qextserialport/qextserialport.h \
-    md5.h \
-    usercmd.h \
-    user_md5.h
+    user_md5.h \
+    mangeid.h
+
 
 SOURCES += 	main.cpp \
 		mainwindow.cpp \
 		threadcomport/threadcomport.cpp \
 		qextserialport/qextserialbase.cpp \
 		qextserialport/qextserialport.cpp \
-    md5.cpp \
-    usercmd.cpp \
-    user_md5.cpp
+    user_md5.cpp \
+    mangeid.cpp
+
 
 RESOURCES     = resources.grc
 
@@ -36,3 +36,5 @@ win32 {
 	SOURCES +=  qextserialport/win_qextserialport.cpp
         QT += widgets
 }
+
+QT += network
