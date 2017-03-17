@@ -26,20 +26,7 @@ enum
     update_step_finish
 };
 
-//uart cmd
-enum
-{
-    u_getDevNetInf = 0x00,  //查询/设置网络参数
-    u_getDevInf,            //请求设备详细信息
-    u_senFirInf,            //发送固件信息包
-    u_senPacket,            //发送固件数据包
-    u_getBootloader,        //请求回传bootloader
-    u_getFirmware,          //请求回传firmware
-    u_recDevNetInf=0x80,    //返回网络参数
-    u_recDevInf,            //返回设备详细信息
-    u_recUpdSta,            //返回固件升级状态
-    u_recPacSta             //返回固件数据包接收状态
-};
+
 
 //rf cmd
 enum
@@ -82,14 +69,6 @@ enum
 
 
 
-struct UC_PAR
-{
-    uchar head;
-    uchar len;
-    uchar cmd;
-    uchar *data;
-    ushort crc;
-};
 
 struct RF_PAR
 {
@@ -111,27 +90,59 @@ struct UR_PAR
 };
 
 
+
+/*********************/
+//device type
+enum
+{
+    cmd_heartBeat = 0x10,      //网关
+    cmd_config = 0x20,  //成人腕带
+    cmd_control = 0x30,//精神病腕带
+    cmd_app = 0x40,  //婴儿腕带
+    cmd_idRequest = 0x50,           //SOS按键（胸牌）
+    cmd_network = 0x60               //插座
+};
+
+
+struct RF_FRAME
+{
+    uchar sequence;
+    uchar deviceType;
+    uchar cmd;
+    uchar *data;
+};
+
+struct APP_FRAME
+{
+    RF_FRAME rf;
+    uchar rssi;
+};
+
+
+
+struct IOT_FRAME
+{
+    ushort head;
+    ushort gateway_id;
+    ushort device_id;
+    uchar cmd;
+    uchar length;
+    uchar *data;
+    uchar checkSum;
+};
+/*********************/
+
+
 struct RF_SEND
 {
-    ushort dest_addr;
-    ushort src_addr;
+    ushort device_id;
     uchar rssi;
     uchar sequence;
     uchar device;
 };
 
 
-struct local_firmwares
-{
-    ushort total_packet;
-    ushort packet_byte;
-    uint total_byte;
-    uchar version;
-    QByteArray md5;
-    QByteArray buff;
-    ushort send_cout;
-    ushort send_max;
-};
+
 
 struct ota_firmwares
 {
@@ -151,8 +162,6 @@ struct ota_firmwares
 struct firmwares
 {
     uchar auto_step;
-    local_firmwares local_w;
-    local_firmwares local_r;
     ota_firmwares ota_w;
     ota_firmwares ota_r;
 };
@@ -225,22 +234,22 @@ private:
     //add bye lekee
     void user_init();
     void UART_send(QByteArray src);
-    char u_sendMessage(unsigned char cmd,QByteArray *data,bool sendById);
     char r_sendMessage(unsigned char cmd,QByteArray *data);
-    void usartAck(uchar head);
+    char IOT_sendMessage(uchar cmd,QByteArray *data);
     void pressCmdData(uchar *data , ushort size);
+    void pressOldCmdData(uchar *data , ushort size);
     void DisplayWithTime(const QString &text);
     void DisplayWithNoTime(const QString &text);
     QString uint8ToHex(uchar data);
     QString uint16ToHex(ushort data);
     QString uint32ToHex(uint data);
     QString strToHex(uchar *data , ushort len);
-    void ucmdGetDeviceInf(bool sendById);
-    void ucmdSendFirInf(bool sendById);
-    void ucmdSendsendPacket(ushort packet,bool sendById);
     void rcmdSendsendPacket(ushort packet);
     void rcmdSendFirInf();
     void rcmdGetDeviceInf();
+
+    void IOT_cmdAsscessId(ushort gateway_id,ushort device_id,ID_SEND *id);
+    void IOT_cmdHeartBeat(ushort gateway_id,ushort device_id,ushort time);
 
 
 //    QTcpSocket *tcpSocket;
@@ -267,6 +276,7 @@ private slots:
     void receiveMsg(const QTime timesl, const unsigned char *data, const int size);
 	void SetCurComboBState();
     unsigned short int Crc16Bit(const char *ptr, unsigned short int len);
+    uchar checkSum(const char* puchData, ushort len);
 	void transmitMsg();
 	void intervalChange(int value);
     void on_File_clicked();
@@ -295,7 +305,6 @@ private slots:
 
 
     void pressUartData();
-    void ucmdAutoUpdate(uchar step);
 
     void newListen(); //建立TCP监听事件
     void acceptConnection(); //接受客户端连接

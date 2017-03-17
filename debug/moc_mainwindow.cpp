@@ -20,7 +20,7 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_MainWindow_t {
     QByteArrayData data[62];
-    char stringdata0[1165];
+    char stringdata0[1163];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -49,48 +49,48 @@ QT_MOC_LITERAL(16, 172, 18), // "unsigned short int"
 QT_MOC_LITERAL(17, 191, 11), // "const char*"
 QT_MOC_LITERAL(18, 203, 3), // "ptr"
 QT_MOC_LITERAL(19, 207, 3), // "len"
-QT_MOC_LITERAL(20, 211, 11), // "transmitMsg"
-QT_MOC_LITERAL(21, 223, 14), // "intervalChange"
-QT_MOC_LITERAL(22, 238, 5), // "value"
-QT_MOC_LITERAL(23, 244, 15), // "on_File_clicked"
-QT_MOC_LITERAL(24, 260, 21), // "on_pushButton_clicked"
-QT_MOC_LITERAL(25, 282, 22), // "on_bt_openFile_clicked"
-QT_MOC_LITERAL(26, 305, 41), // "on_comboBox_updateWay_current..."
-QT_MOC_LITERAL(27, 347, 4), // "arg1"
-QT_MOC_LITERAL(28, 352, 26), // "on_bt_getDeviceInf_clicked"
-QT_MOC_LITERAL(29, 379, 24), // "on_bt_sendFirInf_clicked"
-QT_MOC_LITERAL(30, 404, 24), // "on_bt_sendPacket_clicked"
-QT_MOC_LITERAL(31, 429, 24), // "on_bt_autoUpdate_clicked"
-QT_MOC_LITERAL(32, 454, 28), // "on_bt_stopAutoUpdate_clicked"
-QT_MOC_LITERAL(33, 483, 22), // "on_bt_readBoot_clicked"
-QT_MOC_LITERAL(34, 506, 26), // "on_bt_readFirmware_clicked"
-QT_MOC_LITERAL(35, 533, 22), // "on_bt_stopRead_clicked"
-QT_MOC_LITERAL(36, 556, 23), // "on_bt_storeFile_clicked"
-QT_MOC_LITERAL(37, 580, 41), // "on_comboBox_updateMode_curren..."
-QT_MOC_LITERAL(38, 622, 33), // "on_shortAddr_itemSelectionCha..."
-QT_MOC_LITERAL(39, 656, 39), // "on_frimwareVersion_3_currentT..."
-QT_MOC_LITERAL(40, 696, 35), // "on_cb_deviceType_currentTextC..."
-QT_MOC_LITERAL(41, 732, 36), // "on_cb_deviceType_currentIndex..."
-QT_MOC_LITERAL(42, 769, 5), // "index"
-QT_MOC_LITERAL(43, 775, 26), // "on_shortAddr_doubleClicked"
-QT_MOC_LITERAL(44, 802, 21), // "on_pb_addAddr_clicked"
-QT_MOC_LITERAL(45, 824, 24), // "on_pb_deleteAddr_clicked"
-QT_MOC_LITERAL(46, 849, 13), // "pressUartData"
-QT_MOC_LITERAL(47, 863, 14), // "ucmdAutoUpdate"
-QT_MOC_LITERAL(48, 878, 4), // "step"
-QT_MOC_LITERAL(49, 883, 9), // "newListen"
-QT_MOC_LITERAL(50, 893, 16), // "acceptConnection"
-QT_MOC_LITERAL(51, 910, 12), // "displayError"
-QT_MOC_LITERAL(52, 923, 28), // "QAbstractSocket::SocketError"
-QT_MOC_LITERAL(53, 952, 7), // "revData"
-QT_MOC_LITERAL(54, 960, 21), // "on_bt_netSend_clicked"
-QT_MOC_LITERAL(55, 982, 20), // "on_bt_listen_clicked"
-QT_MOC_LITERAL(56, 1003, 24), // "on_bt_stopListen_clicked"
-QT_MOC_LITERAL(57, 1028, 22), // "on_bt_searchId_clicked"
-QT_MOC_LITERAL(58, 1051, 24), // "on_export_idList_clicked"
-QT_MOC_LITERAL(59, 1076, 19), // "on_bt_clear_clicked"
-QT_MOC_LITERAL(60, 1096, 43), // "on_comunication_protocal_curr..."
-QT_MOC_LITERAL(61, 1140, 24) // "on_bt_search_net_clicked"
+QT_MOC_LITERAL(20, 211, 8), // "checkSum"
+QT_MOC_LITERAL(21, 220, 8), // "puchData"
+QT_MOC_LITERAL(22, 229, 11), // "transmitMsg"
+QT_MOC_LITERAL(23, 241, 14), // "intervalChange"
+QT_MOC_LITERAL(24, 256, 5), // "value"
+QT_MOC_LITERAL(25, 262, 15), // "on_File_clicked"
+QT_MOC_LITERAL(26, 278, 21), // "on_pushButton_clicked"
+QT_MOC_LITERAL(27, 300, 22), // "on_bt_openFile_clicked"
+QT_MOC_LITERAL(28, 323, 41), // "on_comboBox_updateWay_current..."
+QT_MOC_LITERAL(29, 365, 4), // "arg1"
+QT_MOC_LITERAL(30, 370, 26), // "on_bt_getDeviceInf_clicked"
+QT_MOC_LITERAL(31, 397, 24), // "on_bt_sendFirInf_clicked"
+QT_MOC_LITERAL(32, 422, 24), // "on_bt_sendPacket_clicked"
+QT_MOC_LITERAL(33, 447, 24), // "on_bt_autoUpdate_clicked"
+QT_MOC_LITERAL(34, 472, 28), // "on_bt_stopAutoUpdate_clicked"
+QT_MOC_LITERAL(35, 501, 22), // "on_bt_readBoot_clicked"
+QT_MOC_LITERAL(36, 524, 26), // "on_bt_readFirmware_clicked"
+QT_MOC_LITERAL(37, 551, 22), // "on_bt_stopRead_clicked"
+QT_MOC_LITERAL(38, 574, 23), // "on_bt_storeFile_clicked"
+QT_MOC_LITERAL(39, 598, 41), // "on_comboBox_updateMode_curren..."
+QT_MOC_LITERAL(40, 640, 33), // "on_shortAddr_itemSelectionCha..."
+QT_MOC_LITERAL(41, 674, 39), // "on_frimwareVersion_3_currentT..."
+QT_MOC_LITERAL(42, 714, 35), // "on_cb_deviceType_currentTextC..."
+QT_MOC_LITERAL(43, 750, 36), // "on_cb_deviceType_currentIndex..."
+QT_MOC_LITERAL(44, 787, 5), // "index"
+QT_MOC_LITERAL(45, 793, 26), // "on_shortAddr_doubleClicked"
+QT_MOC_LITERAL(46, 820, 21), // "on_pb_addAddr_clicked"
+QT_MOC_LITERAL(47, 842, 24), // "on_pb_deleteAddr_clicked"
+QT_MOC_LITERAL(48, 867, 13), // "pressUartData"
+QT_MOC_LITERAL(49, 881, 9), // "newListen"
+QT_MOC_LITERAL(50, 891, 16), // "acceptConnection"
+QT_MOC_LITERAL(51, 908, 12), // "displayError"
+QT_MOC_LITERAL(52, 921, 28), // "QAbstractSocket::SocketError"
+QT_MOC_LITERAL(53, 950, 7), // "revData"
+QT_MOC_LITERAL(54, 958, 21), // "on_bt_netSend_clicked"
+QT_MOC_LITERAL(55, 980, 20), // "on_bt_listen_clicked"
+QT_MOC_LITERAL(56, 1001, 24), // "on_bt_stopListen_clicked"
+QT_MOC_LITERAL(57, 1026, 22), // "on_bt_searchId_clicked"
+QT_MOC_LITERAL(58, 1049, 24), // "on_export_idList_clicked"
+QT_MOC_LITERAL(59, 1074, 19), // "on_bt_clear_clicked"
+QT_MOC_LITERAL(60, 1094, 43), // "on_comunication_protocal_curr..."
+QT_MOC_LITERAL(61, 1138, 24) // "on_bt_search_net_clicked"
 
     },
     "MainWindow\0about\0\0applyPortOptions\0"
@@ -99,9 +99,9 @@ QT_MOC_LITERAL(61, 1140, 24) // "on_bt_search_net_clicked"
     "timesl\0const unsigned char*\0data\0size\0"
     "SetCurComboBState\0Crc16Bit\0"
     "unsigned short int\0const char*\0ptr\0"
-    "len\0transmitMsg\0intervalChange\0value\0"
-    "on_File_clicked\0on_pushButton_clicked\0"
-    "on_bt_openFile_clicked\0"
+    "len\0checkSum\0puchData\0transmitMsg\0"
+    "intervalChange\0value\0on_File_clicked\0"
+    "on_pushButton_clicked\0on_bt_openFile_clicked\0"
     "on_comboBox_updateWay_currentIndexChanged\0"
     "arg1\0on_bt_getDeviceInf_clicked\0"
     "on_bt_sendFirInf_clicked\0"
@@ -118,11 +118,10 @@ QT_MOC_LITERAL(61, 1140, 24) // "on_bt_search_net_clicked"
     "on_cb_deviceType_currentIndexChanged\0"
     "index\0on_shortAddr_doubleClicked\0"
     "on_pb_addAddr_clicked\0on_pb_deleteAddr_clicked\0"
-    "pressUartData\0ucmdAutoUpdate\0step\0"
-    "newListen\0acceptConnection\0displayError\0"
-    "QAbstractSocket::SocketError\0revData\0"
-    "on_bt_netSend_clicked\0on_bt_listen_clicked\0"
-    "on_bt_stopListen_clicked\0"
+    "pressUartData\0newListen\0acceptConnection\0"
+    "displayError\0QAbstractSocket::SocketError\0"
+    "revData\0on_bt_netSend_clicked\0"
+    "on_bt_listen_clicked\0on_bt_stopListen_clicked\0"
     "on_bt_searchId_clicked\0on_export_idList_clicked\0"
     "on_bt_clear_clicked\0"
     "on_comunication_protocal_currentTextChanged\0"
@@ -154,43 +153,43 @@ static const uint qt_meta_data_MainWindow[] = {
        9,    3,  256,    2, 0x08 /* Private */,
       14,    0,  263,    2, 0x08 /* Private */,
       15,    2,  264,    2, 0x08 /* Private */,
-      20,    0,  269,    2, 0x08 /* Private */,
-      21,    1,  270,    2, 0x08 /* Private */,
-      23,    0,  273,    2, 0x08 /* Private */,
-      24,    0,  274,    2, 0x08 /* Private */,
-      25,    0,  275,    2, 0x08 /* Private */,
-      26,    1,  276,    2, 0x08 /* Private */,
-      28,    0,  279,    2, 0x08 /* Private */,
-      29,    0,  280,    2, 0x08 /* Private */,
-      30,    0,  281,    2, 0x08 /* Private */,
-      31,    0,  282,    2, 0x08 /* Private */,
-      32,    0,  283,    2, 0x08 /* Private */,
-      33,    0,  284,    2, 0x08 /* Private */,
-      34,    0,  285,    2, 0x08 /* Private */,
-      35,    0,  286,    2, 0x08 /* Private */,
-      36,    0,  287,    2, 0x08 /* Private */,
-      37,    1,  288,    2, 0x08 /* Private */,
-      38,    0,  291,    2, 0x08 /* Private */,
-      39,    1,  292,    2, 0x08 /* Private */,
-      40,    1,  295,    2, 0x08 /* Private */,
-      41,    1,  298,    2, 0x08 /* Private */,
-      43,    1,  301,    2, 0x08 /* Private */,
-      44,    0,  304,    2, 0x08 /* Private */,
-      45,    0,  305,    2, 0x08 /* Private */,
-      46,    0,  306,    2, 0x08 /* Private */,
-      47,    1,  307,    2, 0x08 /* Private */,
-      49,    0,  310,    2, 0x08 /* Private */,
-      50,    0,  311,    2, 0x08 /* Private */,
-      51,    1,  312,    2, 0x08 /* Private */,
-      53,    0,  315,    2, 0x08 /* Private */,
-      54,    0,  316,    2, 0x08 /* Private */,
-      55,    0,  317,    2, 0x08 /* Private */,
-      56,    0,  318,    2, 0x08 /* Private */,
-      57,    0,  319,    2, 0x08 /* Private */,
-      58,    0,  320,    2, 0x08 /* Private */,
-      59,    0,  321,    2, 0x08 /* Private */,
-      60,    1,  322,    2, 0x08 /* Private */,
-      61,    0,  325,    2, 0x08 /* Private */,
+      20,    2,  269,    2, 0x08 /* Private */,
+      22,    0,  274,    2, 0x08 /* Private */,
+      23,    1,  275,    2, 0x08 /* Private */,
+      25,    0,  278,    2, 0x08 /* Private */,
+      26,    0,  279,    2, 0x08 /* Private */,
+      27,    0,  280,    2, 0x08 /* Private */,
+      28,    1,  281,    2, 0x08 /* Private */,
+      30,    0,  284,    2, 0x08 /* Private */,
+      31,    0,  285,    2, 0x08 /* Private */,
+      32,    0,  286,    2, 0x08 /* Private */,
+      33,    0,  287,    2, 0x08 /* Private */,
+      34,    0,  288,    2, 0x08 /* Private */,
+      35,    0,  289,    2, 0x08 /* Private */,
+      36,    0,  290,    2, 0x08 /* Private */,
+      37,    0,  291,    2, 0x08 /* Private */,
+      38,    0,  292,    2, 0x08 /* Private */,
+      39,    1,  293,    2, 0x08 /* Private */,
+      40,    0,  296,    2, 0x08 /* Private */,
+      41,    1,  297,    2, 0x08 /* Private */,
+      42,    1,  300,    2, 0x08 /* Private */,
+      43,    1,  303,    2, 0x08 /* Private */,
+      45,    1,  306,    2, 0x08 /* Private */,
+      46,    0,  309,    2, 0x08 /* Private */,
+      47,    0,  310,    2, 0x08 /* Private */,
+      48,    0,  311,    2, 0x08 /* Private */,
+      49,    0,  312,    2, 0x08 /* Private */,
+      50,    0,  313,    2, 0x08 /* Private */,
+      51,    1,  314,    2, 0x08 /* Private */,
+      53,    0,  317,    2, 0x08 /* Private */,
+      54,    0,  318,    2, 0x08 /* Private */,
+      55,    0,  319,    2, 0x08 /* Private */,
+      56,    0,  320,    2, 0x08 /* Private */,
+      57,    0,  321,    2, 0x08 /* Private */,
+      58,    0,  322,    2, 0x08 /* Private */,
+      59,    0,  323,    2, 0x08 /* Private */,
+      60,    1,  324,    2, 0x08 /* Private */,
+      61,    0,  327,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
@@ -203,31 +202,31 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void, QMetaType::QTime, 0x80000000 | 11, QMetaType::Int,   10,   12,   13,
     QMetaType::Void,
     0x80000000 | 16, 0x80000000 | 17, 0x80000000 | 16,   18,   19,
+    QMetaType::UChar, 0x80000000 | 17, QMetaType::UShort,   21,   19,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Int,   22,
-    QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void, QMetaType::QString,   27,
+    QMetaType::Void, QMetaType::Int,   24,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void, QMetaType::QString,   29,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QString,   27,
-    QMetaType::Void,
-    QMetaType::Void, QMetaType::QString,   27,
-    QMetaType::Void, QMetaType::QString,   27,
-    QMetaType::Void, QMetaType::Int,   42,
-    QMetaType::Void, QMetaType::QModelIndex,   42,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::UChar,   48,
+    QMetaType::Void, QMetaType::QString,   29,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::QString,   29,
+    QMetaType::Void, QMetaType::QString,   29,
+    QMetaType::Void, QMetaType::Int,   44,
+    QMetaType::Void, QMetaType::QModelIndex,   44,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void, 0x80000000 | 52,    2,
@@ -238,7 +237,7 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QString,   27,
+    QMetaType::Void, QMetaType::QString,   29,
     QMetaType::Void,
 
        0        // eod
@@ -261,31 +260,32 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 8: _t->SetCurComboBState(); break;
         case 9: { unsigned short int _r = _t->Crc16Bit((*reinterpret_cast< const char*(*)>(_a[1])),(*reinterpret_cast< unsigned short int(*)>(_a[2])));
             if (_a[0]) *reinterpret_cast< unsigned short int*>(_a[0]) = _r; }  break;
-        case 10: _t->transmitMsg(); break;
-        case 11: _t->intervalChange((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 12: _t->on_File_clicked(); break;
-        case 13: _t->on_pushButton_clicked(); break;
-        case 14: _t->on_bt_openFile_clicked(); break;
-        case 15: _t->on_comboBox_updateWay_currentIndexChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 16: _t->on_bt_getDeviceInf_clicked(); break;
-        case 17: _t->on_bt_sendFirInf_clicked(); break;
-        case 18: _t->on_bt_sendPacket_clicked(); break;
-        case 19: _t->on_bt_autoUpdate_clicked(); break;
-        case 20: _t->on_bt_stopAutoUpdate_clicked(); break;
-        case 21: _t->on_bt_readBoot_clicked(); break;
-        case 22: _t->on_bt_readFirmware_clicked(); break;
-        case 23: _t->on_bt_stopRead_clicked(); break;
-        case 24: _t->on_bt_storeFile_clicked(); break;
-        case 25: _t->on_comboBox_updateMode_currentTextChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 26: _t->on_shortAddr_itemSelectionChanged(); break;
-        case 27: _t->on_frimwareVersion_3_currentTextChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 28: _t->on_cb_deviceType_currentTextChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 29: _t->on_cb_deviceType_currentIndexChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 30: _t->on_shortAddr_doubleClicked((*reinterpret_cast< const QModelIndex(*)>(_a[1]))); break;
-        case 31: _t->on_pb_addAddr_clicked(); break;
-        case 32: _t->on_pb_deleteAddr_clicked(); break;
-        case 33: _t->pressUartData(); break;
-        case 34: _t->ucmdAutoUpdate((*reinterpret_cast< uchar(*)>(_a[1]))); break;
+        case 10: { uchar _r = _t->checkSum((*reinterpret_cast< const char*(*)>(_a[1])),(*reinterpret_cast< ushort(*)>(_a[2])));
+            if (_a[0]) *reinterpret_cast< uchar*>(_a[0]) = _r; }  break;
+        case 11: _t->transmitMsg(); break;
+        case 12: _t->intervalChange((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 13: _t->on_File_clicked(); break;
+        case 14: _t->on_pushButton_clicked(); break;
+        case 15: _t->on_bt_openFile_clicked(); break;
+        case 16: _t->on_comboBox_updateWay_currentIndexChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 17: _t->on_bt_getDeviceInf_clicked(); break;
+        case 18: _t->on_bt_sendFirInf_clicked(); break;
+        case 19: _t->on_bt_sendPacket_clicked(); break;
+        case 20: _t->on_bt_autoUpdate_clicked(); break;
+        case 21: _t->on_bt_stopAutoUpdate_clicked(); break;
+        case 22: _t->on_bt_readBoot_clicked(); break;
+        case 23: _t->on_bt_readFirmware_clicked(); break;
+        case 24: _t->on_bt_stopRead_clicked(); break;
+        case 25: _t->on_bt_storeFile_clicked(); break;
+        case 26: _t->on_comboBox_updateMode_currentTextChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 27: _t->on_shortAddr_itemSelectionChanged(); break;
+        case 28: _t->on_frimwareVersion_3_currentTextChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 29: _t->on_cb_deviceType_currentTextChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 30: _t->on_cb_deviceType_currentIndexChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 31: _t->on_shortAddr_doubleClicked((*reinterpret_cast< const QModelIndex(*)>(_a[1]))); break;
+        case 32: _t->on_pb_addAddr_clicked(); break;
+        case 33: _t->on_pb_deleteAddr_clicked(); break;
+        case 34: _t->pressUartData(); break;
         case 35: _t->newListen(); break;
         case 36: _t->acceptConnection(); break;
         case 37: _t->displayError((*reinterpret_cast< QAbstractSocket::SocketError(*)>(_a[1]))); break;

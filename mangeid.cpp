@@ -79,7 +79,7 @@ bool MangeId::readFromFile()
 }
 
 
-ID_SEND* MangeId::getId(uchar *src)
+ID_SEND MangeId::accessId(uchar *src)
 {
     ulong i;
     uchar *ptr = src;
@@ -139,7 +139,7 @@ send:
     id_send.device_id=id_store[i].device_id;
     memcpy(id_send.un,id_store[i].un,4);
     writeInFile();
-    return &id_send;
+    return id_send;
 }
 
 QString MangeId::getIdInf(ushort id)
@@ -151,13 +151,25 @@ QString MangeId::getIdInf(ushort id)
     str += " / MAC:"+strToHex(id_store[id].mac , 8).toUpper();
     str += " / Gateway_id:0x"+uint16ToHex(id_store[id].gateway_id).toUpper();
     str += " / Panid:0x"+uint16ToHex(id_store[id].panid).toUpper();
-    str += " / Frequence:0x"+uint16ToHex(id_store[id].frequence).toUpper();
+    str += " / Frequence:"+QString("%1MHZ").arg(id_store[id].frequence);
     str += " / Channel:0x"+uint16ToHex(id_store[id].channel).toUpper();
     str += " / Device_id:0x"+uint16ToHex(id_store[id].device_id).toUpper();
     str += " / Un:"+strToHex(id_store[id].un , 4).toUpper();
     return str;
 }
 
+
+
+ID_SEND MangeId::getIdSendInf(ushort id)
+{
+
+    memcpy(id_send.mac,id_store[id].mac,8);
+    id_send.panid=id_store[id].panid;
+    id_send.gateway_id=id_store[id].gateway_id;
+    id_send.device_id=id_store[id].device_id;
+    memcpy(id_send.un,id_store[id].un,4);
+    return id_send;
+}
 
 void MangeId::ExportIdInformation()
 {
@@ -173,7 +185,7 @@ void MangeId::ExportIdInformation()
         buff += " / MAC:"+strToHex(id_store[i].mac , 8).toUpper();
         buff += " / Gateway_id:0x"+uint16ToHex(id_store[i].gateway_id).toUpper();
         buff += " / Panid:0x"+uint16ToHex(id_store[i].panid).toUpper();
-        buff += " / Frequence:0x"+uint16ToHex(id_store[i].frequence).toUpper();
+        buff += " / Frequence:0x"+QString("%1MHZ").arg(id_store[i].frequence);
         buff += " / Channel:0x"+uint16ToHex(id_store[i].channel).toUpper();
         buff += " / Device_id:0x"+uint16ToHex(id_store[i].device_id).toUpper();
         buff += " / Un:"+strToHex(id_store[i].un , 4).toUpper();

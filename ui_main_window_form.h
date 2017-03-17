@@ -959,7 +959,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        function->setCurrentIndex(1);
+        function->setCurrentIndex(2);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -1045,9 +1045,6 @@ public:
         label_8->setText(QApplication::translate("MainWindow", "\346\250\241\345\274\217", 0));
         comboBox_updateMode->clear();
         comboBox_updateMode->insertItems(0, QStringList()
-         << QApplication::translate("MainWindow", "\346\234\254\345\234\260\346\211\213\345\212\250\345\215\207\347\272\247", 0)
-         << QApplication::translate("MainWindow", "\346\234\254\345\234\260\350\207\252\345\212\250\345\215\207\347\272\247", 0)
-         << QApplication::translate("MainWindow", "\346\234\254\345\234\260\345\233\272\344\273\266\350\257\273\345\217\226", 0)
          << QApplication::translate("MainWindow", "OTA\346\211\213\345\212\250\345\215\207\347\272\247", 0)
          << QApplication::translate("MainWindow", "OTA\345\215\225\347\213\254\345\215\207\347\272\247", 0)
          << QApplication::translate("MainWindow", "OTA\346\211\271\351\207\217\345\215\207\347\272\247", 0)
@@ -1056,8 +1053,8 @@ public:
         label_11->setText(QApplication::translate("MainWindow", " \346\225\260\346\215\256\345\214\205\345\244\247\345\260\217", 0));
         packetbyte->clear();
         packetbyte->insertItems(0, QStringList()
+         << QApplication::translate("MainWindow", "88", 0)
          << QApplication::translate("MainWindow", "1000", 0)
-         << QApplication::translate("MainWindow", "91", 0)
         );
         label_10->setText(QApplication::translate("MainWindow", " \345\233\272\344\273\266\347\211\210\346\234\254", 0));
         frimwareVersion->clear();

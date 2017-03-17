@@ -37,12 +37,16 @@ struct ID_STORE
 };
 
 
+
+
+
 class MangeId
 {
 public:
     MangeId();
-    ID_SEND* getId(uchar *src);
+    ID_SEND accessId(uchar *src);
     QString getIdInf(ushort id);
+    ID_SEND getIdSendInf(ushort id);
     void ExportIdInformation();
 
 

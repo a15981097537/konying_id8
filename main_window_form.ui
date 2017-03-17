@@ -925,21 +925,6 @@
                </property>
                <item>
                 <property name="text">
-                 <string>本地手动升级</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>本地自动升级</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>本地固件读取</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
                  <string>OTA手动升级</string>
                 </property>
                </item>
@@ -975,12 +960,12 @@
               <widget class="QComboBox" name="packetbyte">
                <item>
                 <property name="text">
-                 <string>1000</string>
+                 <string>88</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>91</string>
+                 <string>1000</string>
                 </property>
                </item>
               </widget>
