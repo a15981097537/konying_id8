@@ -80,6 +80,11 @@
            </item>
            <item>
             <property name="text">
+             <string>Client</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
              <string>Uart</string>
             </property>
            </item>

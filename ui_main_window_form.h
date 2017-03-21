@@ -187,6 +187,35 @@ public:
     QPushButton *bt_storeFile;
     QProgressBar *progressBar;
     QTextBrowser *textBr_mess;
+    QWidget *tab;
+    QGroupBox *groupBox_7;
+    QHBoxLayout *horizontalLayout_10;
+    QVBoxLayout *verticalLayout_26;
+    QHBoxLayout *horizontalLayout_18;
+    QLabel *label_23;
+    QTextEdit *textEdit_IP_2;
+    QPushButton *bt_listen_2;
+    QHBoxLayout *horizontalLayout_21;
+    QLabel *label_24;
+    QTextEdit *textEdit_Port_2;
+    QPushButton *bt_stopListen_2;
+    QHBoxLayout *horizontalLayout_15;
+    QLabel *label_25;
+    QTextEdit *textEdit_ID2_2;
+    QPushButton *bt_search_net_2;
+    QSpacerItem *horizontalSpacer_12;
+    QVBoxLayout *verticalLayout_27;
+    QHBoxLayout *horizontalLayout_25;
+    QLabel *label_26;
+    QTextEdit *textEdit_ID_2;
+    QPushButton *bt_searchId_2;
+    QPushButton *export_idList_2;
+    QSpacerItem *horizontalSpacer_13;
+    QSpacerItem *horizontalSpacer_14;
+    QSpacerItem *horizontalSpacer_15;
+    QSpacerItem *horizontalSpacer_16;
+    QSpacerItem *horizontalSpacer_17;
+    QSpacerItem *horizontalSpacer_18;
     QStatusBar *statusbar;
     QMenuBar *menubar;
 
@@ -646,7 +675,7 @@ public:
 
         horizontalLayout_8->addLayout(verticalLayout_8);
 
-        horizontalSpacer_9 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        horizontalSpacer_9 = new QSpacerItem(49, 17, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
         horizontalLayout_8->addItem(horizontalSpacer_9);
 
@@ -938,6 +967,147 @@ public:
         verticalLayout_5->addWidget(textBr_mess);
 
         function->addTab(firmware_update, QString());
+        tab = new QWidget();
+        tab->setObjectName(QStringLiteral("tab"));
+        groupBox_7 = new QGroupBox(tab);
+        groupBox_7->setObjectName(QStringLiteral("groupBox_7"));
+        groupBox_7->setGeometry(QRect(0, 0, 856, 120));
+        groupBox_7->setMaximumSize(QSize(16777215, 120));
+        horizontalLayout_10 = new QHBoxLayout(groupBox_7);
+        horizontalLayout_10->setObjectName(QStringLiteral("horizontalLayout_10"));
+        verticalLayout_26 = new QVBoxLayout();
+        verticalLayout_26->setObjectName(QStringLiteral("verticalLayout_26"));
+        horizontalLayout_18 = new QHBoxLayout();
+        horizontalLayout_18->setObjectName(QStringLiteral("horizontalLayout_18"));
+        label_23 = new QLabel(groupBox_7);
+        label_23->setObjectName(QStringLiteral("label_23"));
+        label_23->setMaximumSize(QSize(30, 25));
+
+        horizontalLayout_18->addWidget(label_23);
+
+        textEdit_IP_2 = new QTextEdit(groupBox_7);
+        textEdit_IP_2->setObjectName(QStringLiteral("textEdit_IP_2"));
+        textEdit_IP_2->setMaximumSize(QSize(100, 25));
+
+        horizontalLayout_18->addWidget(textEdit_IP_2);
+
+        bt_listen_2 = new QPushButton(groupBox_7);
+        bt_listen_2->setObjectName(QStringLiteral("bt_listen_2"));
+
+        horizontalLayout_18->addWidget(bt_listen_2);
+
+
+        verticalLayout_26->addLayout(horizontalLayout_18);
+
+        horizontalLayout_21 = new QHBoxLayout();
+        horizontalLayout_21->setObjectName(QStringLiteral("horizontalLayout_21"));
+        label_24 = new QLabel(groupBox_7);
+        label_24->setObjectName(QStringLiteral("label_24"));
+        label_24->setMaximumSize(QSize(30, 25));
+
+        horizontalLayout_21->addWidget(label_24);
+
+        textEdit_Port_2 = new QTextEdit(groupBox_7);
+        textEdit_Port_2->setObjectName(QStringLiteral("textEdit_Port_2"));
+        textEdit_Port_2->setMaximumSize(QSize(100, 25));
+
+        horizontalLayout_21->addWidget(textEdit_Port_2);
+
+        bt_stopListen_2 = new QPushButton(groupBox_7);
+        bt_stopListen_2->setObjectName(QStringLiteral("bt_stopListen_2"));
+
+        horizontalLayout_21->addWidget(bt_stopListen_2);
+
+
+        verticalLayout_26->addLayout(horizontalLayout_21);
+
+        horizontalLayout_15 = new QHBoxLayout();
+        horizontalLayout_15->setObjectName(QStringLiteral("horizontalLayout_15"));
+        label_25 = new QLabel(groupBox_7);
+        label_25->setObjectName(QStringLiteral("label_25"));
+        label_25->setMaximumSize(QSize(30, 25));
+
+        horizontalLayout_15->addWidget(label_25);
+
+        textEdit_ID2_2 = new QTextEdit(groupBox_7);
+        textEdit_ID2_2->setObjectName(QStringLiteral("textEdit_ID2_2"));
+        textEdit_ID2_2->setMaximumSize(QSize(100, 25));
+
+        horizontalLayout_15->addWidget(textEdit_ID2_2);
+
+        bt_search_net_2 = new QPushButton(groupBox_7);
+        bt_search_net_2->setObjectName(QStringLiteral("bt_search_net_2"));
+
+        horizontalLayout_15->addWidget(bt_search_net_2);
+
+
+        verticalLayout_26->addLayout(horizontalLayout_15);
+
+
+        horizontalLayout_10->addLayout(verticalLayout_26);
+
+        horizontalSpacer_12 = new QSpacerItem(49, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_10->addItem(horizontalSpacer_12);
+
+        verticalLayout_27 = new QVBoxLayout();
+        verticalLayout_27->setObjectName(QStringLiteral("verticalLayout_27"));
+        horizontalLayout_25 = new QHBoxLayout();
+        horizontalLayout_25->setObjectName(QStringLiteral("horizontalLayout_25"));
+        label_26 = new QLabel(groupBox_7);
+        label_26->setObjectName(QStringLiteral("label_26"));
+        label_26->setMaximumSize(QSize(30, 25));
+
+        horizontalLayout_25->addWidget(label_26);
+
+        textEdit_ID_2 = new QTextEdit(groupBox_7);
+        textEdit_ID_2->setObjectName(QStringLiteral("textEdit_ID_2"));
+        textEdit_ID_2->setMaximumSize(QSize(100, 25));
+
+        horizontalLayout_25->addWidget(textEdit_ID_2);
+
+
+        verticalLayout_27->addLayout(horizontalLayout_25);
+
+        bt_searchId_2 = new QPushButton(groupBox_7);
+        bt_searchId_2->setObjectName(QStringLiteral("bt_searchId_2"));
+        bt_searchId_2->setMaximumSize(QSize(16777215, 25));
+
+        verticalLayout_27->addWidget(bt_searchId_2);
+
+        export_idList_2 = new QPushButton(groupBox_7);
+        export_idList_2->setObjectName(QStringLiteral("export_idList_2"));
+
+        verticalLayout_27->addWidget(export_idList_2);
+
+
+        horizontalLayout_10->addLayout(verticalLayout_27);
+
+        horizontalSpacer_13 = new QSpacerItem(49, 17, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_10->addItem(horizontalSpacer_13);
+
+        horizontalSpacer_14 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_10->addItem(horizontalSpacer_14);
+
+        horizontalSpacer_15 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_10->addItem(horizontalSpacer_15);
+
+        horizontalSpacer_16 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_10->addItem(horizontalSpacer_16);
+
+        horizontalSpacer_17 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_10->addItem(horizontalSpacer_17);
+
+        horizontalSpacer_18 = new QSpacerItem(139, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_10->addItem(horizontalSpacer_18);
+
+        function->addTab(tab, QString());
 
         horizontalLayout_12->addWidget(function);
 
@@ -959,7 +1129,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        function->setCurrentIndex(2);
+        function->setCurrentIndex(3);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -1125,6 +1295,17 @@ public:
         bt_openFile->setText(QApplication::translate("MainWindow", " \346\211\223\345\274\200\345\233\272\344\273\266", 0));
         bt_storeFile->setText(QApplication::translate("MainWindow", " \345\255\230\345\202\250\345\233\272\344\273\266", 0));
         function->setTabText(function->indexOf(firmware_update), QApplication::translate("MainWindow", "firmware update", 0));
+        groupBox_7->setTitle(QString());
+        label_23->setText(QApplication::translate("MainWindow", "IP", 0));
+        bt_listen_2->setText(QApplication::translate("MainWindow", " \347\233\221\345\220\254", 0));
+        label_24->setText(QApplication::translate("MainWindow", "PORT", 0));
+        bt_stopListen_2->setText(QApplication::translate("MainWindow", " \345\201\234\346\255\242\347\233\221\345\220\254", 0));
+        label_25->setText(QApplication::translate("MainWindow", "ID", 0));
+        bt_search_net_2->setText(QApplication::translate("MainWindow", "Search NET", 0));
+        label_26->setText(QApplication::translate("MainWindow", "ID", 0));
+        bt_searchId_2->setText(QApplication::translate("MainWindow", "\346\220\234\347\264\242ID\344\277\241\346\201\257", 0));
+        export_idList_2->setText(QApplication::translate("MainWindow", "  \345\257\274\345\207\272ID\350\241\250", 0));
+        function->setTabText(function->indexOf(tab), QApplication::translate("MainWindow", "\351\241\265", 0));
     } // retranslateUi
 
 };

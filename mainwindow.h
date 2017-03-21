@@ -115,7 +115,7 @@ struct RF_FRAME
 struct APP_FRAME
 {
     RF_FRAME rf;
-    uchar rssi;
+    char rssi;
 };
 
 
@@ -234,8 +234,6 @@ private:
     //add bye lekee
     void user_init();
     void UART_send(QByteArray src);
-    char r_sendMessage(unsigned char cmd,QByteArray *data);
-    char IOT_sendMessage(uchar cmd,QByteArray *data);
     void pressCmdData(uchar *data , ushort size);
     void pressOldCmdData(uchar *data , ushort size);
     void DisplayWithTime(const QString &text);
@@ -244,10 +242,11 @@ private:
     QString uint16ToHex(ushort data);
     QString uint32ToHex(uint data);
     QString strToHex(uchar *data , ushort len);
-    void rcmdSendsendPacket(ushort packet);
-    void rcmdSendFirInf();
-    void rcmdGetDeviceInf();
+    void rcmdSendsendPacket(ushort gateway_id,ushort device_id,ushort packet);
+    void rcmdSendFirInf(ushort gateway_id,ushort device_id);
+    void rcmdGetDeviceInf(ushort gateway_id,ushort device_id);
 
+    void IOT_cmdNetwork(ushort gateway_id,ushort device_id,QByteArray data);
     void IOT_cmdAsscessId(ushort gateway_id,ushort device_id,ID_SEND *id);
     void IOT_cmdHeartBeat(ushort gateway_id,ushort device_id,ushort time);
 

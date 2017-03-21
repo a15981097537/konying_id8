@@ -757,7 +757,7 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
                 if((comboBox_updateMode->currentText() == "OTA单独升级")||
                    (comboBox_updateMode->currentText() == "OTA批量升级"))
                 {
-                    rcmdSendFirInf();
+                    rcmdSendFirInf(iot_frame.gateway_id,iot_frame.device_id);
                 }
             break;
             case r_recUpdSta:            //返回固件升级状态
@@ -769,7 +769,8 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
                         DisplayWithTime(str);
                         if(comboBox_updateMode->currentText() == "OTA单独升级")
                         {
-                            rcmdSendsendPacket(fir.ota_w.send_cout);
+                            //发送第0包数据，开始升级
+                            rcmdSendsendPacket(iot_frame.gateway_id,iot_frame.device_id,0);
                         }
                     break;
                     case 1:
@@ -808,8 +809,8 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
                     if((comboBox_updateMode->currentText() == "OTA单独升级")||
                        (comboBox_updateMode->currentText() == "OTA批量升级"))
                     {
-                        fir.ota_w.send_cout = packet_num+1;
-                        rcmdSendsendPacket(fir.ota_w.send_cout);
+
+                        rcmdSendsendPacket(iot_frame.gateway_id,iot_frame.device_id,packet_num+1);
                     }
                 }
                 else
@@ -819,8 +820,7 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
                     if((comboBox_updateMode->currentText() == "OTA单独升级")||
                        (comboBox_updateMode->currentText() == "OTA批量升级"))
                     {
-                        fir.ota_w.send_cout = packet_num;
-                        rcmdSendsendPacket(fir.ota_w.send_cout);
+                        rcmdSendsendPacket(iot_frame.gateway_id,iot_frame.device_id,packet_num);
                     }
                 }
 
@@ -1039,24 +1039,6 @@ void MainWindow::UART_send(QByteArray src)
     }
 }
 
-char MainWindow::r_sendMessage(unsigned char cmd,QByteArray *data)
-{
-
-    QByteArray send_buff;
-
-    if(rf_send.sequence==255)rf_send.sequence=0;
-    else rf_send.sequence++;
-
-
-    send_buff.clear();
-    send_buff = *data;
-    send_buff.insert(0,rf_send.sequence);
-    send_buff.insert(1,rf_send.device);
-    send_buff.insert(2,cmd);
-    send_buff.append(rf_send.rssi);
-
-    return IOT_sendMessage(cmd_network,&send_buff);
-}
 
 
 
@@ -1110,7 +1092,7 @@ void  MainWindow::IOT_cmdAsscessId(ushort gateway_id,ushort device_id,ID_SEND *i
     }
     else if(comunication_protocal->currentText() == "Network")
     {
-        NET_getBindSocket(id->device_id);
+        //NET_getBindSocket(id->device_id);
         NET_send(buff);
     }
 }
@@ -1153,10 +1135,9 @@ void  MainWindow::IOT_cmdHeartBeat(ushort gateway_id,ushort device_id,ushort tim
 
 
 
-char MainWindow::IOT_sendMessage(uchar cmd,QByteArray *data)
+void MainWindow::IOT_cmdNetwork(ushort gateway_id,ushort device_id,QByteArray data)
 {
-    ID_SEND send;
-    char status = 0;
+
     QByteArray send_buff;
 
     if(rf_send.sequence==255)rf_send.sequence=0;
@@ -1166,24 +1147,27 @@ char MainWindow::IOT_sendMessage(uchar cmd,QByteArray *data)
     if(shortAddr->currentRow()<0)
     {
         DisplayWithTime("please select addr ");
-        return 0;
+        return ;
     }
 
 
-    send = id_access.getIdSendInf(rf_send.device_id);
+    //ID_SEND send = id_access.getIdSendInf(rf_send.device_id);
 
     send_buff.clear();
-    send_buff = *data;
+    send_buff = data;
     send_buff.insert(0,0x98);
     send_buff.insert(1,0x89);
-    send_buff.insert(2,send.gateway_id/256);
-    send_buff.insert(3,send.gateway_id%256);
-    send_buff.insert(4,send.device_id/256);
-    send_buff.insert(5,send.device_id%256);
-    send_buff.insert(6,cmd);
+    send_buff.insert(2,gateway_id/256);
+    send_buff.insert(3,gateway_id%256);
+    send_buff.insert(4,device_id/256);
+    send_buff.insert(5,device_id%256);
+    send_buff.insert(6,cmd_network);
+    send_buff.insert(7,0xFF);
+    send_buff.insert(8,rf_send.sequence);
+    send_buff.insert(9,rf_send.device);
+    send_buff.append(rf_send.rssi);
     send_buff.append(checkSum(send_buff,send_buff.length()));
-    send_buff.insert(7,send_buff.length()-8);
-
+    send_buff[7] = send_buff.length()-9;
 
 
     if(comunication_protocal->currentText() == "Uart")
@@ -1192,11 +1176,9 @@ char MainWindow::IOT_sendMessage(uchar cmd,QByteArray *data)
     }
     else if(comunication_protocal->currentText() == "Network")
     {
-        NET_getBindSocket(send.device_id);
+        NET_getBindSocket(device_id);
         NET_send(send_buff);
     }
-
-    return status;
 }
 //*****************************************
 //IOT end
@@ -1213,15 +1195,16 @@ char MainWindow::IOT_sendMessage(uchar cmd,QByteArray *data)
 
 
 
-void MainWindow::rcmdGetDeviceInf()
+void MainWindow::rcmdGetDeviceInf(ushort gateway_id,ushort device_id)
 {
     QByteArray buff;
     buff.clear();
-    r_sendMessage(r_getDevInf,&buff);
+    buff[0] = r_getDevInf;
+    IOT_cmdNetwork(gateway_id,device_id,buff);
     DisplayWithTime("get device information");
 }
 
-void MainWindow::rcmdSendFirInf()
+void MainWindow::rcmdSendFirInf(ushort gateway_id,ushort device_id)
 {
     QByteArray buff;
     unsigned short i = 0;
@@ -1231,6 +1214,7 @@ void MainWindow::rcmdSendFirInf()
         return;
     }
     buff.clear();
+    buff[i++] = r_senFirInf;
     buff[i++] = fir.ota_w.mode;
     buff[i++] = fir.ota_w.device_type;
     buff[i++] = (fir.ota_w.total_packet>>8)&0xFF;
@@ -1245,11 +1229,14 @@ void MainWindow::rcmdSendFirInf()
     {
         buff[i++] = fir.ota_w.md5[j];
     }
-    r_sendMessage(r_senFirInf,&buff);
+
+
+    IOT_cmdNetwork(gateway_id,device_id,buff);
+
     DisplayWithTime("send firmware information");
 }
 
-void MainWindow::rcmdSendsendPacket(ushort packet)
+void MainWindow::rcmdSendsendPacket(ushort gateway_id,ushort device_id,ushort packet)
 {
     QByteArray buff;
     ushort i = 0;
@@ -1271,6 +1258,7 @@ void MainWindow::rcmdSendsendPacket(ushort packet)
 
 
     buff.clear();
+    buff[i++] = r_senPacket;
     buff[i++] = (packet>>8)&0xFF;
     buff[i++] = (packet>>0)&0xFF;
     buff[i++] = fir.ota_w.mode;
@@ -1292,8 +1280,7 @@ void MainWindow::rcmdSendsendPacket(ushort packet)
     {
         buff[i++] = fir.ota_w.buff[ptr+j];
     }
-    r_sendMessage(r_senPacket,&buff);
-
+    IOT_cmdNetwork(gateway_id,device_id,buff);
     DisplayWithTime(QString("send_packet:%1  packet byte:%2").arg(packet).arg(byte_count));
     progressBar->setValue(packet*100/fir.ota_w.total_packet);
 }
@@ -1326,7 +1313,8 @@ void MainWindow::on_bt_getDeviceInf_clicked()
 
     if(comboBox_updateMode->currentText() == "OTA手动升级")
     {
-        rcmdGetDeviceInf();
+        ID_SEND send = id_access.getIdSendInf(rf_send.device_id);
+        rcmdGetDeviceInf(send.gateway_id,send.device_id);
     }
     else
     {
@@ -1340,7 +1328,8 @@ void MainWindow::on_bt_sendFirInf_clicked()
 
     if(comboBox_updateMode->currentText() == "OTA手动升级")
     {
-        rcmdSendFirInf();
+        ID_SEND send = id_access.getIdSendInf(rf_send.device_id);
+        rcmdSendFirInf(send.gateway_id,send.device_id);
     }
     else
     {
@@ -1353,7 +1342,8 @@ void MainWindow::on_bt_sendPacket_clicked()
 {
     if(comboBox_updateMode->currentText() == "OTA手动升级")
     {
-        rcmdSendsendPacket(fir.ota_w.send_cout);
+        ID_SEND send = id_access.getIdSendInf(rf_send.device_id);
+        rcmdSendsendPacket(send.gateway_id,send.device_id,fir.ota_w.send_cout);
         fir.ota_w.send_cout++;
     }
     else
@@ -1368,8 +1358,8 @@ void MainWindow::on_bt_autoUpdate_clicked()
 
     if(comboBox_updateMode->currentText() == "OTA单独升级")
     {
-        fir.ota_w.send_cout=0;
-        rcmdGetDeviceInf();
+        ID_SEND send = id_access.getIdSendInf(rf_send.device_id);
+        rcmdGetDeviceInf(send.gateway_id,send.device_id);
     }
     else
     {
@@ -1765,22 +1755,16 @@ void MainWindow::NET_send(QByteArray src)
 
     if(net_par.currentSocket ==NULL )
     {
-        if(rf_send.device_id == 0xFFFF)
+
+        for(ushort i=0;i<SOCKET_MAX;i++)
         {
-            for(ushort i=0;i<SOCKET_MAX;i++)
+            if(net_par.Socket[i]!=NULL)
             {
-                if(net_par.Socket[i]!=NULL)
-                {
-                    net_par.Socket[i]->write(src);
-                    NET_DisplayWithTime("send message to IP:"+net_par.Socket[i]->peerAddress().toString());
-                }
+                net_par.Socket[i]->write(src);
+                NET_DisplayWithTime("send message to IP:"+net_par.Socket[i]->peerAddress().toString());
             }
         }
-        else
-        {
-            infDisplay->append("no client connect to the ID");
-            return ;
-        }
+
     }
     else
     {
@@ -1960,7 +1944,16 @@ void MainWindow::NET_setBindSocket(ushort id)
 void MainWindow::NET_getBindSocket(ushort id)
 {
     if(comunication_protocal->currentText() == "Network")
-    net_par.currentSocket = net_par.bind_socket[id];
+    {
+        if(id = 0xFFFF)
+        {
+            net_par.currentSocket = NULL;
+        }
+        else
+        {
+            net_par.currentSocket = net_par.bind_socket[id];
+        }
+    }
 }
 
 
@@ -2010,3 +2003,6 @@ void MainWindow::on_bt_search_net_clicked()
     }
     NET_DisplayWithTime(str);
 }
+
+
+
