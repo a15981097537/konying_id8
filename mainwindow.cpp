@@ -104,7 +104,7 @@
     sendTimer = new QTimer(this);
     user_init();
     NET_Init();
-
+    LOC_init();
 
 
 	SetCurComboBState();
@@ -164,7 +164,7 @@
 
 
      rf_send.sequence = 0;
-     rf_send.rssi = 0xFF;
+     rf_send.rssi = 100;
      rf_send.device = dev_gatway;
 
 
@@ -478,7 +478,7 @@ void MainWindow::receiveMsg(const QTime timesl, const unsigned char *data, const
 //    textBr_inp->append(transformInpData(data, size));
 //    textBr_inp->insertPlainText(transformInpData(data, size));
 
-    if(comunication_protocal->currentText() == "uart")
+    if(comunication_protocal->currentText() == "Uart")
     {
         for(i = 0; i < size;i++)
         {
@@ -555,6 +555,10 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
     QByteArray buff;
     IOT_FRAME iot_frame;
     APP_FRAME app_frame;
+    LOCATION_FRAME location_frame;
+    COOL_FRAME cool_frame;
+
+
     QString str,str0;
     ushort packet_num;
     ushort packet_length;
@@ -576,11 +580,15 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
         {
             str.insert(i*3+2, " ");
         }
-        if(comunication_protocal->currentText() == "Network")
+        if(comunication_protocal->currentText() == "Server")
         {
-            DisplayWithTime(QString("tcp/ip receive %1 byte").arg(buff.length()));
+            DisplayWithTime(QString("tcp/ip Server receive %1 byte").arg(buff.length()));
         }
-        else
+        else if(comunication_protocal->currentText() == "Client")
+        {
+            DisplayWithTime(QString("tcp/ip Client receive %1 byte").arg(buff.length()));
+        }
+        else if(comunication_protocal->currentText() == "Uart")
         {
             DisplayWithTime(QString("uart receive %1 byte").arg(buff.length()));
         }
@@ -596,21 +604,36 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
     iot_frame.length = data[7];
     iot_frame.data = &data[8];
     iot_frame.checkSum = data[9];
+    iot_frame.rssi = data[size-2];
 
-
-    str = "message from node";
-    str0 = "0x" + uint16ToHex(iot_frame.device_id).toUpper();
+    str = "gateway_id:";
+    str0 = "0x" + uint16ToHex(iot_frame.gateway_id).toUpper();
     str += str0;
-
 
     if(shortAddr->findItems(str0 , Qt::MatchExactly).isEmpty())
     {
         shortAddr->insertItem(0,tr(""));
         shortAddr->item(0)->setText(str0);
     }
-
     NET_setBindSocket(iot_frame.gateway_id);
+
+
+    str += "/ device_id:";
+    str0 = "0x" + uint16ToHex(iot_frame.device_id).toUpper();
+    str += str0;
+
+    if(shortAddr->findItems(str0 , Qt::MatchExactly).isEmpty())
+    {
+        shortAddr->insertItem(0,tr(""));
+        shortAddr->item(0)->setText(str0);
+    }
     NET_setBindSocket(iot_frame.device_id);
+
+
+
+
+
+    str += QString("/ rssi:%1dBm").arg(iot_frame.rssi ,0,10);
 
     if(iot_frame.cmd == cmd_idRequest)
     {
@@ -627,15 +650,238 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
          id_access.getIdInf(send.device_id);
          NET_DisplayWithTime(id_access.getIdInf(send.device_id));
     }
+    else if(iot_frame.cmd == cmd_app)
+    {
+        if(iot_frame.data[0]==0xA5 && iot_frame.data[1]==0x5A)
+        {
+            location_frame.head[0] = iot_frame.data[0];
+            location_frame.head[1] = iot_frame.data[1];
+            location_frame.devie_id = iot_frame.data[2]*256+iot_frame.data[3];
+            location_frame.ant_id = iot_frame.data[4]*256+iot_frame.data[5];
+            location_frame.rssi = iot_frame.data[6];
+            location_frame.alarm = iot_frame.data[7];
+            location_frame.checksum = iot_frame.data[8];
+
+
+            if(checkSum((char *)(&iot_frame.data[2]),6)!= iot_frame.data[8])
+            {
+                return ;
+            }
+
+            if(locationStopDisplay->isChecked() == true)return;
+
+
+            if(location_frame.devie_id != loc_par.filtId && loc_par.filtId != 0xFFFF)
+            {
+                return;
+            }
+            if(loc_par.filtStr.length()!=0)
+            {
+
+                if((buff.toHex()).contains(loc_par.filtStr) == false)
+                return;
+            }
+
+
+
+
+            str += QString("/ devie_id:%1").arg(location_frame.devie_id)+"=0x"+uint16ToHex(location_frame.devie_id).toUpper();
+            str += QString("/ ant_id:%1").arg(location_frame.ant_id)+"=0x"+uint16ToHex(location_frame.ant_id).toUpper();
+            str += QString("/ rssi:%1").arg(location_frame.rssi,0,10);
+            str += "/ alarm:0x"+uint8ToHex(location_frame.alarm).toUpper();
+            if(checkAlarm(location_frame.alarm))str += " 紧急报警;";
+            if(checkLocation(location_frame.alarm))str += " 室外报警;";
+            if(checkLowBattery(location_frame.alarm))str += " 低电报警;";
+            if(checkTamper(location_frame.alarm))str += " 防拆报警;";
+            LOC_DisplayWithTime(str);
+        }
+        else if(iot_frame.data[0]==0xFA && iot_frame.data[1]==0xCA)
+        {
+
+
+            cool_frame.head[0] = iot_frame.data[0];
+            cool_frame.head[1] = iot_frame.data[1];
+            cool_frame.sensorId = iot_frame.data[2]*256+iot_frame.data[3];
+            cool_frame.deviceType = iot_frame.data[4];
+            cool_frame.len = iot_frame.data[5];
+            cool_frame.cmd = iot_frame.data[6];
+            cool_frame.data = &iot_frame.data[7];
+            cool_frame.checksum = iot_frame.data[6+cool_frame.len];
+
+            if(checkSum((char *)(iot_frame.data),cool_frame.len+6)!= cool_frame.checksum)
+            {
+                return ;
+            }
+
+            //COO_ackSuccess(iot_frame.gateway_id,iot_frame.device_id,cool_frame.cmd);
+
+            if(cool_frame.deviceType == coolDevTempreture)
+            {
+                if(coolStopDisplay->isChecked() == true)return;
+
+                if(cool_frame.sensorId != loc_par.filtId && loc_par.filtId != 0xFFFF)
+                {
+                    return;
+                }
+                if(loc_par.filtStr.length()!=0)
+                {
+
+                    if((buff.toHex()).contains(loc_par.filtStr) == false)
+                    return;
+                }
+
+
+                str += QString("/ sensor_id:%1").arg(cool_frame.sensorId);
+                str += "=0x"+uint16ToHex(cool_frame.sensorId).toUpper();
+                str +="/ 温度传感器";
+                switch(cool_frame.cmd)
+                {
+                    case coolCmdUnkown:
+                    str +="/ coolCmdUnkown";
+                    break;
+
+
+                    case coolCmdGetDisNum:
+                    str +="/ coolCmdGetDisNum：";
+                    str +=QString("%1").arg(cool_frame.data[0]*256+cool_frame.data[1]);
+                    str +="/ status code:0x" + uint8ToHex(cool_frame.data[2]).toUpper();
+                    break;
+
+
+
+
+                    case coolCmdSetDisNum:
+                    str +="/ coolCmdSetDisNum：";
+                    str +=QString("%1").arg(cool_frame.data[0]*256+cool_frame.data[1]);
+                    str +="/ status code:0x" + uint8ToHex(cool_frame.data[2]).toUpper();
+                    break;
+
+
+
+
+                    case coolCmdAlarm:
+                    str +="/ coolCmdAlarm:";
+                    if(cool_frame.data[0] == 0)str += "00 超过上限温度";
+                    else if(cool_frame.data[0] == 1)str += "01 低于下限温度";
+
+                    if(cool_frame.data[1] == 0)str += "/ +";
+                    else if(cool_frame.data[1] == 1)str += "/ -";
+
+                    str += QString("%1.").arg(cool_frame.data[2]*256+cool_frame.data[3]);
+                    str += QString("%1'C").arg(cool_frame.data[4]);
+                    str += QString("/ %1.%2%H").arg(cool_frame.data[5]).arg(cool_frame.data[6]);
+                    str +="/ status code:0x" + uint8ToHex(cool_frame.data[7]).toUpper();
+                    break;
+
+
+
+
+                    case coolCmdDisarm:
+                    str +="/ coolCmdDisarm";
+                    str +="/ status code:0x" + uint8ToHex(cool_frame.data[2]).toUpper();
+                    break;
+
+
+
+
+                    case coolCmdSetRepTime:
+                    str +="/ coolCmdSetRepTime:";
+                    uint detect_time;
+                    detect_time = (cool_frame.data[0]<<24)+
+                                  (cool_frame.data[1]<<16)+
+                                  (cool_frame.data[2]<<8)+
+                                  (cool_frame.data[3]<<0);
+                    str +=QString("%1S = 0x").arg(detect_time)+uint32ToHex(detect_time).toUpper()+"S";
+                    str +="/ status code:0x" + uint8ToHex(cool_frame.data[4]).toUpper();
+                    break;
+
+
+                    case coolCmdTemVer:
+                    str +="/ coolCmdTemVer";
+                    if(cool_frame.data[0] == 0)str +="/ +";
+                    else if(cool_frame.data[0] == 1)str +="/ -";
+                    str += QString("%1.%1'C").arg(cool_frame.data[1]/10).arg(cool_frame.data[1]%10);
+                    str +="/ status code:0x" + uint8ToHex(cool_frame.data[2]).toUpper();
+                    break;
+
+
+
+                    case coolCmdHumVer:
+                    str +="/ coolCmdHumVer";
+                    if(cool_frame.data[0] == 0)str +="/ +";
+                    else if(cool_frame.data[0] == 1)str +="/ -";
+                    str += QString("%1.%1%H").arg(cool_frame.data[1]/10).arg(cool_frame.data[1]%10);
+                    str +="/ status code:0x" + uint8ToHex(cool_frame.data[2]).toUpper();
+                    break;
+
+
+
+                    case coolCmdGetSenVal:
+                    str +="/ coolCmdGetSenVal";
+                    if(cool_frame.data[0] == 0)str += "/ +";
+                    else if(cool_frame.data[0] == 1)str += "/ -";
+                    str += QString("%1.").arg(cool_frame.data[1]*256+cool_frame.data[2]);
+                    str += QString("%1'C").arg(cool_frame.data[3]);
+                    str += QString("/ %1.%2%H").arg(cool_frame.data[4]).arg(cool_frame.data[5]);
+                    str +="/ status code:0x" + uint8ToHex(cool_frame.data[6]).toUpper();
+                    break;
+
+
+
+
+                    case coolCmdSetAlaVal:
+                    str +="/ coolCmdSetAlaVal";
+                    if(cool_frame.data[0] == 0)str += "/ 上限温度：+";
+                    else if(cool_frame.data[0] == 1)str += "/ 上限温度：-";
+                    str += QString("%1.").arg(cool_frame.data[1]*256+cool_frame.data[2]);
+                    str += QString("%1'C").arg(cool_frame.data[3]);
+
+                    if(cool_frame.data[4] == 0)str += "/ 下限温度：+";
+                    else if(cool_frame.data[4] == 1)str += "/ 下限温度：-";
+                    str += QString("%1.").arg(cool_frame.data[5]*256+cool_frame.data[6]);
+                    str += QString("%1'C").arg(cool_frame.data[7]);
+                    str +="/ status code:0x" + uint8ToHex(cool_frame.data[6]).toUpper();
+                    break;
+
+
+
+                    case coolCmdSenError:
+                    str +="/ coolCmdSenError";
+                    str +="/ status code:0x" + uint8ToHex(cool_frame.data[2]).toUpper();
+                    break;
+                    case coolCmdStatus:
+                    str +="/ coolCmdStatus";
+                    str +="/ status code:0x" + uint8ToHex(cool_frame.data[1]).toUpper();
+                    break;
+                    default:
+                    str +="/ ERROR";
+                    break;
+                }
+                COO_DisplayWithTime(str);
+
+            }
+            else if(cool_frame.deviceType == coolDevSiren)
+            {
+
+            }
+            else if(cool_frame.deviceType == coolDevSosPanic)
+            {
+
+            }
+            else if(cool_frame.deviceType == coolDevUnkown)
+            {
+
+            }
+        }
+
+    }
     else if(iot_frame.cmd == cmd_network)
     {
         app_frame.rf.sequence = iot_frame.data[0];
         app_frame.rf.deviceType = iot_frame.data[1];
         app_frame.rf.cmd = iot_frame.data[2];
         app_frame.rf.data = &iot_frame.data[3];
-        app_frame.rssi = data[size-2];
 
-        str += QString("/ rssi:%1dBm").arg(app_frame.rssi);
         str += QString("/ sequence:%1").arg(app_frame.rf.sequence);
         str += "/ device type:";
         switch(app_frame.rf.deviceType)
@@ -666,6 +912,9 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
             break;
         case dev_multileSensor:
             str += "multileSensor";
+            break;
+        case dev_tag:
+            str += "money_tag";
             break;
         default:
             str += "unkown device";
@@ -751,7 +1000,16 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
                 DisplayWithTime(str+"/ 返回设备详细信息:");
                 textBr_mess->append("MAC:         "+strToHex(&app_frame.rf.data[0],8).toUpper());
                 textBr_mess->append("panID:       "+uint16ToHex(app_frame.rf.data[8]*256+app_frame.rf.data[9]).toUpper());
-                textBr_mess->append("nodeType:    "+uint8ToHex(app_frame.rf.data[10]).toUpper());
+                //textBr_mess->append("nodeType:    "+uint8ToHex(app_frame.rf.data[10]).toUpper());
+                str = "nodeType:    "+uint8ToHex(app_frame.rf.data[10]).toUpper();
+                if(app_frame.rf.data[10] == 0)str+= "/ EMBER_UNKNOWN_DEVICE";
+                else if(app_frame.rf.data[10] == 1)str+= "/ EMBER_STAR_COORDINATOR";
+                else if(app_frame.rf.data[10] == 2)str+= "/ EMBER_STAR_RANGE_EXTENDER ";
+                else if(app_frame.rf.data[10] == 3)str+= "/ EMBER_STAR_END_DEVICE";
+                else if(app_frame.rf.data[10] == 4)str+= "/ EMBER_STAR_SLEEPY_END_DEVICE";
+                else if(app_frame.rf.data[10] == 5)str+= "/ EMBER_DIRECT_DEVICE";
+                else if(app_frame.rf.data[10] == 6)str+= "/ EMBER_MAC_MODE_DEVICE";
+                textBr_mess->append(str);
                 textBr_mess->append("Fir version: "+uint8ToHex(app_frame.rf.data[11]).toUpper());
                 textBr_mess->append("MD5:         "+strToHex(&app_frame.rf.data[12],16).toUpper());
                 if((comboBox_updateMode->currentText() == "OTA单独升级")||
@@ -1082,17 +1340,22 @@ void  MainWindow::IOT_cmdAsscessId(ushort gateway_id,ushort device_id,ID_SEND *i
     buff[23]=id->un[1];
     buff[24]=id->un[2];
     buff[25]=id->un[3];
-    buff[26]=rf_send.rssi;//rssi
-    buff[27] = checkSum(buff,buff.length());
-    buff[7]=buff.length()-9;
+    //buff[26]=rf_send.rssi;//rssi
+    buff[7]=buff.length()-8;
+    buff.append(checkSum(buff,buff.length()));
+
 
     if(comunication_protocal->currentText() == "Uart")
     {
         UART_send(buff);
     }
-    else if(comunication_protocal->currentText() == "Network")
+    else if(comunication_protocal->currentText() == "Server")
     {
         //NET_getBindSocket(id->device_id);
+        NET_send(buff);
+    }
+    else if(comunication_protocal->currentText() == "Client")
+    {
         NET_send(buff);
     }
 }
@@ -1117,17 +1380,22 @@ void  MainWindow::IOT_cmdHeartBeat(ushort gateway_id,ushort device_id,ushort tim
     buff[11]=gateway_id&0xFF;
     buff[12]=0;
     buff[13]=0;
-    buff[14]=rf_send.rssi;//rssi
-    buff[15] = checkSum(buff,buff.length());
-    buff[7]=buff.length()-9;
+    //buff[14]=rf_send.rssi;//rssi
+    buff[7]=buff.length()-8;
+    buff.append(checkSum(buff,buff.length()));
+
 
     if(comunication_protocal->currentText() == "Uart")
     {
         UART_send(buff);
     }
-    else if(comunication_protocal->currentText() == "Network")
+    else if(comunication_protocal->currentText() == "Server")
     {
         NET_getBindSocket(device_id);
+        NET_send(buff);
+    }
+    else if(comunication_protocal->currentText() == "Client")
+    {
         NET_send(buff);
     }
 }
@@ -1165,21 +1433,77 @@ void MainWindow::IOT_cmdNetwork(ushort gateway_id,ushort device_id,QByteArray da
     send_buff.insert(7,0xFF);
     send_buff.insert(8,rf_send.sequence);
     send_buff.insert(9,rf_send.device);
-    send_buff.append(rf_send.rssi);
+    //send_buff.append(rf_send.rssi);
+    send_buff[7] = send_buff.length()-8;
     send_buff.append(checkSum(send_buff,send_buff.length()));
-    send_buff[7] = send_buff.length()-9;
+
 
 
     if(comunication_protocal->currentText() == "Uart")
     {
         UART_send(send_buff);
     }
-    else if(comunication_protocal->currentText() == "Network")
+    else if(comunication_protocal->currentText() == "Server")
     {
         NET_getBindSocket(device_id);
         NET_send(send_buff);
     }
+    else if(comunication_protocal->currentText() == "Client")
+    {
+        NET_send(send_buff);
+    }
 }
+
+
+void MainWindow::IOT_cmdApp(ushort gateway_id,ushort device_id,QByteArray data)
+{
+
+    QByteArray send_buff;
+
+    if(rf_send.sequence==255)rf_send.sequence=0;
+    else rf_send.sequence++;
+
+
+    if(shortAddr->currentRow()<0)
+    {
+        DisplayWithTime("please select addr ");
+        return ;
+    }
+
+
+    //ID_SEND send = id_access.getIdSendInf(rf_send.device_id);
+
+    send_buff.clear();
+    send_buff = data;
+    send_buff.insert(0,0x98);
+    send_buff.insert(1,0x89);
+    send_buff.insert(2,gateway_id/256);
+    send_buff.insert(3,gateway_id%256);
+    send_buff.insert(4,device_id/256);
+    send_buff.insert(5,device_id%256);
+    send_buff.insert(6,cmd_app);
+    send_buff.insert(7,0xFF);
+    //send_buff.append(rf_send.rssi);
+    send_buff[7] = send_buff.length()-8;
+    send_buff.append(checkSum(send_buff,send_buff.length()));
+
+
+
+    if(comunication_protocal->currentText() == "Uart")
+    {
+        UART_send(send_buff);
+    }
+    else if(comunication_protocal->currentText() == "Server")
+    {
+        NET_getBindSocket(device_id);
+        NET_send(send_buff);
+    }
+    else if(comunication_protocal->currentText() == "Client")
+    {
+        NET_send(send_buff);
+    }
+}
+
 //*****************************************
 //IOT end
 //*****************************************
@@ -1589,7 +1913,7 @@ void MainWindow::on_shortAddr_itemSelectionChanged()
 {
     QString str = shortAddr->currentItem()->text();
     rf_send.device_id = str.toUShort(0,16);
-    if(comunication_protocal->currentText() == "Network")
+    if(comunication_protocal->currentText() == "Server")
     {
         if(net_par.bind_socket[rf_send.device_id]!=NULL)
         {
@@ -1601,6 +1925,14 @@ void MainWindow::on_shortAddr_itemSelectionChanged()
             if(rf_send.device_id == 0xFFFF)str+=" / brocast message to all gateway and all node";
             else str+=" / no gateway bind";
         }
+    }
+    else if(comunication_protocal->currentText() == "Client")
+    {
+
+    }
+    else if(comunication_protocal->currentText() == "Uart")
+    {
+
     }
 
     DisplayWithTime(QString("Dest addr:")+str);
@@ -1665,7 +1997,7 @@ void MainWindow::NET_Init()
 
 {
     ulong i;
-    QString str = get_localmachine_ip();
+    QString str = NET_get_localmachine_ip();
     textEdit_IP->setPlainText(str);
     textEdit_Port->setPlainText("7777");
     textEdit_ID->setPlainText("0");
@@ -1682,11 +2014,20 @@ void MainWindow::NET_Init()
     {
         net_par.bind_socket[i] = NULL;
     }
+    comunication_protocal->setCurrentText("Servezr");
+
+    net_par.clientSocket = new QTcpSocket(this);
+
+//    uchar aa = 0xFF;
+//    ushort bb = 0xFFFF;
+//    short cc = 0xFFFF;
+//    NET_DisplayWithNoTime(QString("%1  %2  %3").arg(aa,0,10).arg(bb,0,10).arg(cc,0,10));
+
 }
 
 
 
-QString MainWindow::get_localmachine_ip()
+QString MainWindow::NET_get_localmachine_ip()
 {
     QString ipAddress;
     QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
@@ -1704,7 +2045,7 @@ QString MainWindow::get_localmachine_ip()
     return ipAddress;
 }
 
-void MainWindow::revData()
+void MainWindow::NET_revData()
 
 {
 
@@ -1712,15 +2053,44 @@ void MainWindow::revData()
    QByteArray display;
    QByteArray datas;
 
-   for(j = 0 ; j < SOCKET_MAX ; j ++)
+   if(comunication_protocal->currentText() == "Server")
    {
+       for(j = 0 ; j < SOCKET_MAX ; j ++)
+       {
 
-       if(net_par.Socket[j] == NULL)continue;
+           if(net_par.Socket[j] == NULL)continue;
+           datas.clear();
+           datas = net_par.Socket[j]->readAll();
+           if(datas.length() == 0)continue;
+
+           net_par.currentSocket = net_par.Socket[j];
+           //接收字符串数据。
+           display = datas.toHex().toUpper();
+           for(i=0;i<display.length();i+=3)
+           {
+                display.insert( i+2, " ");
+           }
+           infReceive->setPlainText(display);
+
+
+
+
+           for(i = 0; i < datas.length();i++)
+           {
+               transport.receive[transport.r_count] = datas[i];
+               transport.r_count++;
+           }
+           //receiveTimer->start(20);
+           pressUartData();
+
+       }
+   }
+   else if(comunication_protocal->currentText() == "Client")
+   {
        datas.clear();
-       datas = net_par.Socket[j]->readAll();
-       if(datas.length() == 0)continue;
+       datas = net_par.clientSocket->readAll();
+       if(datas.length() == 0)return;
 
-       net_par.currentSocket = net_par.Socket[j];
        //接收字符串数据。
        display = datas.toHex().toUpper();
        for(i=0;i<display.length();i+=3)
@@ -1731,45 +2101,60 @@ void MainWindow::revData()
 
 
 
-       if(comunication_protocal->currentText() == "Network")
+
+       for(i = 0; i < datas.length();i++)
        {
-           for(i = 0; i < datas.length();i++)
-           {
-               transport.receive[transport.r_count] = datas[i];
-               transport.r_count++;
-           }
-           //receiveTimer->start(20);
-           pressUartData();
+           transport.receive[transport.r_count] = datas[i];
+           transport.r_count++;
        }
+       //receiveTimer->start(20);
+       pressUartData();
+
    }
 }
 
 void MainWindow::NET_send(QByteArray src)
 {
 
-    if(net_par.Server ==NULL )
+    if(comunication_protocal->currentText() == "Server")
     {
-        infDisplay->append("no server operation");
-        return ;
-    }
-
-    if(net_par.currentSocket ==NULL )
-    {
-
-        for(ushort i=0;i<SOCKET_MAX;i++)
+        if(net_par.Server ==NULL)
         {
-            if(net_par.Socket[i]!=NULL)
+            infDisplay->append("no server operation");
+            return ;
+        }
+
+        if(net_par.currentSocket ==NULL )
+        {
+
+            for(ushort i=0;i<SOCKET_MAX;i++)
             {
-                net_par.Socket[i]->write(src);
-                NET_DisplayWithTime("send message to IP:"+net_par.Socket[i]->peerAddress().toString());
+                if(net_par.Socket[i]!=NULL)
+                {
+                    net_par.Socket[i]->write(src);
+                    NET_DisplayWithTime("send message to IP:"+net_par.Socket[i]->peerAddress().toString());
+                }
             }
+
+        }
+        else
+        {
+            net_par.currentSocket->write(src);
+            NET_DisplayWithTime("send message to IP:"+net_par.currentSocket->peerAddress().toString());
         }
 
     }
+    else if(comunication_protocal->currentText() == "Client")
+    {
+        if(net_par.clientSocket->isValid())
+        {
+            net_par.clientSocket->write(src);
+            NET_DisplayWithTime("send message to IP:"+net_par.clientSocket->peerAddress().toString());
+        }
+    }
     else
     {
-        net_par.currentSocket->write(src);
-        NET_DisplayWithTime("send message to IP:"+net_par.currentSocket->peerAddress().toString());
+        return;
     }
 
 
@@ -1800,7 +2185,7 @@ void MainWindow::on_bt_netSend_clicked()
 }
 
 
-void MainWindow::newListen()
+void MainWindow::NET_newListen()
 {
     ushort port;
     QString str = textEdit_Port->toPlainText();
@@ -1824,9 +2209,20 @@ void MainWindow::newListen()
    }
 }
 
+void MainWindow::NET_clientToServer()
+{
+    ushort port;
+    QString str = textEdit_Port->toPlainText();
+    port = str.toUShort();
+    net_par.clientSocket->abort();
+    net_par.clientSocket->connectToHost(textEdit_IP->toPlainText(),port);
+    connect(net_par.clientSocket,SIGNAL(readyRead()),this,SLOT(NET_revData()));
+    //connect(net_par.clientSocket,SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(NET_displayError(QAbstractSocket::SocketError)));
+}
 
 
-void MainWindow::acceptConnection()
+
+void MainWindow::NET_acceptConnection()
 {
     ushort i;
     QString str;
@@ -1837,12 +2233,12 @@ void MainWindow::acceptConnection()
         {
             net_par.Socket[i] = new QTcpSocket(this);
             //net_par.currentSocket = net_par.Socket[i];
-            //当tcpSocket在接受客户端连接时出现错误时，displayError(QAbstractSocket::SocketError)进行错误提醒并关闭tcpSocket。
-            connect(net_par.Socket[i],SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(displayError(QAbstractSocket::SocketError)));
+            //当tcpSocket在接受客户端连接时出现错误时，NET_displayError(QAbstractSocket::SocketError)进行错误提醒并关闭tcpSocket。
+            connect(net_par.Socket[i],SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(NET_displayError(QAbstractSocket::SocketError)));
 
             //当有客户来访时将tcpSocket接受tcpServer建立的socket
             net_par.Socket[i] = net_par.Server->nextPendingConnection();
-            connect(net_par.Socket[i],SIGNAL(readyRead()),this,SLOT(revData()));
+            connect(net_par.Socket[i],SIGNAL(readyRead()),this,SLOT(NET_revData()));
             str = "new client connection";
             str +=" / peerName:"+net_par.Socket[i]->peerName();
             str +=" / peerAddress:"+net_par.Socket[i]->peerAddress().toString();
@@ -1857,10 +2253,10 @@ void MainWindow::acceptConnection()
 
 
 
-void MainWindow::displayError(QAbstractSocket::SocketError)
+void MainWindow::NET_displayError(QAbstractSocket::SocketError)
 {
     ushort i;
-    //qDebug()<<net_par.Socket[0]->errorString();
+    qDebug()<<net_par.Socket[0]->errorString();
     for(i=0;i<SOCKET_MAX;i++)
     {
         if(net_par.Socket[i]->errorString()!=NULL)
@@ -1873,20 +2269,27 @@ void MainWindow::displayError(QAbstractSocket::SocketError)
 
 void MainWindow::on_bt_listen_clicked()
 {
+
+
     bt_listen->setDisabled(true);
     bt_stopListen->setDisabled(false);
-    net_par.Server = new QTcpServer(this);
 
+    if(comunication_protocal->currentText() == "Server")
+    {
+        net_par.Server = new QTcpServer(this);
 
+        NET_newListen();
+        //newConnection()用于当有客户端访问时发出信号，NET_acceptConnection()信号处理函数
+        connect(net_par.Server,SIGNAL(newConnection()),this,SLOT(NET_acceptConnection()));
+    }
+    else if(comunication_protocal->currentText() == "Client")
+    {
+        NET_clientToServer();
+    }
+    else
+    {
 
-
-    newListen();
-    //newConnection()用于当有客户端访问时发出信号，acceptConnection()信号处理函数
-    connect(net_par.Server,SIGNAL(newConnection()),this,SLOT(acceptConnection()));
-
-
-
-
+    }
 }
 
 void MainWindow::on_bt_stopListen_clicked()
@@ -1898,9 +2301,13 @@ void MainWindow::on_bt_stopListen_clicked()
             net_par.Socket[i]->close();
         }
     }
+    if(net_par.Server != NULL)net_par.Server->close();
+    net_par.clientSocket->abort();
 
-    net_par.Server->close();
     bt_listen->setDisabled(false);
+
+
+
 }
 
 void MainWindow::on_bt_searchId_clicked()
@@ -1926,7 +2333,7 @@ void MainWindow::on_export_idList_clicked()
 void MainWindow::NET_DisplayWithTime(const QString &text)
 {
     QDateTime datTime = QDateTime::currentDateTime();
-    infDisplay->append(datTime.toString("yyyy/MM/dd hh:mm:ss // ")+text);
+    infDisplay->append(datTime.toString("yyyy/MM/dd hh:mm:ss/ ")+text);
 }
 
 void MainWindow::NET_DisplayWithNoTime(const QString &text)
@@ -1937,13 +2344,13 @@ void MainWindow::NET_DisplayWithNoTime(const QString &text)
 
 void MainWindow::NET_setBindSocket(ushort id)
 {
-     if(comunication_protocal->currentText() == "Network")
+     if(comunication_protocal->currentText() == "Server")
      net_par.bind_socket[id] = net_par.currentSocket;
 }
 
 void MainWindow::NET_getBindSocket(ushort id)
 {
-    if(comunication_protocal->currentText() == "Network")
+    if(comunication_protocal->currentText() == "Server")
     {
         if(id = 0xFFFF)
         {
@@ -1954,6 +2361,495 @@ void MainWindow::NET_getBindSocket(ushort id)
             net_par.currentSocket = net_par.bind_socket[id];
         }
     }
+    else
+    {
+        net_par.currentSocket = NULL;
+    }
+}
+
+
+
+
+/*******************Client start******************/
+
+
+
+/*******************Client end******************/
+
+
+/*******************network end******************/
+/*******************network end******************/
+/*******************network end******************/
+/*******************network end******************/
+
+
+/****************location start****************/
+
+
+void MainWindow::LOC_init()
+{
+    loc_par.filtStr.clear();
+    localtionFiltId->setPlainText("0xFFFF");
+}
+
+
+void MainWindow::LOC_DisplayWithTime(const QString &text)
+{
+    QDateTime datTime = QDateTime::currentDateTime();
+    location_display->append(datTime.toString("yyyy/MM/dd hh:mm:ss/ ")+text);
+}
+
+void MainWindow::LOC_DisplayWithNoTime(const QString &text)
+{
+    location_display->append( text);
+}
+
+void MainWindow::on_localtionFiltId_textChanged()
+{
+    QString str = localtionFiltId->toPlainText();
+    if(str.length() == 0)
+    {
+        loc_par.filtId = 0xFFFF;
+    }
+    else if(str[0]=='0' && (str[1]=='x' || str[1]=='X'))
+    {
+        loc_par.filtId = str.toUShort(Q_NULLPTR,16);
+    }
+    else
+    {
+        loc_par.filtId = str.toUShort(Q_NULLPTR,10);
+    }
+    LOC_DisplayWithTime("filt id:0x"+uint16ToHex(loc_par.filtId).toUpper());
+}
+
+void MainWindow::on_localtionFiltStr_textChanged()
+{
+    loc_par.filtStr = QByteArray::fromStdString(localtionFiltStr->toPlainText().toStdString());
+    LOC_DisplayWithTime("filt string:"+loc_par.filtStr);
+}
+
+
+void MainWindow::on_locationStopDisplay_clicked(bool checked)
+{
+
+}
+
+void MainWindow::on_localtionFiltId_windowIconTextChanged(const QString &iconText)
+{
+
+}
+
+void MainWindow::on_localtionFiltStr_windowIconTextChanged(const QString &iconText)
+{
+
+}
+
+
+
+void MainWindow::on_localtionIdSelection_windowIconTextChanged(const QString &iconText)
+{
+
+}
+
+void MainWindow::on_localtionIdSelection_4_windowIconTextChanged(const QString &iconText)
+{
+
+}
+
+
+
+/***********************location end****************/
+
+
+
+/****************cool start****************/
+
+
+void MainWindow::COO_init()
+{
+    coo_par.filtStr.clear();
+    coolFiltId->setPlainText("0xFFFF");
+}
+
+
+void MainWindow::COO_DisplayWithTime(const QString &text)
+{
+    QDateTime datTime = QDateTime::currentDateTime();
+   // QTime time = QTime::currentTime();
+    cool_display->append(datTime.toString("yyyy/MM/dd hh:mm:ss/ ") +
+                         //QString(" %1 mS     ").arg(time.msec()) +
+                         text);
+}
+
+void MainWindow::COO_DisplayWithNoTime(const QString &text)
+{
+    cool_display->append( text);
+}
+
+void MainWindow::on_coolFiltId_textChanged()
+{
+    QString str = coolFiltId->toPlainText();
+    if(str.length() == 0)
+    {
+        coo_par.filtId = 0xFFFF;
+    }
+    else if(str[0]=='0' && (str[1]=='x' || str[1]=='X'))
+    {
+        coo_par.filtId = str.toUShort(Q_NULLPTR,16);
+    }
+    else
+    {
+        coo_par.filtId = str.toUShort(Q_NULLPTR,10);
+    }
+    COO_DisplayWithTime("filt id:0x"+uint16ToHex(coo_par.filtId).toUpper());
+}
+
+void MainWindow::on_coolFiltStr_textChanged()
+{
+    coo_par.filtStr = QByteArray::fromStdString(coolFiltStr->toPlainText().toStdString());
+    COO_DisplayWithTime("filt string:"+coo_par.filtStr);
+}
+
+
+
+void MainWindow::on_coolGetSn_clicked()
+{
+
+    ID_SEND send = id_access.getIdSendInf(rf_send.device_id);
+    COO_getSnNumber(send.gateway_id , send.device_id);
+    COO_DisplayWithTime("获取冷链显示编号");
+}
+
+
+
+void MainWindow::on_coolSetRepTime_Bt_clicked()
+{
+    ID_SEND send = id_access.getIdSendInf(rf_send.device_id);
+    COO_setReportTime(send.gateway_id , send.device_id);
+    COO_DisplayWithTime("设置采样时间");
+}
+
+void MainWindow::on_coolSetSn_Bt_clicked()
+{
+    ID_SEND send = id_access.getIdSendInf(rf_send.device_id);
+    COO_setSnNumber(send.gateway_id , send.device_id);
+    COO_DisplayWithTime("设置冷链显示编号");
+}
+
+void MainWindow::on_coolTemVerification_Bt_clicked()
+{
+    ID_SEND send = id_access.getIdSendInf(rf_send.device_id);
+    COO_tempretureVerfication(send.gateway_id , send.device_id);
+    COO_DisplayWithTime("温度校准");
+}
+
+void MainWindow::on_coolHumVerification_Bt_clicked()
+{
+    ID_SEND send = id_access.getIdSendInf(rf_send.device_id);
+    COO_HumVerfication(send.gateway_id , send.device_id);
+    COO_DisplayWithTime("湿度校准");
+}
+
+void MainWindow::on_coolDisarm_clicked()
+{
+    ID_SEND send = id_access.getIdSendInf(rf_send.device_id);
+    COO_clearTemAlarm(send.gateway_id , send.device_id);
+    COO_DisplayWithTime("解除报警");
+}
+
+void MainWindow::on_coolGetTempreture_clicked()
+{
+    ID_SEND send = id_access.getIdSendInf(rf_send.device_id);
+    COO_getSensorValue(send.gateway_id , send.device_id);
+    COO_DisplayWithTime("获取温湿度");
+}
+
+void MainWindow::on_coolTemAlarm_Bt_clicked()
+{
+    ID_SEND send = id_access.getIdSendInf(rf_send.device_id);
+    COO_tempretureAlarmHL(send.gateway_id , send.device_id);
+    COO_DisplayWithTime("设置报警参数");
+}
+
+
+
+void MainWindow::COO_getSnNumber(ushort gateway_id,ushort device_id)
+{
+    QByteArray buff;
+    buff.clear();
+    buff[0] = 0xFA;
+    buff[1] = 0xCA;
+    buff[2] = 0xFF;
+    buff[3] = 0xFF;
+    buff[4] = coolDevTempreture;
+    buff[5] = 0x03;//len
+    buff[6] = coolCmdGetDisNum;
+    buff[7] = 00;
+    buff[8] = 00;
+    buff[9] = checkSum(buff,buff.length());
+
+    IOT_cmdApp(gateway_id,device_id,buff);
+}
+
+void MainWindow::COO_setSnNumber(ushort gateway_id,ushort device_id)
+{
+    QByteArray buff;
+    ushort display_id;
+    display_id = coolSetSn_Edit->toPlainText().toUShort(Q_NULLPTR,10);
+
+
+
+    buff.clear();
+    buff[0] = 0xFA;
+    buff[1] = 0xCA;
+    buff[2] = 0xFF;
+    buff[3] = 0xFF;
+    buff[4] = coolDevTempreture;
+    buff[5] = 0x03;//len
+    buff[6] = coolCmdSetDisNum;
+    buff[7] = display_id/256;
+    buff[8] = display_id%256;
+    buff[9] = checkSum(buff,buff.length());
+
+    IOT_cmdApp(gateway_id,device_id,buff);
+}
+
+void MainWindow::COO_getSensorValue(ushort gateway_id,ushort device_id)
+{
+    QByteArray buff;
+    buff.clear();
+    buff[0] = 0xFA;
+    buff[1] = 0xCA;
+    buff[2] = 0xFF;
+    buff[3] = 0xFF;
+    buff[4] = coolDevTempreture;
+    buff[5] = 0x03;//len
+    buff[6] = coolCmdGetSenVal;
+    buff[7] = 00;
+    buff[8] = 00;
+    buff[9] = checkSum(buff,buff.length());
+
+    IOT_cmdApp(gateway_id,device_id,buff);
+}
+
+void MainWindow::COO_clearTemAlarm(ushort gateway_id,ushort device_id)
+{
+    QByteArray buff;
+    buff.clear();
+    buff[0] = 0xFA;
+    buff[1] = 0xCA;
+    buff[2] = 0xFF;
+    buff[3] = 0xFF;
+    buff[4] = coolDevTempreture;
+    buff[5] = 0x03;//len
+    buff[6] = coolCmdDisarm;
+    buff[7] = 00;
+    buff[8] = 00;
+    buff[9] = checkSum(buff,buff.length());
+
+    IOT_cmdApp(gateway_id,device_id,buff);
+}
+
+
+
+void MainWindow::COO_tempretureVerfication(ushort gateway_id,ushort device_id)
+{
+    QByteArray buff;
+    short num;
+    QString str = coolTemVerification_Edit->toPlainText();
+
+
+    num = str.toShort();
+
+
+
+
+
+    buff.clear();
+    buff[0] = 0xFA;
+    buff[1] = 0xCA;
+    buff[2] = 0xFF;
+    buff[3] = 0xFF;
+    buff[4] = coolDevTempreture;
+    buff[5] = 0x03;//len
+    buff[6] = coolCmdTemVer;
+    if(num<0)
+    {
+        buff[7] = 1;
+        buff[8] = -num;
+    }
+    else
+    {
+        buff[7] = 0;
+        buff[8] = num;
+    }
+
+    buff[9] = checkSum(buff,buff.length());
+
+    IOT_cmdApp(gateway_id,device_id,buff);
+}
+
+
+void MainWindow::COO_HumVerfication(ushort gateway_id,ushort device_id)
+{
+    QByteArray buff;
+    short num;
+    QString str = coolHumVerification_Edit->toPlainText();
+
+
+    num = str.toShort();
+
+
+
+
+
+    buff.clear();
+    buff[0] = 0xFA;
+    buff[1] = 0xCA;
+    buff[2] = 0xFF;
+    buff[3] = 0xFF;
+    buff[4] = coolDevTempreture;
+    buff[5] = 0x03;//len
+    buff[6] = coolCmdHumVer;
+    if(num<0)
+    {
+        buff[7] = 1;
+        buff[8] = -num;
+    }
+    else
+    {
+        buff[7] = 0;
+        buff[8] = num;
+    }
+
+    buff[9] = checkSum(buff,buff.length());
+
+    IOT_cmdApp(gateway_id,device_id,buff);
+}
+
+
+void MainWindow::COO_tempretureAlarmHL(ushort gateway_id,ushort device_id)
+{
+    QByteArray buff;
+    float tem_h,tem_l;
+    uint tem;
+    QString str;
+    str = coolTemAlarmH_Edit->toPlainText();
+    tem_h = str.toDouble();
+    str = coolTemAlarmL_Edit->toPlainText();
+    tem_l = str.toDouble();
+
+
+
+
+    buff.clear();
+    buff[0] = 0xFA;
+    buff[1] = 0xCA;
+    buff[2] = 0xFF;
+    buff[3] = 0xFF;
+    buff[4] = coolDevTempreture;
+    buff[5] = 0x03;//len
+    buff[6] = coolCmdSetAlaVal;
+    if(tem_h<0)
+    {
+        tem = (-tem_h)*100;
+        buff[7] = 1;
+        buff[8] = (tem/100)>>8;
+        buff[9] = (tem/100)>>0;
+        buff[10] =(tem%100)>>0;
+    }
+    else
+    {
+        tem = tem_h*100;
+        buff[7] = 0;
+        buff[8] = (tem/100)>>8;
+        buff[9] = (tem/100)>>0;
+        buff[10] =(tem%100)>>0;
+    }
+    if(tem_l<0)
+    {
+        tem = (-tem_l)*100;
+        buff[11] = 1;
+        buff[12] = (tem/100)>>8;
+        buff[13] = (tem/100)>>0;
+        buff[14] = (tem%100)>>0;
+    }
+    else
+    {
+        tem = tem_l*100;
+        buff[11] = 0;
+        buff[12] = (tem/100)>>8;
+        buff[13] = (tem/100)>>0;
+        buff[14] = (tem%100)>>0;
+    }
+    buff[5] = buff.length()-6;
+    buff[15] = checkSum(buff,buff.length());
+
+    IOT_cmdApp(gateway_id,device_id,buff);
+}
+
+void MainWindow::COO_setReportTime(ushort gateway_id,ushort device_id)
+{
+    QByteArray buff;
+    uint time;
+    time = coolSetRepTime_Edit->toPlainText().toUInt(Q_NULLPTR,10);
+
+    buff.clear();
+    buff[0] = 0xFA;
+    buff[1] = 0xCA;
+    buff[2] = 0xFF;
+    buff[3] = 0xFF;
+    buff[4] = coolDevTempreture;
+    buff[5] = 0x05;//len
+    buff[6] = coolCmdSetRepTime;
+    buff[7] = 0xFF&(time>>24);
+    buff[8] = 0xFF&(time>>16);
+    buff[9] = 0xFF&(time>>8);
+    buff[10] = 0xFF&(time>>0);
+    buff[11] = checkSum(buff,buff.length());
+
+    IOT_cmdApp(gateway_id,device_id,buff);
+}
+
+
+void MainWindow::COO_ackSuccess(ushort gateway_id,ushort device_id,uchar ack_cmd)
+{
+    QByteArray buff;
+    buff.clear();
+    buff[0] = 0xFA;
+    buff[1] = 0xCA;
+    buff[2] = 0xFF;
+    buff[3] = 0xFF;
+    buff[4] = coolDevTempreture;
+    buff[5] = 0x03;//len
+    buff[6] = coolCmdStatus;
+    buff[7] = ack_cmd;
+    buff[8] = 00;
+    buff[9] = checkSum(buff,buff.length());
+
+    IOT_cmdApp(gateway_id,device_id,buff);
+
+    COO_DisplayWithTime("server ack success");
+}
+
+void MainWindow::COO_ackError(ushort gateway_id,ushort device_id,uchar ack_cmd)
+{
+    QByteArray buff;
+    buff.clear();
+    buff[0] = 0xFA;
+    buff[1] = 0xCA;
+    buff[2] = 0xFF;
+    buff[3] = 0xFF;
+    buff[4] = coolDevTempreture;
+    buff[5] = 0x03;//len
+    buff[6] = coolCmdStatus;
+    buff[7] = ack_cmd;
+    buff[8] = 01;
+    buff[9] = checkSum(buff,buff.length());
+
+    IOT_cmdApp(gateway_id,device_id,buff);
+
+    COO_DisplayWithTime("server ack error");
 }
 
 
@@ -1961,9 +2857,10 @@ void MainWindow::NET_getBindSocket(ushort id)
 
 
 
+/***********************cool end****************/
 
 
-/*******************network end******************/
+
 
 
 void MainWindow::on_bt_clear_clicked()
@@ -1973,15 +2870,33 @@ void MainWindow::on_bt_clear_clicked()
     infDisplay->clear();
     infEdit->clear();
     infReceive->clear();
+    location_display->clear();
+    cool_display->clear();
 }
 
 void MainWindow::on_comunication_protocal_currentTextChanged(const QString &arg1)
 {
-    if(arg1=="Network" || arg1=="Uart")
+    transport.r_count = 0;
+    transport.s_count = 0;
+    if(arg1=="Server")
     {
-        transport.r_count = 0;
-        transport.s_count = 0;
+        bt_listen->setText("监听");
+        bt_stopListen->setText("停止监听");
     }
+    else if(arg1=="Client")
+    {
+        bt_listen->setText("连接");
+        bt_stopListen->setText("断开连接");
+    }
+    else if(arg1=="Uart")
+    {
+
+    }
+    else
+    {
+
+    }
+
 }
 
 void MainWindow::on_bt_search_net_clicked()
@@ -2003,6 +2918,11 @@ void MainWindow::on_bt_search_net_clicked()
     }
     NET_DisplayWithTime(str);
 }
+
+
+
+
+
 
 
 

@@ -62,7 +62,7 @@ enum
     dev_tempreture,         //温度传感器
     dev_humidity,           //湿度传感器
     dev_multileSensor,       //多功能传感器
-    dev_tag
+    dev_tag                 //资产标签
 };
 
 
@@ -84,7 +84,7 @@ struct UR_PAR
     ushort len;
     ushort dstAddr;
     ushort srcAddr;
-    signed char rssi;
+    char rssi;
     RF_PAR rf;
     ushort crc;
 };
@@ -95,12 +95,12 @@ struct UR_PAR
 //device type
 enum
 {
-    cmd_heartBeat = 0x10,      //网关
-    cmd_config = 0x20,  //成人腕带
-    cmd_control = 0x30,//精神病腕带
-    cmd_app = 0x40,  //婴儿腕带
-    cmd_idRequest = 0x50,           //SOS按键（胸牌）
-    cmd_network = 0x60               //插座
+    cmd_heartBeat = 0x10,      //
+    cmd_config = 0x20,  //
+    cmd_control = 0x30,//
+    cmd_app = 0x40,  //
+    cmd_idRequest = 0x50,           //
+    cmd_network = 0x60               //
 };
 
 
@@ -115,10 +115,80 @@ struct RF_FRAME
 struct APP_FRAME
 {
     RF_FRAME rf;
-    char rssi;
 };
 
 
+/******location*****/
+
+#define BV(n)   (0x01<<n)
+
+#define checkTamper(n)  (BV(3)&n)
+#define checkLocation(n)  (BV(2)&n)
+#define checkAlarm(n)  (BV(1)&n)
+#define checkLowBattery(n)  (BV(0)&n)
+
+struct LOCATION_FRAME
+{
+    uchar head[2];
+    ushort devie_id;
+    ushort ant_id;
+    char rssi;
+    uchar alarm;
+    uchar checksum;
+};
+
+struct LOC_PAR
+{
+    QByteArray filtStr;
+    ushort filtId;
+};
+/**************************/
+
+
+/************cool*************/
+enum
+{
+    coolCmdUnkown = 0x00,//ERROR
+    coolCmdGetDisNum = 0x01,//
+    coolCmdSetDisNum = 0x02,//
+    coolCmdAlarm = 0x03,//
+    coolCmdDisarm = 0x04,//
+    coolCmdSetRepTime = 0x05,//
+    coolCmdTemVer = 0x06,//
+    coolCmdHumVer = 0x07,//
+    coolCmdGetSenVal = 0x08,//
+    coolCmdSetAlaVal = 0x09,//
+    coolCmdSenError = 0x0A,//
+    coolCmdStatus = 0xFE//
+};
+
+enum
+{
+    coolDevUnkown = 0x00,//ERROR
+    coolDevTempreture = 0x01,//
+    coolDevSiren = 0x02,//
+    coolDevSosPanic = 0x03//
+};
+
+
+
+struct COOL_FRAME
+{
+    uchar head[2];
+    ushort sensorId;
+    uchar deviceType;
+    char len;
+    uchar cmd;
+    uchar *data;
+    uchar checksum;
+};
+
+struct COO_PAR
+{
+    QByteArray filtStr;
+    ushort filtId;
+};
+/*************************/
 
 struct IOT_FRAME
 {
@@ -128,6 +198,7 @@ struct IOT_FRAME
     uchar cmd;
     uchar length;
     uchar *data;
+    char rssi;
     uchar checkSum;
 };
 /*********************/
@@ -136,7 +207,7 @@ struct IOT_FRAME
 struct RF_SEND
 {
     ushort device_id;
-    uchar rssi;
+    char rssi;
     uchar sequence;
     uchar device;
 };
@@ -185,7 +256,15 @@ struct NET_PAR
     QTcpSocket *currentSocket;
     QTcpServer *Server;
     QTcpSocket *bind_socket[65536];
+    QTcpSocket *clientSocket;
 };
+
+
+
+
+
+
+
 
 
 
@@ -219,8 +298,6 @@ private:
     RF_SEND rf_send;
 
 
-
-
 	bool bRTS;
 	bool bDTR;
 	void createMainMenu();
@@ -249,13 +326,11 @@ private:
     void IOT_cmdNetwork(ushort gateway_id,ushort device_id,QByteArray data);
     void IOT_cmdAsscessId(ushort gateway_id,ushort device_id,ID_SEND *id);
     void IOT_cmdHeartBeat(ushort gateway_id,ushort device_id,ushort time);
+    void IOT_cmdApp(ushort gateway_id,ushort device_id,QByteArray data);
 
-
-//    QTcpSocket *tcpSocket;
-//    QTcpServer *tcpServer;
     NET_PAR net_par;
     MangeId id_access;
-    QString get_localmachine_ip();
+    QString NET_get_localmachine_ip();
     void NET_DisplayWithTime(const QString &text);
     void NET_DisplayWithNoTime(const QString &text);
     void NET_Init();
@@ -263,7 +338,30 @@ private:
     void NET_sendById(QByteArray src);
     void NET_getBindSocket(ushort id);
     void NET_setBindSocket(ushort id);
+    void NET_clientToServer();
+
+
+    LOC_PAR loc_par;
+    void LOC_DisplayWithTime(const QString &text);
+    void LOC_DisplayWithNoTime(const QString &text);
+    void LOC_init();
 	
+
+    COO_PAR coo_par;
+    void COO_init();
+    void COO_DisplayWithTime(const QString &text);
+    void COO_DisplayWithNoTime(const QString &text);
+    void COO_getSnNumber(ushort gateway_id,ushort device_id);
+    void COO_ackSuccess(ushort gateway_id,ushort device_id,uchar ack_cmd);
+    void COO_ackError(ushort gateway_id,ushort device_id,uchar ack_cmd);
+    void COO_setSnNumber(ushort gateway_id,ushort device_id);
+    void COO_setReportTime(ushort gateway_id,ushort device_id);
+    void COO_clearTemAlarm(ushort gateway_id,ushort device_id);
+    void COO_tempretureVerfication(ushort gateway_id,ushort device_id);
+    void COO_HumVerfication(ushort gateway_id,ushort device_id);
+    void COO_tempretureAlarmHL(ushort gateway_id,ushort device_id);
+    void COO_getSensorValue(ushort gateway_id,ushort device_id);
+
 private slots:
 	void about();
 	void applyPortOptions();
@@ -305,10 +403,10 @@ private slots:
 
     void pressUartData();
 
-    void newListen(); //建立TCP监听事件
-    void acceptConnection(); //接受客户端连接
-    void displayError(QAbstractSocket::SocketError); //显示错误信息
-    void revData();
+    void NET_newListen(); //建立TCP监听事件
+    void NET_acceptConnection(); //接受客户端连接
+    void NET_displayError(QAbstractSocket::SocketError); //显示错误信息
+    void NET_revData();
     void on_bt_netSend_clicked();
     void on_bt_listen_clicked();
     void on_bt_stopListen_clicked();
@@ -317,6 +415,23 @@ private slots:
     void on_bt_clear_clicked();
     void on_comunication_protocal_currentTextChanged(const QString &arg1);
     void on_bt_search_net_clicked();
+    void on_localtionIdSelection_windowIconTextChanged(const QString &iconText);
+    void on_localtionIdSelection_4_windowIconTextChanged(const QString &iconText);
+    void on_localtionFiltId_windowIconTextChanged(const QString &iconText);
+    void on_localtionFiltStr_windowIconTextChanged(const QString &iconText);
+    void on_localtionFiltId_textChanged();
+    void on_localtionFiltStr_textChanged();
+    void on_locationStopDisplay_clicked(bool checked);
+    void on_coolFiltId_textChanged();
+    void on_coolFiltStr_textChanged();
+    void on_coolGetSn_clicked();
+    void on_coolSetRepTime_Bt_clicked();
+    void on_coolTemVerification_Bt_clicked();
+    void on_coolHumVerification_Bt_clicked();
+    void on_coolDisarm_clicked();
+    void on_coolGetTempreture_clicked();
+    void on_coolTemAlarm_Bt_clicked();
+    void on_coolSetSn_Bt_clicked();
 };
 
  #endif

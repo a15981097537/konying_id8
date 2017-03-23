@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1054</width>
-    <height>593</height>
+    <width>1112</width>
+    <height>689</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -70,12 +70,12 @@
            </property>
            <item>
             <property name="text">
-             <string>Network</string>
+             <string>Server</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Server</string>
+             <string>Client</string>
             </property>
            </item>
            <item>
@@ -134,11 +134,11 @@
     <item>
      <widget class="QTabWidget" name="function">
       <property name="currentIndex">
-       <number>3</number>
+       <number>4</number>
       </property>
-      <widget class="QWidget" name="Server">
+      <widget class="QWidget" name="Network">
        <attribute name="title">
-        <string>Server</string>
+        <string>Network</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_25">
         <item>
@@ -343,8 +343,8 @@
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>40</width>
-               <height>20</height>
+               <width>49</width>
+               <height>17</height>
               </size>
              </property>
             </spacer>
@@ -356,8 +356,8 @@
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>40</width>
-               <height>20</height>
+               <width>49</width>
+               <height>17</height>
               </size>
              </property>
             </spacer>
@@ -369,8 +369,8 @@
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>40</width>
-               <height>20</height>
+               <width>49</width>
+               <height>17</height>
               </size>
              </property>
             </spacer>
@@ -382,8 +382,8 @@
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>40</width>
-               <height>20</height>
+               <width>49</width>
+               <height>17</height>
               </size>
              </property>
             </spacer>
@@ -395,8 +395,8 @@
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>139</width>
-               <height>20</height>
+               <width>136</width>
+               <height>17</height>
               </size>
              </property>
             </spacer>
@@ -498,280 +498,6 @@
          </widget>
         </item>
        </layout>
-      </widget>
-      <widget class="QWidget" name="Client">
-       <attribute name="title">
-        <string>Client</string>
-       </attribute>
-       <widget class="QGroupBox" name="groupBox_7">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>856</width>
-          <height>120</height>
-         </rect>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>120</height>
-         </size>
-        </property>
-        <property name="title">
-         <string/>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_10">
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_26">
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_18">
-             <item>
-              <widget class="QLabel" name="label_23">
-               <property name="maximumSize">
-                <size>
-                 <width>30</width>
-                 <height>25</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>IP</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QTextEdit" name="textEdit_IP_2">
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>25</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="bt_listen_2">
-               <property name="text">
-                <string> 监听</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_21">
-             <item>
-              <widget class="QLabel" name="label_24">
-               <property name="maximumSize">
-                <size>
-                 <width>30</width>
-                 <height>25</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>PORT</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QTextEdit" name="textEdit_Port_2">
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>25</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="bt_stopListen_2">
-               <property name="text">
-                <string> 停止监听</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_15">
-             <item>
-              <widget class="QLabel" name="label_25">
-               <property name="maximumSize">
-                <size>
-                 <width>30</width>
-                 <height>25</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>ID</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QTextEdit" name="textEdit_ID2_2">
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>25</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="bt_search_net_2">
-               <property name="text">
-                <string>Search NET</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_12">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>49</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_27">
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_25">
-             <item>
-              <widget class="QLabel" name="label_26">
-               <property name="maximumSize">
-                <size>
-                 <width>30</width>
-                 <height>25</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>ID</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QTextEdit" name="textEdit_ID_2">
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>25</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="QPushButton" name="bt_searchId_2">
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>25</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>搜索ID信息</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="export_idList_2">
-             <property name="text">
-              <string>  导出ID表</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_13">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>49</width>
-             <height>17</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_14">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_15">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_16">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_17">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_18">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>139</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </widget>
       </widget>
       <widget class="QWidget" name="Uart">
        <attribute name="title">
@@ -1703,6 +1429,549 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="location">
+       <attribute name="title">
+        <string>location</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_28">
+        <item>
+         <widget class="QGroupBox" name="groupBox_7">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>120</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>120</height>
+           </size>
+          </property>
+          <property name="title">
+           <string/>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_18">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_26">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_15">
+               <item>
+                <widget class="QLabel" name="label_9">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>ID    筛选</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QTextEdit" name="localtionFiltId">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>150</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_10">
+               <item>
+                <widget class="QLabel" name="label_16">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>字符串筛选</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QTextEdit" name="localtionFiltStr">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>150</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="locationStopDisplay">
+               <property name="text">
+                <string>  暂停显示</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_14">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_15">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_13">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_12">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextBrowser" name="location_display"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="cool">
+       <attribute name="title">
+        <string>cool</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_29">
+        <item>
+         <widget class="QGroupBox" name="groupBox_8">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>120</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>120</height>
+           </size>
+          </property>
+          <property name="title">
+           <string/>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_21">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_27">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_25">
+               <item>
+                <widget class="QLabel" name="label_14">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>ID    筛选</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QTextEdit" name="coolFiltId">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_26">
+               <item>
+                <widget class="QLabel" name="label_23">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>字符串筛选</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QTextEdit" name="coolFiltStr">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>100</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="coolStopDisplay">
+               <property name="text">
+                <string>  暂停显示</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_32">
+             <item>
+              <widget class="QPushButton" name="coolGetSn">
+               <property name="text">
+                <string>查询编号</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="coolGetTempreture">
+               <property name="text">
+                <string>查询温湿度</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="coolDisarm">
+               <property name="text">
+                <string>解除报警</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_31">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_27">
+               <item>
+                <widget class="QTextEdit" name="coolSetSn_Edit">
+                 <property name="minimumSize">
+                  <size>
+                   <width>60</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>60</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="coolSetSn_Bt">
+                 <property name="text">
+                  <string>修改编号</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_30">
+               <item>
+                <widget class="QTextEdit" name="coolTemVerification_Edit">
+                 <property name="minimumSize">
+                  <size>
+                   <width>60</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>60</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="coolTemVerification_Bt">
+                 <property name="text">
+                  <string>温度校正</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_29">
+               <item>
+                <widget class="QTextEdit" name="coolHumVerification_Edit">
+                 <property name="minimumSize">
+                  <size>
+                   <width>60</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>60</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="coolHumVerification_Bt">
+                 <property name="text">
+                  <string> 湿度校正</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_30">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_31">
+               <item>
+                <widget class="QTextEdit" name="coolTemAlarmH_Edit">
+                 <property name="minimumSize">
+                  <size>
+                   <width>60</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>60</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QTextEdit" name="coolTemAlarmL_Edit">
+                 <property name="minimumSize">
+                  <size>
+                   <width>60</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>60</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QPushButton" name="coolTemAlarm_Bt">
+               <property name="text">
+                <string>设置上下限温度</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_28">
+               <item>
+                <widget class="QTextEdit" name="coolSetRepTime_Edit">
+                 <property name="minimumSize">
+                  <size>
+                   <width>60</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>60</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="coolSetRepTime_Bt">
+                 <property name="text">
+                  <string>修改上报时间</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_17">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_18">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_19">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_16">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextBrowser" name="cool_display"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="energy">
+       <attribute name="title">
+        <string>energy</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="injection">
+       <attribute name="title">
+        <string>injection</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="custom">
+       <attribute name="title">
+        <string> custom</string>
+       </attribute>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -1717,7 +1986,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1054</width>
+     <width>1112</width>
      <height>23</height>
     </rect>
    </property>
