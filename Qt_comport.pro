@@ -10,7 +10,8 @@ HEADERS += 	mainwindow.h \
 		qextserialport/qextserialbase.h \
 		qextserialport/qextserialport.h \
     user_md5.h \
-    mangeid.h
+    mangeid.h \
+    mygraphicsitem.h
 
 
 SOURCES += 	main.cpp \
@@ -19,7 +20,8 @@ SOURCES += 	main.cpp \
 		qextserialport/qextserialbase.cpp \
 		qextserialport/qextserialport.cpp \
     user_md5.cpp \
-    mangeid.cpp
+    mangeid.cpp \
+    mygraphicsitem.cpp
 
 
 RESOURCES     = resources.grc

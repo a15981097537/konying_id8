@@ -1,0 +1,47 @@
+2017/04/27 16:00:34/ new client connection / peerName: / peerAddress:172.16.1.105 / peerPort:19999
+2017/04/27 16:00:38/ send message to IP:172.16.1.105
+2017/04/27 16:00:39/ 存储固定ID
+2017/04/27 16:00:39/ device_id>0xFF00,不进行处理
+2017/04/27 16:03:46/ send message to IP:172.16.1.105
+2017/04/27 16:03:46/ 存储固定ID
+2017/04/27 16:03:46/ device_id>0xFF00,不进行处理
+2017/04/27 16:03:46/ send message to IP:172.16.1.105
+2017/04/27 16:03:46/ send message to IP:172.16.1.105
+2017/04/27 16:06:38/ new client connection / peerName: / peerAddress:172.16.1.105 / peerPort:19999
+2017/04/27 16:06:58/ send message to IP:
+2017/04/27 16:06:58/ send message to IP:172.16.1.105
+2017/04/27 16:07:12/ send message to IP:
+2017/04/27 16:07:12/ send message to IP:
+2017/04/27 16:08:20/ new client connection / peerName: / peerAddress:172.16.1.105 / peerPort:19999
+2017/04/27 16:08:26/ send message to IP:
+2017/04/27 16:08:26/ send message to IP:
+2017/04/27 16:08:26/ send message to IP:172.16.1.105
+2017/04/27 16:08:32/ send message to IP:
+2017/04/27 16:08:32/ send message to IP:
+2017/04/27 16:08:32/ send message to IP:172.16.1.105
+2017/04/27 16:08:32/ 存储固定ID
+2017/04/27 16:08:32/ device_id>0xFF00,不进行处理
+2017/04/27 16:08:32/ send message to IP:
+2017/04/27 16:08:32/ send message to IP:
+2017/04/27 16:08:32/ send message to IP:172.16.1.105
+2017/04/27 16:08:32/ send message to IP:
+2017/04/27 16:08:32/ send message to IP:
+2017/04/27 16:08:32/ send message to IP:172.16.1.105
+2017/04/27 16:08:36/ send message to IP:
+2017/04/27 16:08:36/ send message to IP:
+2017/04/27 16:08:36/ send message to IP:172.16.1.105
+2017/04/27 16:08:36/ 存储固定ID
+2017/04/27 16:08:36/ device_id>0xFF00,不进行处理
+2017/04/27 16:08:36/ send message to IP:
+2017/04/27 16:08:36/ send message to IP:
+2017/04/27 16:08:36/ send message to IP:172.16.1.105
+2017/04/27 16:08:36/ send message to IP:
+2017/04/27 16:08:36/ send message to IP:
+2017/04/27 16:08:36/ send message to IP:172.16.1.105
+2017/04/27 16:09:31/ new client connection / peerName: / peerAddress:172.16.1.105 / peerPort:19999
+2017/04/27 16:10:14/ new client connection / peerName: / peerAddress:172.16.1.105 / peerPort:19999
+2017/04/27 16:10:20/ send message to IP:
+2017/04/27 16:10:20/ send message to IP:
+2017/04/27 16:10:20/ send message to IP:
+2017/04/27 16:10:20/ send message to IP:
+2017/04/27 16:10:20/ send message to IP:172.16.1.105

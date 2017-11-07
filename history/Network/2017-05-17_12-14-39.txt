@@ -1,0 +1,401 @@
+2017/05/17 11:39:35/ send message to IP:172.16.5.44
+2017/05/17 11:39:35/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:25
+2017/05/17 11:39:45/ send message to IP:172.16.5.44
+2017/05/17 11:39:45/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:24
+2017/05/17 11:39:55/ send message to IP:172.16.5.44
+2017/05/17 11:39:55/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:24
+2017/05/17 11:40:05/ send message to IP:172.16.5.44
+2017/05/17 11:40:05/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:29
+2017/05/17 11:40:15/ send message to IP:172.16.5.44
+2017/05/17 11:40:15/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:24
+2017/05/17 11:40:25/ send message to IP:172.16.5.44
+2017/05/17 11:40:25/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:22
+2017/05/17 11:40:35/ send message to IP:172.16.5.44
+2017/05/17 11:40:35/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:30
+2017/05/17 11:40:45/ send message to IP:172.16.5.44
+2017/05/17 11:40:45/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:22
+2017/05/17 11:40:55/ send message to IP:172.16.5.44
+2017/05/17 11:40:55/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:24
+2017/05/17 11:41:05/ send message to IP:172.16.5.44
+2017/05/17 11:41:05/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:26
+2017/05/17 11:41:15/ send message to IP:172.16.5.44
+2017/05/17 11:41:15/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:26
+2017/05/17 11:41:25/ send message to IP:172.16.5.44
+2017/05/17 11:41:25/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:23
+2017/05/17 11:41:35/ send message to IP:172.16.5.44
+2017/05/17 11:41:35/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:24
+2017/05/17 11:41:45/ send message to IP:172.16.5.44
+2017/05/17 11:41:45/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:27
+2017/05/17 11:41:55/ send message to IP:172.16.5.44
+2017/05/17 11:41:55/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:25
+2017/05/17 11:42:05/ send message to IP:172.16.5.44
+2017/05/17 11:42:05/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:21
+2017/05/17 11:42:15/ send message to IP:172.16.5.44
+2017/05/17 11:42:15/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:24
+2017/05/17 11:42:25/ send message to IP:172.16.5.44
+2017/05/17 11:42:25/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:28
+2017/05/17 11:42:35/ send message to IP:172.16.5.44
+2017/05/17 11:42:35/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:24
+2017/05/17 11:42:45/ send message to IP:172.16.5.44
+2017/05/17 11:42:45/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:27
+2017/05/17 11:42:55/ send message to IP:172.16.5.44
+2017/05/17 11:42:55/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:25
+2017/05/17 11:43:05/ send message to IP:172.16.5.44
+2017/05/17 11:43:05/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:26
+2017/05/17 11:43:15/ send message to IP:172.16.5.44
+2017/05/17 11:43:15/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:24
+2017/05/17 11:43:25/ send message to IP:172.16.5.44
+2017/05/17 11:43:25/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:25
+2017/05/17 11:43:34/ send message to IP:172.16.5.44
+2017/05/17 11:43:34/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:27
+2017/05/17 11:43:44/ send message to IP:172.16.5.44
+2017/05/17 11:43:44/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:24
+2017/05/17 11:43:54/ send message to IP:172.16.5.44
+2017/05/17 11:43:54/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:25
+2017/05/17 11:44:04/ send message to IP:172.16.5.44
+2017/05/17 11:44:04/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:23
+2017/05/17 11:44:14/ send message to IP:172.16.5.44
+2017/05/17 11:44:14/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:26
+2017/05/17 11:44:24/ send message to IP:172.16.5.44
+2017/05/17 11:44:24/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:22
+2017/05/17 11:44:34/ send message to IP:172.16.5.44
+2017/05/17 11:44:34/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:25
+2017/05/17 11:44:44/ send message to IP:172.16.5.44
+2017/05/17 11:44:44/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:22
+2017/05/17 11:44:54/ send message to IP:172.16.5.44
+2017/05/17 11:44:54/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:26
+2017/05/17 11:45:04/ send message to IP:172.16.5.44
+2017/05/17 11:45:04/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:24
+2017/05/17 11:45:14/ send message to IP:172.16.5.44
+2017/05/17 11:45:14/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:26
+2017/05/17 11:45:24/ send message to IP:172.16.5.44
+2017/05/17 11:45:24/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:25
+2017/05/17 11:45:34/ send message to IP:172.16.5.44
+2017/05/17 11:45:34/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:26
+2017/05/17 11:45:44/ send message to IP:172.16.5.44
+2017/05/17 11:45:44/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:26
+2017/05/17 11:45:54/ send message to IP:172.16.5.44
+2017/05/17 11:45:54/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:24
+2017/05/17 11:46:04/ send message to IP:172.16.5.44
+2017/05/17 11:46:04/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:27
+2017/05/17 11:46:14/ send message to IP:172.16.5.44
+2017/05/17 11:46:14/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:23
+2017/05/17 11:46:24/ send message to IP:172.16.5.44
+2017/05/17 11:46:24/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:27
+2017/05/17 11:46:34/ send message to IP:172.16.5.44
+2017/05/17 11:46:34/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:24
+2017/05/17 11:46:44/ send message to IP:172.16.5.44
+2017/05/17 11:46:44/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:28
+2017/05/17 11:46:54/ send message to IP:172.16.5.44
+2017/05/17 11:46:54/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:25
+2017/05/17 11:47:04/ send message to IP:172.16.5.44
+2017/05/17 11:47:04/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:29
+2017/05/17 11:47:14/ send message to IP:172.16.5.44
+2017/05/17 11:47:14/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:22
+2017/05/17 11:47:24/ send message to IP:172.16.5.44
+2017/05/17 11:47:24/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:25
+2017/05/17 11:47:34/ send message to IP:172.16.5.44
+2017/05/17 11:47:34/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:25
+2017/05/17 11:47:44/ send message to IP:172.16.5.44
+2017/05/17 11:47:44/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:23
+2017/05/17 11:47:54/ send message to IP:172.16.5.44
+2017/05/17 11:47:54/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:27
+2017/05/17 11:48:04/ send message to IP:172.16.5.44
+2017/05/17 11:48:04/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:24
+2017/05/17 11:48:14/ send message to IP:172.16.5.44
+2017/05/17 11:48:14/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:27
+2017/05/17 11:48:24/ send message to IP:172.16.5.44
+2017/05/17 11:48:24/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:23
+2017/05/17 11:48:34/ send message to IP:172.16.5.44
+2017/05/17 11:48:34/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:25
+2017/05/17 11:48:44/ send message to IP:172.16.5.44
+2017/05/17 11:48:44/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:22
+2017/05/17 11:48:54/ send message to IP:172.16.5.44
+2017/05/17 11:48:54/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:25
+2017/05/17 11:49:04/ send message to IP:172.16.5.44
+2017/05/17 11:49:04/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:22
+2017/05/17 11:49:14/ send message to IP:172.16.5.44
+2017/05/17 11:49:14/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:26
+2017/05/17 11:49:24/ send message to IP:172.16.5.44
+2017/05/17 11:49:24/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:22
+2017/05/17 12:13:59/ new client connection / peerName: / peerAddress:172.16.5.44 / peerPort:3342
+2017/05/17 12:14:07/ send message to IP:
+2017/05/17 12:14:08/ send message to IP:172.16.5.44
+2017/05/17 12:14:08/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:26
+2017/05/17 12:14:08/ send message to IP:
+2017/05/17 12:14:08/ send message to IP:172.16.5.44
+2017/05/17 12:14:08/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:25
+2017/05/17 12:14:08/ send message to IP:
+2017/05/17 12:14:08/ send message to IP:172.16.5.44
+2017/05/17 12:14:08/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:25
+2017/05/17 12:14:08/ send message to IP:
+2017/05/17 12:14:08/ send message to IP:172.16.5.44
+2017/05/17 12:14:08/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:26
+2017/05/17 12:14:08/ send message to IP:
+2017/05/17 12:14:08/ send message to IP:172.16.5.44
+2017/05/17 12:14:08/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:25
+2017/05/17 12:14:08/ send message to IP:
+2017/05/17 12:14:08/ send message to IP:172.16.5.44
+2017/05/17 12:14:08/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:27
+2017/05/17 12:14:08/ send message to IP:
+2017/05/17 12:14:08/ send message to IP:172.16.5.44
+2017/05/17 12:14:08/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:21
+2017/05/17 12:14:08/ 自动分配
+2017/05/17 12:14:09/ send message to IP:
+2017/05/17 12:14:09/ send message to IP:172.16.5.44
+2017/05/17 12:14:09/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:09/ 自动分配
+2017/05/17 12:14:09/ send message to IP:
+2017/05/17 12:14:09/ send message to IP:172.16.5.44
+2017/05/17 12:14:09/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:09/ 自动分配
+2017/05/17 12:14:09/ send message to IP:
+2017/05/17 12:14:09/ send message to IP:172.16.5.44
+2017/05/17 12:14:09/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:09/ 自动分配
+2017/05/17 12:14:09/ send message to IP:
+2017/05/17 12:14:09/ send message to IP:172.16.5.44
+2017/05/17 12:14:09/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:09/ 自动分配
+2017/05/17 12:14:09/ send message to IP:
+2017/05/17 12:14:09/ send message to IP:172.16.5.44
+2017/05/17 12:14:09/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:09/ 自动分配
+2017/05/17 12:14:09/ send message to IP:
+2017/05/17 12:14:09/ send message to IP:172.16.5.44
+2017/05/17 12:14:09/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:10/ 自动分配
+2017/05/17 12:14:10/ send message to IP:
+2017/05/17 12:14:10/ send message to IP:172.16.5.44
+2017/05/17 12:14:10/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:10/ 自动分配
+2017/05/17 12:14:10/ send message to IP:
+2017/05/17 12:14:10/ send message to IP:172.16.5.44
+2017/05/17 12:14:10/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:10/ 自动分配
+2017/05/17 12:14:10/ send message to IP:
+2017/05/17 12:14:10/ send message to IP:172.16.5.44
+2017/05/17 12:14:10/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:10/ 自动分配
+2017/05/17 12:14:10/ send message to IP:
+2017/05/17 12:14:10/ send message to IP:172.16.5.44
+2017/05/17 12:14:10/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:10/ 自动分配
+2017/05/17 12:14:10/ send message to IP:
+2017/05/17 12:14:10/ send message to IP:172.16.5.44
+2017/05/17 12:14:10/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:10/ 自动分配
+2017/05/17 12:14:10/ send message to IP:
+2017/05/17 12:14:10/ send message to IP:172.16.5.44
+2017/05/17 12:14:10/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:10/ 自动分配
+2017/05/17 12:14:10/ send message to IP:
+2017/05/17 12:14:10/ send message to IP:172.16.5.44
+2017/05/17 12:14:10/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:10/ 自动分配
+2017/05/17 12:14:10/ send message to IP:
+2017/05/17 12:14:10/ send message to IP:172.16.5.44
+2017/05/17 12:14:10/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:10/ 自动分配
+2017/05/17 12:14:10/ send message to IP:
+2017/05/17 12:14:10/ send message to IP:172.16.5.44
+2017/05/17 12:14:10/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:10/ 自动分配
+2017/05/17 12:14:10/ send message to IP:
+2017/05/17 12:14:10/ send message to IP:172.16.5.44
+2017/05/17 12:14:10/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:10/ 自动分配
+2017/05/17 12:14:10/ send message to IP:
+2017/05/17 12:14:10/ send message to IP:172.16.5.44
+2017/05/17 12:14:10/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:10/ 自动分配
+2017/05/17 12:14:10/ send message to IP:
+2017/05/17 12:14:10/ send message to IP:172.16.5.44
+2017/05/17 12:14:10/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:10/ 自动分配
+2017/05/17 12:14:10/ send message to IP:
+2017/05/17 12:14:10/ send message to IP:172.16.5.44
+2017/05/17 12:14:10/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:10/ 自动分配
+2017/05/17 12:14:10/ send message to IP:
+2017/05/17 12:14:10/ send message to IP:172.16.5.44
+2017/05/17 12:14:10/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:10/ 自动分配
+2017/05/17 12:14:10/ send message to IP:
+2017/05/17 12:14:10/ send message to IP:172.16.5.44
+2017/05/17 12:14:10/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:10/ 自动分配
+2017/05/17 12:14:10/ send message to IP:
+2017/05/17 12:14:10/ send message to IP:172.16.5.44
+2017/05/17 12:14:10/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:10/ 自动分配
+2017/05/17 12:14:10/ send message to IP:
+2017/05/17 12:14:10/ send message to IP:172.16.5.44
+2017/05/17 12:14:10/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:11/ 自动分配
+2017/05/17 12:14:11/ send message to IP:
+2017/05/17 12:14:11/ send message to IP:172.16.5.44
+2017/05/17 12:14:11/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:11/ 自动分配
+2017/05/17 12:14:11/ send message to IP:
+2017/05/17 12:14:11/ send message to IP:172.16.5.44
+2017/05/17 12:14:11/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:11/ 自动分配
+2017/05/17 12:14:11/ send message to IP:
+2017/05/17 12:14:11/ send message to IP:172.16.5.44
+2017/05/17 12:14:11/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:11/ 自动分配
+2017/05/17 12:14:11/ send message to IP:
+2017/05/17 12:14:11/ send message to IP:172.16.5.44
+2017/05/17 12:14:11/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:11/ 自动分配
+2017/05/17 12:14:11/ send message to IP:
+2017/05/17 12:14:11/ send message to IP:172.16.5.44
+2017/05/17 12:14:11/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:11/ 自动分配
+2017/05/17 12:14:11/ send message to IP:
+2017/05/17 12:14:11/ send message to IP:172.16.5.44
+2017/05/17 12:14:11/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:11/ 自动分配
+2017/05/17 12:14:11/ send message to IP:
+2017/05/17 12:14:11/ send message to IP:172.16.5.44
+2017/05/17 12:14:11/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:11/ 自动分配
+2017/05/17 12:14:11/ send message to IP:
+2017/05/17 12:14:11/ send message to IP:172.16.5.44
+2017/05/17 12:14:11/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:11/ 自动分配
+2017/05/17 12:14:11/ send message to IP:
+2017/05/17 12:14:11/ send message to IP:172.16.5.44
+2017/05/17 12:14:11/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:11/ 自动分配
+2017/05/17 12:14:11/ send message to IP:
+2017/05/17 12:14:11/ send message to IP:172.16.5.44
+2017/05/17 12:14:11/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:11/ 自动分配
+2017/05/17 12:14:11/ send message to IP:
+2017/05/17 12:14:11/ send message to IP:172.16.5.44
+2017/05/17 12:14:11/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:11/ 自动分配
+2017/05/17 12:14:11/ send message to IP:
+2017/05/17 12:14:11/ send message to IP:172.16.5.44
+2017/05/17 12:14:11/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:11/ 自动分配
+2017/05/17 12:14:11/ send message to IP:
+2017/05/17 12:14:11/ send message to IP:172.16.5.44
+2017/05/17 12:14:11/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:11/ 自动分配
+2017/05/17 12:14:11/ send message to IP:
+2017/05/17 12:14:11/ send message to IP:172.16.5.44
+2017/05/17 12:14:11/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:11/ 自动分配
+2017/05/17 12:14:11/ send message to IP:
+2017/05/17 12:14:11/ send message to IP:172.16.5.44
+2017/05/17 12:14:11/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:11/ 自动分配
+2017/05/17 12:14:11/ send message to IP:
+2017/05/17 12:14:11/ send message to IP:172.16.5.44
+2017/05/17 12:14:11/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:12/ 自动分配
+2017/05/17 12:14:12/ send message to IP:
+2017/05/17 12:14:12/ send message to IP:172.16.5.44
+2017/05/17 12:14:12/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:12/ 自动分配
+2017/05/17 12:14:12/ send message to IP:
+2017/05/17 12:14:12/ send message to IP:172.16.5.44
+2017/05/17 12:14:12/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:12/ 自动分配
+2017/05/17 12:14:12/ send message to IP:
+2017/05/17 12:14:12/ send message to IP:172.16.5.44
+2017/05/17 12:14:12/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:12/ 自动分配
+2017/05/17 12:14:12/ send message to IP:
+2017/05/17 12:14:12/ send message to IP:172.16.5.44
+2017/05/17 12:14:12/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:12/ 自动分配
+2017/05/17 12:14:12/ send message to IP:
+2017/05/17 12:14:12/ send message to IP:172.16.5.44
+2017/05/17 12:14:12/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:12/ 自动分配
+2017/05/17 12:14:12/ send message to IP:
+2017/05/17 12:14:12/ send message to IP:172.16.5.44
+2017/05/17 12:14:12/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:12/ 自动分配
+2017/05/17 12:14:12/ send message to IP:
+2017/05/17 12:14:12/ send message to IP:172.16.5.44
+2017/05/17 12:14:12/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:12/ 自动分配
+2017/05/17 12:14:12/ send message to IP:
+2017/05/17 12:14:12/ send message to IP:172.16.5.44
+2017/05/17 12:14:12/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:12/ 自动分配
+2017/05/17 12:14:12/ send message to IP:
+2017/05/17 12:14:12/ send message to IP:172.16.5.44
+2017/05/17 12:14:12/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:12/ 自动分配
+2017/05/17 12:14:12/ send message to IP:
+2017/05/17 12:14:12/ send message to IP:172.16.5.44
+2017/05/17 12:14:12/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:12/ 自动分配
+2017/05/17 12:14:12/ send message to IP:
+2017/05/17 12:14:12/ send message to IP:172.16.5.44
+2017/05/17 12:14:12/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:12/ 自动分配
+2017/05/17 12:14:12/ send message to IP:
+2017/05/17 12:14:12/ send message to IP:172.16.5.44
+2017/05/17 12:14:12/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:12/ 自动分配
+2017/05/17 12:14:12/ send message to IP:
+2017/05/17 12:14:12/ send message to IP:172.16.5.44
+2017/05/17 12:14:12/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:12/ 自动分配
+2017/05/17 12:14:12/ send message to IP:
+2017/05/17 12:14:12/ send message to IP:172.16.5.44
+2017/05/17 12:14:12/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:12/ 自动分配
+2017/05/17 12:14:12/ send message to IP:
+2017/05/17 12:14:12/ send message to IP:172.16.5.44
+2017/05/17 12:14:12/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:12/ 自动分配
+2017/05/17 12:14:12/ send message to IP:
+2017/05/17 12:14:12/ send message to IP:172.16.5.44
+2017/05/17 12:14:12/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:13/ 自动分配
+2017/05/17 12:14:13/ send message to IP:172.16.5.44
+2017/05/17 12:14:13/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:13/ 自动分配
+2017/05/17 12:14:13/ send message to IP:172.16.5.44
+2017/05/17 12:14:13/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:13/ 自动分配
+2017/05/17 12:14:13/ send message to IP:172.16.5.44
+2017/05/17 12:14:13/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:13/ 自动分配
+2017/05/17 12:14:13/ send message to IP:172.16.5.44
+2017/05/17 12:14:13/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:13/ 自动分配
+2017/05/17 12:14:13/ send message to IP:172.16.5.44
+2017/05/17 12:14:13/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:13/ 自动分配
+2017/05/17 12:14:13/ send message to IP:172.16.5.44
+2017/05/17 12:14:13/ ID 0x0024 information: / MAC:937F21FEFF570B00/ Gateway_id:0xFF01/ Panid:0x0025/ Frequence:863MHZ/ Channel:0x0000/ Device_id:0x0024/ Un:00000000
+2017/05/17 12:14:15/ 自动分配
+2017/05/17 12:14:15/ send message to IP:172.16.5.44
+2017/05/17 12:14:15/ ID 0x005f information: / MAC:B87F21FEFF570B00/ Gateway_id:0x0024/ Panid:0x0025/ Frequence:868MHZ/ Channel:0x0000/ Device_id:0x005F/ Un:00000000
+2017/05/17 12:14:15/ send message to IP:
+2017/05/17 12:14:15/ send message to IP:172.16.5.44
+2017/05/17 12:14:15/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:16
+2017/05/17 12:14:17/ 自动分配
+2017/05/17 12:14:17/ send message to IP:172.16.5.44
+2017/05/17 12:14:17/ ID 0x003a information: / MAC:4A9837FEFF570B00/ Gateway_id:0x0024/ Panid:0x0025/ Frequence:868MHZ/ Channel:0x0000/ Device_id:0x003A/ Un:00000000
+2017/05/17 12:14:22/ 自动分配
+2017/05/17 12:14:22/ send message to IP:172.16.5.44
+2017/05/17 12:14:22/ ID 0x0030 information: / MAC:9A7E21FEFF570B00/ Gateway_id:0x0024/ Panid:0x0025/ Frequence:868MHZ/ Channel:0x0000/ Device_id:0x0030/ Un:00000000
+2017/05/17 12:14:25/ send message to IP:
+2017/05/17 12:14:25/ send message to IP:172.16.5.44
+2017/05/17 12:14:25/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:42
+2017/05/17 12:14:35/ send message to IP:
+2017/05/17 12:14:35/ send message to IP:172.16.5.44
+2017/05/17 12:14:35/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:30
+2017/05/17 12:14:38/ 自动分配
+2017/05/17 12:14:38/ send message to IP:172.16.5.44
+2017/05/17 12:14:38/ ID 0x003f information: / MAC:C87B21FEFF570B00/ Gateway_id:0x0024/ Panid:0x0025/ Frequence:868MHZ/ Channel:0x0000/ Device_id:0x003F/ Un:00000000

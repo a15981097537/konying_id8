@@ -1,0 +1,144 @@
+2017/05/19 13:22:17/ send message to IP:172.16.5.44
+2017/05/19 13:22:17/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:11
+2017/05/19 13:22:27/ send message to IP:172.16.5.44
+2017/05/19 13:22:27/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:15
+2017/05/19 13:22:37/ send message to IP:172.16.5.44
+2017/05/19 13:22:37/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:11
+2017/05/19 13:22:46/ send message to IP:172.16.5.44
+2017/05/19 13:22:46/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:13
+2017/05/19 13:22:56/ send message to IP:172.16.5.44
+2017/05/19 13:22:56/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:13
+2017/05/19 13:23:06/ send message to IP:172.16.5.44
+2017/05/19 13:23:06/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:15
+2017/05/19 13:23:16/ send message to IP:172.16.5.44
+2017/05/19 13:23:16/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:14
+2017/05/19 13:23:26/ send message to IP:172.16.5.44
+2017/05/19 13:23:26/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:17
+2017/05/19 13:23:36/ send message to IP:172.16.5.44
+2017/05/19 13:23:36/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:15
+2017/05/19 13:23:46/ send message to IP:172.16.5.44
+2017/05/19 13:23:46/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:7
+2017/05/19 13:23:56/ send message to IP:172.16.5.44
+2017/05/19 13:23:56/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:0
+2017/05/19 13:24:06/ send message to IP:172.16.5.44
+2017/05/19 13:24:06/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:0
+2017/05/19 13:24:16/ send message to IP:172.16.5.44
+2017/05/19 13:24:16/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/19 13:24:19/ 自动分配
+2017/05/19 13:24:19/ send message to IP:172.16.5.44
+2017/05/19 13:24:19/ ID 0x0060 information: / MAC:E97D21FEFF570B00/ Gateway_id:0x001B/ Panid:0x0025/ Frequence:868MHZ/ Channel:0x0000/ Device_id:0x0060/ Un:00000000
+2017/05/19 13:24:26/ send message to IP:172.16.5.44
+2017/05/19 13:24:26/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:9
+2017/05/19 13:24:36/ send message to IP:172.16.5.44
+2017/05/19 13:24:36/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:0
+2017/05/19 13:24:46/ send message to IP:172.16.5.44
+2017/05/19 13:24:46/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:3
+2017/05/19 13:24:56/ send message to IP:172.16.5.44
+2017/05/19 13:24:56/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/19 13:25:06/ send message to IP:172.16.5.44
+2017/05/19 13:25:06/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/19 13:25:16/ send message to IP:172.16.5.44
+2017/05/19 13:25:16/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:2
+2017/05/19 13:25:26/ send message to IP:172.16.5.44
+2017/05/19 13:25:26/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:0
+2017/05/19 13:25:36/ send message to IP:172.16.5.44
+2017/05/19 13:25:36/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:3
+2017/05/19 13:25:46/ send message to IP:172.16.5.44
+2017/05/19 13:25:46/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/19 13:25:56/ send message to IP:172.16.5.44
+2017/05/19 13:25:56/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:3
+2017/05/19 13:26:06/ send message to IP:172.16.5.44
+2017/05/19 13:26:06/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:3
+2017/05/19 13:26:13/ 自动分配
+2017/05/19 13:26:13/ send message to IP:172.16.5.44
+2017/05/19 13:26:13/ ID 0x0060 information: / MAC:E97D21FEFF570B00/ Gateway_id:0x001B/ Panid:0x0025/ Frequence:868MHZ/ Channel:0x0000/ Device_id:0x0060/ Un:00000000
+2017/05/19 13:26:16/ send message to IP:172.16.5.44
+2017/05/19 13:26:16/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:7
+2017/05/19 13:26:26/ send message to IP:172.16.5.44
+2017/05/19 13:26:26/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:12
+2017/05/19 13:26:36/ send message to IP:172.16.5.44
+2017/05/19 13:26:36/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:14
+2017/05/19 13:26:46/ send message to IP:172.16.5.44
+2017/05/19 13:26:46/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:13
+2017/05/19 13:26:56/ send message to IP:172.16.5.44
+2017/05/19 13:26:56/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:13
+2017/05/19 13:27:06/ send message to IP:172.16.5.44
+2017/05/19 13:27:06/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:13
+2017/05/19 13:27:16/ send message to IP:172.16.5.44
+2017/05/19 13:27:16/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:14
+2017/05/19 13:27:26/ send message to IP:172.16.5.44
+2017/05/19 13:27:26/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:3
+2017/05/19 13:27:27/ 自动分配
+2017/05/19 13:27:27/ send message to IP:172.16.5.44
+2017/05/19 13:27:27/ ID 0x0060 information: / MAC:E97D21FEFF570B00/ Gateway_id:0x001B/ Panid:0x0025/ Frequence:868MHZ/ Channel:0x0000/ Device_id:0x0060/ Un:00000000
+2017/05/19 13:27:36/ send message to IP:172.16.5.44
+2017/05/19 13:27:36/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:19
+2017/05/19 13:27:46/ send message to IP:172.16.5.44
+2017/05/19 13:27:46/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:11
+2017/05/19 13:27:56/ send message to IP:172.16.5.44
+2017/05/19 13:27:56/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:13
+2017/05/19 13:28:06/ send message to IP:172.16.5.44
+2017/05/19 13:28:06/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:9
+2017/05/19 13:28:16/ send message to IP:172.16.5.44
+2017/05/19 13:28:16/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:13
+2017/05/19 13:28:26/ send message to IP:172.16.5.44
+2017/05/19 13:28:26/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:7
+2017/05/19 13:28:36/ send message to IP:172.16.5.44
+2017/05/19 13:28:36/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:10
+2017/05/19 13:28:46/ send message to IP:172.16.5.44
+2017/05/19 13:28:46/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:13
+2017/05/19 13:28:56/ send message to IP:172.16.5.44
+2017/05/19 13:28:56/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:12
+2017/05/19 13:29:06/ send message to IP:172.16.5.44
+2017/05/19 13:29:06/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:11
+2017/05/19 13:29:16/ send message to IP:172.16.5.44
+2017/05/19 13:29:16/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:13
+2017/05/19 13:29:26/ send message to IP:172.16.5.44
+2017/05/19 13:29:26/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:13
+2017/05/19 13:29:36/ send message to IP:172.16.5.44
+2017/05/19 13:29:36/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:3
+2017/05/19 13:29:38/ 自动分配
+2017/05/19 13:29:38/ send message to IP:172.16.5.44
+2017/05/19 13:29:38/ ID 0x0060 information: / MAC:E97D21FEFF570B00/ Gateway_id:0x001B/ Panid:0x0025/ Frequence:868MHZ/ Channel:0x0000/ Device_id:0x0060/ Un:00000000
+2017/05/19 13:29:46/ send message to IP:172.16.5.44
+2017/05/19 13:29:46/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:29
+2017/05/19 13:29:56/ send message to IP:172.16.5.44
+2017/05/19 13:29:56/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:15
+2017/05/19 13:30:06/ send message to IP:172.16.5.44
+2017/05/19 13:30:06/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:13
+2017/05/19 13:30:16/ send message to IP:172.16.5.44
+2017/05/19 13:30:16/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:13
+2017/05/19 13:30:26/ send message to IP:172.16.5.44
+2017/05/19 13:30:26/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:12
+2017/05/19 13:30:36/ send message to IP:172.16.5.44
+2017/05/19 13:30:36/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:12
+2017/05/19 13:30:46/ send message to IP:172.16.5.44
+2017/05/19 13:30:46/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:14
+2017/05/19 13:30:56/ send message to IP:172.16.5.44
+2017/05/19 13:30:56/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:14
+2017/05/19 13:31:06/ send message to IP:172.16.5.44
+2017/05/19 13:31:06/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:14
+2017/05/19 13:31:16/ send message to IP:172.16.5.44
+2017/05/19 13:31:16/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:11
+2017/05/19 13:31:26/ send message to IP:172.16.5.44
+2017/05/19 13:31:26/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:15
+2017/05/19 13:31:36/ send message to IP:172.16.5.44
+2017/05/19 13:31:36/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:14
+2017/05/19 13:31:46/ send message to IP:172.16.5.44
+2017/05/19 13:31:46/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:12
+2017/05/19 13:31:56/ send message to IP:172.16.5.44
+2017/05/19 13:31:56/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:12
+2017/05/19 13:32:06/ send message to IP:172.16.5.44
+2017/05/19 13:32:06/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:16
+2017/05/19 13:32:16/ send message to IP:172.16.5.44
+2017/05/19 13:32:16/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:11
+2017/05/19 13:32:26/ send message to IP:172.16.5.44
+2017/05/19 13:32:26/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:13
+2017/05/19 13:32:36/ send message to IP:172.16.5.44
+2017/05/19 13:32:36/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:11
+2017/05/19 13:32:46/ send message to IP:172.16.5.44
+2017/05/19 13:32:46/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:12
+2017/05/19 13:32:56/ send message to IP:172.16.5.44
+2017/05/19 13:32:56/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:12
+2017/05/19 13:33:06/ send message to IP:172.16.5.44
+2017/05/19 13:33:06/ gateway_id:0x001B/ device_id:0x001B/ rssi:-1dBm/ heartbeat time:10/ bandwith:12

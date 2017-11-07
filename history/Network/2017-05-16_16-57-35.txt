@@ -1,0 +1,240 @@
+2017/05/16 16:46:37/ send message to IP:172.16.5.44
+2017/05/16 16:46:37/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:3
+2017/05/16 16:46:47/ send message to IP:172.16.5.44
+2017/05/16 16:46:47/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:2
+2017/05/16 16:46:57/ send message to IP:172.16.5.44
+2017/05/16 16:46:57/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:0
+2017/05/16 16:47:07/ send message to IP:172.16.5.44
+2017/05/16 16:47:07/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:47:17/ send message to IP:172.16.5.44
+2017/05/16 16:47:17/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:47:27/ send message to IP:172.16.5.44
+2017/05/16 16:47:27/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:2
+2017/05/16 16:47:37/ send message to IP:172.16.5.44
+2017/05/16 16:47:37/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:0
+2017/05/16 16:47:47/ send message to IP:172.16.5.44
+2017/05/16 16:47:47/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:0
+2017/05/16 16:47:57/ send message to IP:172.16.5.44
+2017/05/16 16:47:57/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:48:07/ send message to IP:172.16.5.44
+2017/05/16 16:48:07/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:48:17/ send message to IP:172.16.5.44
+2017/05/16 16:48:17/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:48:27/ send message to IP:172.16.5.44
+2017/05/16 16:48:27/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:2
+2017/05/16 16:48:37/ send message to IP:172.16.5.44
+2017/05/16 16:48:37/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:0
+2017/05/16 16:48:47/ send message to IP:172.16.5.44
+2017/05/16 16:48:47/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:3
+2017/05/16 16:48:57/ send message to IP:172.16.5.44
+2017/05/16 16:48:57/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:49:07/ send message to IP:172.16.5.44
+2017/05/16 16:49:07/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:0
+2017/05/16 16:49:17/ send message to IP:172.16.5.44
+2017/05/16 16:49:17/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:2
+2017/05/16 16:49:27/ send message to IP:172.16.5.44
+2017/05/16 16:49:27/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:0
+2017/05/16 16:49:37/ send message to IP:172.16.5.44
+2017/05/16 16:49:37/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:49:47/ send message to IP:172.16.5.44
+2017/05/16 16:49:47/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:0
+2017/05/16 16:49:57/ send message to IP:172.16.5.44
+2017/05/16 16:49:57/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:2
+2017/05/16 16:50:07/ send message to IP:172.16.5.44
+2017/05/16 16:50:07/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:3
+2017/05/16 16:50:17/ send message to IP:172.16.5.44
+2017/05/16 16:50:17/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:2
+2017/05/16 16:50:27/ send message to IP:172.16.5.44
+2017/05/16 16:50:27/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:0
+2017/05/16 16:50:37/ send message to IP:172.16.5.44
+2017/05/16 16:50:37/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:50:47/ send message to IP:172.16.5.44
+2017/05/16 16:50:47/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:50:57/ send message to IP:172.16.5.44
+2017/05/16 16:50:57/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:51:07/ send message to IP:172.16.5.44
+2017/05/16 16:51:07/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:2
+2017/05/16 16:51:17/ send message to IP:172.16.5.44
+2017/05/16 16:51:17/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:2
+2017/05/16 16:51:27/ send message to IP:172.16.5.44
+2017/05/16 16:51:27/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:2
+2017/05/16 16:51:37/ send message to IP:172.16.5.44
+2017/05/16 16:51:37/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:51:47/ send message to IP:172.16.5.44
+2017/05/16 16:51:47/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:4
+2017/05/16 16:51:57/ send message to IP:172.16.5.44
+2017/05/16 16:51:57/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:2
+2017/05/16 16:52:07/ send message to IP:172.16.5.44
+2017/05/16 16:52:07/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:52:17/ send message to IP:172.16.5.44
+2017/05/16 16:52:17/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:52:27/ send message to IP:172.16.5.44
+2017/05/16 16:52:27/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:2
+2017/05/16 16:52:37/ send message to IP:172.16.5.44
+2017/05/16 16:52:37/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:0
+2017/05/16 16:52:47/ send message to IP:172.16.5.44
+2017/05/16 16:52:47/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:2
+2017/05/16 16:52:57/ send message to IP:172.16.5.44
+2017/05/16 16:52:57/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:53:07/ send message to IP:172.16.5.44
+2017/05/16 16:53:07/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:2
+2017/05/16 16:53:17/ send message to IP:172.16.5.44
+2017/05/16 16:53:17/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:0
+2017/05/16 16:53:27/ send message to IP:172.16.5.44
+2017/05/16 16:53:27/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:53:37/ send message to IP:172.16.5.44
+2017/05/16 16:53:37/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:53:47/ send message to IP:172.16.5.44
+2017/05/16 16:53:47/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:2
+2017/05/16 16:53:57/ send message to IP:172.16.5.44
+2017/05/16 16:53:57/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:2
+2017/05/16 16:54:07/ send message to IP:172.16.5.44
+2017/05/16 16:54:07/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:0
+2017/05/16 16:54:17/ send message to IP:172.16.5.44
+2017/05/16 16:54:17/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:54:27/ send message to IP:172.16.5.44
+2017/05/16 16:54:27/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:54:37/ send message to IP:172.16.5.44
+2017/05/16 16:54:37/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:54:47/ send message to IP:172.16.5.44
+2017/05/16 16:54:47/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:0
+2017/05/16 16:54:57/ send message to IP:172.16.5.44
+2017/05/16 16:54:57/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:0
+2017/05/16 16:55:07/ send message to IP:172.16.5.44
+2017/05/16 16:55:07/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:3
+2017/05/16 16:55:17/ send message to IP:172.16.5.44
+2017/05/16 16:55:17/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:55:27/ send message to IP:172.16.5.44
+2017/05/16 16:55:27/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:55:37/ send message to IP:172.16.5.44
+2017/05/16 16:55:37/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:55:47/ send message to IP:172.16.5.44
+2017/05/16 16:55:47/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:55:57/ send message to IP:172.16.5.44
+2017/05/16 16:55:57/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:56:07/ send message to IP:172.16.5.44
+2017/05/16 16:56:07/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:56:17/ send message to IP:172.16.5.44
+2017/05/16 16:56:17/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:2
+2017/05/16 16:56:27/ send message to IP:172.16.5.44
+2017/05/16 16:56:27/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:2
+2017/05/16 16:56:37/ send message to IP:172.16.5.44
+2017/05/16 16:56:37/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:0
+2017/05/16 16:56:47/ send message to IP:172.16.5.44
+2017/05/16 16:56:47/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:5
+2017/05/16 16:56:57/ send message to IP:172.16.5.44
+2017/05/16 16:56:57/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:0
+2017/05/16 16:57:07/ send message to IP:172.16.5.44
+2017/05/16 16:57:07/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:1
+2017/05/16 16:57:16/ 自动分配
+2017/05/16 16:57:16/ send message to IP:172.16.5.44
+2017/05/16 16:57:16/ ID 0x0019 information: / MAC:989837FEFF570B00/ Gateway_id:0x0024/ Panid:0x0025/ Frequence:868MHZ/ Channel:0x0000/ Device_id:0x0019/ Un:00000000
+2017/05/16 16:57:17/ send message to IP:172.16.5.44
+2017/05/16 16:57:17/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:8
+2017/05/16 16:57:27/ send message to IP:172.16.5.44
+2017/05/16 16:57:27/ gateway_id:0x0024/ device_id:0x0024/ rssi:-1dBm/ heartbeat time:10/ bandwith:17
+2017/05/16 16:57:29/ send message to IP:172.16.5.44
+2017/05/16 16:57:29/ send message to IP:172.16.5.44
+2017/05/16 16:57:30/ send message to IP:172.16.5.44
+2017/05/16 16:57:30/ send message to IP:172.16.5.44
+2017/05/16 16:57:30/ send message to IP:172.16.5.44
+2017/05/16 16:57:30/ send message to IP:172.16.5.44
+2017/05/16 16:57:30/ send message to IP:172.16.5.44
+2017/05/16 16:57:30/ send message to IP:172.16.5.44
+2017/05/16 16:57:30/ send message to IP:172.16.5.44
+2017/05/16 16:57:30/ send message to IP:172.16.5.44
+2017/05/16 16:57:30/ send message to IP:172.16.5.44
+2017/05/16 16:57:31/ send message to IP:172.16.5.44
+2017/05/16 16:57:31/ send message to IP:172.16.5.44
+2017/05/16 16:57:31/ send message to IP:172.16.5.44
+2017/05/16 16:57:31/ send message to IP:172.16.5.44
+2017/05/16 16:57:31/ send message to IP:172.16.5.44
+2017/05/16 16:57:31/ send message to IP:172.16.5.44
+2017/05/16 16:57:31/ send message to IP:172.16.5.44
+2017/05/16 16:57:31/ send message to IP:172.16.5.44
+2017/05/16 16:57:31/ send message to IP:172.16.5.44
+2017/05/16 16:57:31/ send message to IP:172.16.5.44
+2017/05/16 16:57:31/ send message to IP:172.16.5.44
+2017/05/16 16:57:31/ send message to IP:172.16.5.44
+2017/05/16 16:57:31/ send message to IP:172.16.5.44
+2017/05/16 16:57:31/ send message to IP:172.16.5.44
+2017/05/16 16:57:31/ send message to IP:172.16.5.44
+2017/05/16 16:57:31/ send message to IP:172.16.5.44
+2017/05/16 16:57:31/ send message to IP:172.16.5.44
+2017/05/16 16:57:31/ send message to IP:172.16.5.44
+2017/05/16 16:57:31/ send message to IP:172.16.5.44
+2017/05/16 16:57:31/ send message to IP:172.16.5.44
+2017/05/16 16:57:31/ send message to IP:172.16.5.44
+2017/05/16 16:57:31/ send message to IP:172.16.5.44
+2017/05/16 16:57:32/ send message to IP:172.16.5.44
+2017/05/16 16:57:32/ send message to IP:172.16.5.44
+2017/05/16 16:57:32/ send message to IP:172.16.5.44
+2017/05/16 16:57:32/ send message to IP:172.16.5.44
+2017/05/16 16:57:32/ send message to IP:172.16.5.44
+2017/05/16 16:57:32/ send message to IP:172.16.5.44
+2017/05/16 16:57:32/ send message to IP:172.16.5.44
+2017/05/16 16:57:32/ send message to IP:172.16.5.44
+2017/05/16 16:57:32/ send message to IP:172.16.5.44
+2017/05/16 16:57:32/ send message to IP:172.16.5.44
+2017/05/16 16:57:32/ send message to IP:172.16.5.44
+2017/05/16 16:57:32/ send message to IP:172.16.5.44
+2017/05/16 16:57:32/ send message to IP:172.16.5.44
+2017/05/16 16:57:32/ send message to IP:172.16.5.44
+2017/05/16 16:57:32/ send message to IP:172.16.5.44
+2017/05/16 16:57:32/ send message to IP:172.16.5.44
+2017/05/16 16:57:32/ send message to IP:172.16.5.44
+2017/05/16 16:57:32/ send message to IP:172.16.5.44
+2017/05/16 16:57:32/ send message to IP:172.16.5.44
+2017/05/16 16:57:32/ send message to IP:172.16.5.44
+2017/05/16 16:57:32/ send message to IP:172.16.5.44
+2017/05/16 16:57:32/ send message to IP:172.16.5.44
+2017/05/16 16:57:32/ send message to IP:172.16.5.44
+2017/05/16 16:57:33/ send message to IP:172.16.5.44
+2017/05/16 16:57:33/ send message to IP:172.16.5.44
+2017/05/16 16:57:33/ send message to IP:172.16.5.44
+2017/05/16 16:57:33/ send message to IP:172.16.5.44
+2017/05/16 16:57:33/ send message to IP:172.16.5.44
+2017/05/16 16:57:33/ send message to IP:172.16.5.44
+2017/05/16 16:57:33/ send message to IP:172.16.5.44
+2017/05/16 16:57:33/ send message to IP:172.16.5.44
+2017/05/16 16:57:33/ send message to IP:172.16.5.44
+2017/05/16 16:57:33/ send message to IP:172.16.5.44
+2017/05/16 16:57:33/ send message to IP:172.16.5.44
+2017/05/16 16:57:33/ send message to IP:172.16.5.44
+2017/05/16 16:57:33/ send message to IP:172.16.5.44
+2017/05/16 16:57:33/ send message to IP:172.16.5.44
+2017/05/16 16:57:33/ send message to IP:172.16.5.44
+2017/05/16 16:57:33/ send message to IP:172.16.5.44
+2017/05/16 16:57:33/ send message to IP:172.16.5.44
+2017/05/16 16:57:33/ send message to IP:172.16.5.44
+2017/05/16 16:57:33/ send message to IP:172.16.5.44
+2017/05/16 16:57:33/ send message to IP:172.16.5.44
+2017/05/16 16:57:33/ send message to IP:172.16.5.44
+2017/05/16 16:57:33/ send message to IP:172.16.5.44
+2017/05/16 16:57:33/ send message to IP:172.16.5.44
+2017/05/16 16:57:34/ send message to IP:172.16.5.44
+2017/05/16 16:57:34/ send message to IP:172.16.5.44
+2017/05/16 16:57:34/ send message to IP:172.16.5.44
+2017/05/16 16:57:34/ send message to IP:172.16.5.44
+2017/05/16 16:57:34/ send message to IP:172.16.5.44
+2017/05/16 16:57:34/ send message to IP:172.16.5.44
+2017/05/16 16:57:34/ send message to IP:172.16.5.44
+2017/05/16 16:57:34/ send message to IP:172.16.5.44
+2017/05/16 16:57:34/ send message to IP:172.16.5.44
+2017/05/16 16:57:34/ send message to IP:172.16.5.44
+2017/05/16 16:57:34/ send message to IP:172.16.5.44
+2017/05/16 16:57:34/ send message to IP:172.16.5.44
+2017/05/16 16:57:34/ send message to IP:172.16.5.44
+2017/05/16 16:57:34/ send message to IP:172.16.5.44
+2017/05/16 16:57:34/ send message to IP:172.16.5.44
+2017/05/16 16:57:34/ send message to IP:172.16.5.44
+2017/05/16 16:57:34/ send message to IP:172.16.5.44
+2017/05/16 16:57:34/ send message to IP:172.16.5.44
+2017/05/16 16:57:34/ send message to IP:172.16.5.44
+2017/05/16 16:57:34/ send message to IP:172.16.5.44
+2017/05/16 16:57:34/ send message to IP:172.16.5.44
+2017/05/16 16:57:34/ send message to IP:172.16.5.44
+2017/05/16 16:57:35/ send message to IP:172.16.5.44
+2017/05/16 16:57:35/ send message to IP:172.16.5.44
+2017/05/16 16:57:35/ send message to IP:172.16.5.44
+2017/05/16 16:57:35/ send message to IP:172.16.5.44
