@@ -1,2 +1,0 @@
-2017/04/27 10:11:16/ new client connection / peerName: / peerAddress:172.16.2.7 / peerPort:19999
-2017/04/27 10:11:21/ new client connection / peerName: / peerAddress:172.16.2.7 / peerPort:19999
