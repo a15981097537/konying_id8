@@ -14,6 +14,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QGraphicsView>
 #include <QtWidgets/QGroupBox>
@@ -406,7 +407,7 @@ public:
     QWidget *location;
     QVBoxLayout *verticalLayout_28;
     QGroupBox *groupBox_7;
-    QHBoxLayout *horizontalLayout_75;
+    QHBoxLayout *horizontalLayout_82;
     QVBoxLayout *verticalLayout_26;
     QHBoxLayout *horizontalLayout_15;
     QLabel *label_9;
@@ -442,8 +443,8 @@ public:
     QLabel *label_26;
     QPushButton *bt_setHeartBeatTime;
     QSpacerItem *verticalSpacer_3;
-    QSpacerItem *horizontalSpacer_12;
     QSpacerItem *horizontalSpacer_5;
+    QSpacerItem *horizontalSpacer_12;
     QSpacerItem *horizontalSpacer_10;
     QSpacerItem *horizontalSpacer_15;
     QSpacerItem *horizontalSpacer_40;
@@ -530,6 +531,11 @@ public:
     QLabel *label_58;
     QTextEdit *BLE_virtualRssiEdit;
     QPushButton *BLE_virtualSetBt;
+    QCheckBox *BLE_displayLog;
+    QCheckBox *BLE_attenuationcheckBox;
+    QHBoxLayout *horizontalLayout_85;
+    QLabel *label_60;
+    QTextEdit *BLE_virtualRatio;
     QSpacerItem *verticalSpacer_9;
     QGraphicsView *graphicsView_BLE;
     QStatusBar *statusbar;
@@ -2395,8 +2401,8 @@ public:
         groupBox_7->setObjectName(QStringLiteral("groupBox_7"));
         groupBox_7->setMinimumSize(QSize(0, 120));
         groupBox_7->setMaximumSize(QSize(16777215, 120));
-        horizontalLayout_75 = new QHBoxLayout(groupBox_7);
-        horizontalLayout_75->setObjectName(QStringLiteral("horizontalLayout_75"));
+        horizontalLayout_82 = new QHBoxLayout(groupBox_7);
+        horizontalLayout_82->setObjectName(QStringLiteral("horizontalLayout_82"));
         verticalLayout_26 = new QVBoxLayout();
         verticalLayout_26->setObjectName(QStringLiteral("verticalLayout_26"));
         horizontalLayout_15 = new QHBoxLayout();
@@ -2473,7 +2479,7 @@ public:
         verticalLayout_26->addLayout(horizontalLayout_10);
 
 
-        horizontalLayout_75->addLayout(verticalLayout_26);
+        horizontalLayout_82->addLayout(verticalLayout_26);
 
         verticalLayout_64 = new QVBoxLayout();
         verticalLayout_64->setObjectName(QStringLiteral("verticalLayout_64"));
@@ -2505,11 +2511,11 @@ public:
         verticalLayout_64->addWidget(groupBox_12);
 
 
-        horizontalLayout_75->addLayout(verticalLayout_64);
+        horizontalLayout_82->addLayout(verticalLayout_64);
 
         horizontalSpacer_9 = new QSpacerItem(15, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
 
-        horizontalLayout_75->addItem(horizontalSpacer_9);
+        horizontalLayout_82->addItem(horizontalSpacer_9);
 
         verticalLayout_71 = new QVBoxLayout();
         verticalLayout_71->setObjectName(QStringLiteral("verticalLayout_71"));
@@ -2556,11 +2562,11 @@ public:
         verticalLayout_71->addWidget(bt_setHeartBeatTime_3);
 
 
-        horizontalLayout_75->addLayout(verticalLayout_71);
+        horizontalLayout_82->addLayout(verticalLayout_71);
 
         horizontalSpacer_36 = new QSpacerItem(15, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
 
-        horizontalLayout_75->addItem(horizontalSpacer_36);
+        horizontalLayout_82->addItem(horizontalSpacer_36);
 
         verticalLayout_34 = new QVBoxLayout();
         verticalLayout_34->setObjectName(QStringLiteral("verticalLayout_34"));
@@ -2592,35 +2598,35 @@ public:
         verticalLayout_34->addItem(verticalSpacer_3);
 
 
-        horizontalLayout_75->addLayout(verticalLayout_34);
-
-        horizontalSpacer_12 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        horizontalLayout_75->addItem(horizontalSpacer_12);
+        horizontalLayout_82->addLayout(verticalLayout_34);
 
         horizontalSpacer_5 = new QSpacerItem(85, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-        horizontalLayout_75->addItem(horizontalSpacer_5);
+        horizontalLayout_82->addItem(horizontalSpacer_5);
+
+        horizontalSpacer_12 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_82->addItem(horizontalSpacer_12);
 
         horizontalSpacer_10 = new QSpacerItem(84, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-        horizontalLayout_75->addItem(horizontalSpacer_10);
+        horizontalLayout_82->addItem(horizontalSpacer_10);
 
         horizontalSpacer_15 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-        horizontalLayout_75->addItem(horizontalSpacer_15);
+        horizontalLayout_82->addItem(horizontalSpacer_15);
 
         horizontalSpacer_40 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-        horizontalLayout_75->addItem(horizontalSpacer_40);
+        horizontalLayout_82->addItem(horizontalSpacer_40);
 
         horizontalSpacer_27 = new QSpacerItem(37, 17, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-        horizontalLayout_75->addItem(horizontalSpacer_27);
+        horizontalLayout_82->addItem(horizontalSpacer_27);
 
         horizontalSpacer_13 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-        horizontalLayout_75->addItem(horizontalSpacer_13);
+        horizontalLayout_82->addItem(horizontalSpacer_13);
 
 
         verticalLayout_28->addWidget(groupBox_7);
@@ -3056,6 +3062,35 @@ public:
 
         verticalLayout_74->addWidget(BLE_virtualSetBt);
 
+        BLE_displayLog = new QCheckBox(groupBox_25);
+        BLE_displayLog->setObjectName(QStringLiteral("BLE_displayLog"));
+
+        verticalLayout_74->addWidget(BLE_displayLog);
+
+        BLE_attenuationcheckBox = new QCheckBox(groupBox_25);
+        BLE_attenuationcheckBox->setObjectName(QStringLiteral("BLE_attenuationcheckBox"));
+
+        verticalLayout_74->addWidget(BLE_attenuationcheckBox);
+
+        horizontalLayout_85 = new QHBoxLayout();
+        horizontalLayout_85->setObjectName(QStringLiteral("horizontalLayout_85"));
+        label_60 = new QLabel(groupBox_25);
+        label_60->setObjectName(QStringLiteral("label_60"));
+        label_60->setMinimumSize(QSize(36, 0));
+        label_60->setMaximumSize(QSize(36, 16777215));
+        label_60->setAlignment(Qt::AlignCenter);
+
+        horizontalLayout_85->addWidget(label_60);
+
+        BLE_virtualRatio = new QTextEdit(groupBox_25);
+        BLE_virtualRatio->setObjectName(QStringLiteral("BLE_virtualRatio"));
+        BLE_virtualRatio->setMaximumSize(QSize(16777215, 25));
+
+        horizontalLayout_85->addWidget(BLE_virtualRatio);
+
+
+        verticalLayout_74->addLayout(horizontalLayout_85);
+
         verticalSpacer_9 = new QSpacerItem(20, 200, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
         verticalLayout_74->addItem(verticalSpacer_9);
@@ -3485,6 +3520,9 @@ public:
         label_59->setText(QApplication::translate("MainWindow", "\345\272\217\345\210\227\345\217\267", 0));
         label_58->setText(QApplication::translate("MainWindow", "RSSI", 0));
         BLE_virtualSetBt->setText(QApplication::translate("MainWindow", "\346\250\241\346\213\237\346\240\207\347\255\276\346\225\260\346\215\256", 0));
+        BLE_displayLog->setText(QApplication::translate("MainWindow", "BLE_displayLog", 0));
+        BLE_attenuationcheckBox->setText(QApplication::translate("MainWindow", "\350\241\260\345\207\217\345\205\254\345\274\217", 0));
+        label_60->setText(QApplication::translate("MainWindow", "\346\257\224\345\200\274", 0));
         function->setTabText(function->indexOf(BLE_map), QApplication::translate("MainWindow", "BLE_map", 0));
     } // retranslateUi
 

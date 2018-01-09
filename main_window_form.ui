@@ -3524,7 +3524,7 @@ p, li { white-space: pre-wrap; }
           <property name="title">
            <string/>
           </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_75">
+          <layout class="QHBoxLayout" name="horizontalLayout_82">
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_26">
              <item>
@@ -3902,19 +3902,6 @@ p, li { white-space: pre-wrap; }
             </layout>
            </item>
            <item>
-            <spacer name="horizontalSpacer_12">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
             <spacer name="horizontalSpacer_5">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -3922,6 +3909,19 @@ p, li { white-space: pre-wrap; }
              <property name="sizeHint" stdset="0">
               <size>
                <width>85</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_12">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
                <height>20</height>
               </size>
              </property>
@@ -4799,6 +4799,56 @@ p, li { white-space: pre-wrap; }
                 <string>模拟标签数据</string>
                </property>
               </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="BLE_displayLog">
+               <property name="text">
+                <string>BLE_displayLog</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="BLE_attenuationcheckBox">
+               <property name="text">
+                <string>衰减公式</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_85">
+               <item>
+                <widget class="QLabel" name="label_60">
+                 <property name="minimumSize">
+                  <size>
+                   <width>36</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>36</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>比值</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QTextEdit" name="BLE_virtualRatio">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
              <item>
               <spacer name="verticalSpacer_9">

@@ -461,6 +461,7 @@ struct BLE_DEVICE_PAR
 struct BLE_ALGORITHM_PAR
 {
   BLE_DEVICE_PAR ble_algorithm[ALGORITHM_DEVICE_MAX];
+  double  ratio;
   QTimer *timer;
 };
 
@@ -583,7 +584,6 @@ private:
     void LOC_DisplayWithNoTime(const QString &text);
     void LOC_init();
     void LOC_Set125KRssi(ushort gateway_id,ushort device_id);
-	
 
     COO_PAR coo_par;
     void COO_init();
@@ -783,6 +783,7 @@ private slots:
     void on_BLE_hideAllDeviceInf_clicked();
     void on_BLE_rssiCalculatorSlider_valueChanged(int value);
     void on_BLE_virtualSetBt_clicked();
+    void on_BLE_virtualRatio_textChanged();
 };
 
  #endif
