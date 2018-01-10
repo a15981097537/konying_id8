@@ -494,6 +494,7 @@ public:
     QLabel *label_45;
     QPushButton *BLE_bt_setHeartBeatTime;
     QSpacerItem *verticalSpacer_4;
+    QCheckBox *BLE_displayLog;
     QTextBrowser *BLE_display;
     QWidget *BLE_map;
     QVBoxLayout *verticalLayout_72;
@@ -531,8 +532,8 @@ public:
     QLabel *label_58;
     QTextEdit *BLE_virtualRssiEdit;
     QPushButton *BLE_virtualSetBt;
-    QCheckBox *BLE_displayLog;
     QCheckBox *BLE_attenuationcheckBox;
+    QCheckBox *BLE_FiltercheckBox;
     QHBoxLayout *horizontalLayout_85;
     QLabel *label_60;
     QTextEdit *BLE_virtualRatio;
@@ -2857,6 +2858,11 @@ public:
 
         verticalLayout_69->addItem(verticalSpacer_4);
 
+        BLE_displayLog = new QCheckBox(groupBox_22);
+        BLE_displayLog->setObjectName(QStringLiteral("BLE_displayLog"));
+
+        verticalLayout_69->addWidget(BLE_displayLog);
+
 
         horizontalLayout_79->addLayout(verticalLayout_69);
 
@@ -3062,15 +3068,15 @@ public:
 
         verticalLayout_74->addWidget(BLE_virtualSetBt);
 
-        BLE_displayLog = new QCheckBox(groupBox_25);
-        BLE_displayLog->setObjectName(QStringLiteral("BLE_displayLog"));
-
-        verticalLayout_74->addWidget(BLE_displayLog);
-
         BLE_attenuationcheckBox = new QCheckBox(groupBox_25);
         BLE_attenuationcheckBox->setObjectName(QStringLiteral("BLE_attenuationcheckBox"));
 
         verticalLayout_74->addWidget(BLE_attenuationcheckBox);
+
+        BLE_FiltercheckBox = new QCheckBox(groupBox_25);
+        BLE_FiltercheckBox->setObjectName(QStringLiteral("BLE_FiltercheckBox"));
+
+        verticalLayout_74->addWidget(BLE_FiltercheckBox);
 
         horizontalLayout_85 = new QHBoxLayout();
         horizontalLayout_85->setObjectName(QStringLiteral("horizontalLayout_85"));
@@ -3503,6 +3509,7 @@ public:
         BLE__set125KRssi->setText(QApplication::translate("MainWindow", "\350\256\276\347\275\256125K\345\244\251\347\272\277\347\201\265\346\225\217\345\272\246", 0));
         label_45->setText(QApplication::translate("MainWindow", "S ", 0));
         BLE_bt_setHeartBeatTime->setText(QApplication::translate("MainWindow", "\350\256\276\347\275\256\345\277\203\350\267\263\345\214\205\346\227\266\351\227\264", 0));
+        BLE_displayLog->setText(QApplication::translate("MainWindow", "BLE_displayLog", 0));
         function->setTabText(function->indexOf(BLE_data), QApplication::translate("MainWindow", "BLE_data", 0));
         groupBox_25->setTitle(QString());
         label_51->setText(QApplication::translate("MainWindow", "X", 0));
@@ -3520,8 +3527,8 @@ public:
         label_59->setText(QApplication::translate("MainWindow", "\345\272\217\345\210\227\345\217\267", 0));
         label_58->setText(QApplication::translate("MainWindow", "RSSI", 0));
         BLE_virtualSetBt->setText(QApplication::translate("MainWindow", "\346\250\241\346\213\237\346\240\207\347\255\276\346\225\260\346\215\256", 0));
-        BLE_displayLog->setText(QApplication::translate("MainWindow", "BLE_displayLog", 0));
         BLE_attenuationcheckBox->setText(QApplication::translate("MainWindow", "\350\241\260\345\207\217\345\205\254\345\274\217", 0));
+        BLE_FiltercheckBox->setText(QApplication::translate("MainWindow", "\346\273\244\346\263\242", 0));
         label_60->setText(QApplication::translate("MainWindow", "\346\257\224\345\200\274", 0));
         function->setTabText(function->indexOf(BLE_map), QApplication::translate("MainWindow", "BLE_map", 0));
     } // retranslateUi

@@ -4440,6 +4440,13 @@ p, li { white-space: pre-wrap; }
                </property>
               </spacer>
              </item>
+             <item>
+              <widget class="QCheckBox" name="BLE_displayLog">
+               <property name="text">
+                <string>BLE_displayLog</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
           </layout>
@@ -4801,16 +4808,16 @@ p, li { white-space: pre-wrap; }
               </widget>
              </item>
              <item>
-              <widget class="QCheckBox" name="BLE_displayLog">
+              <widget class="QCheckBox" name="BLE_attenuationcheckBox">
                <property name="text">
-                <string>BLE_displayLog</string>
+                <string>衰减公式</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QCheckBox" name="BLE_attenuationcheckBox">
+              <widget class="QCheckBox" name="BLE_FiltercheckBox">
                <property name="text">
-                <string>衰减公式</string>
+                <string>滤波</string>
                </property>
               </widget>
              </item>
