@@ -649,6 +649,8 @@ private:
     void BLE_displayUpdate();
     void BLE_DisplayDrawXY(uint xy_unit,uint xy_max,QGraphicsScene *scene);
     void BLE_storeData(ushort device_id,ushort ant_id,uchar sequence,char rssi);
+    bool BLE_idInfoWriteInFile();
+    bool BLE_idInfoReadFromFile();
 
 private slots:
 	void about();

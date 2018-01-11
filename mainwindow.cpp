@@ -5328,19 +5328,9 @@ void MainWindow::BLE_DisplayInit(void)
 {
 
     uchar i,j;
-    display_par.xy_max = 100;
-    display_par.xy_unit = 10;
+
+    BLE_idInfoReadFromFile();
     for(i=0;i<DEVICE_DISPLAY_MAX;i++){
-
-        display_par.ant[i].id = 0xFFFF;
-        display_par.ant[i].x = 0x00;
-        display_par.ant[i].y = 0x00;
-        display_par.ant[i].radius = 0x00;
-        display_par.ant[i].rssi_offset = 0x00;
-        display_par.ant[i].color = Qt::white;
-        display_par.ant[i].displayInfFlag = false;
-        memset(display_par.ant[i].mac,0x00,8);
-
         display_par.device[i].id = 0xFFFF;
         display_par.device[i].x = 0x00;
         display_par.device[i].y = 0x00;
@@ -5349,37 +5339,7 @@ void MainWindow::BLE_DisplayInit(void)
         display_par.device[i].color = Qt::white;
         display_par.device[i].displayInfFlag = false;
         memset(display_par.device[i].mac,0x00,8);
-
     }
-
-
-//    display_par.ant[0].id = 0x0001;
-//    display_par.ant[0].x = 0;
-//    display_par.ant[0].y = 0;
-//    display_par.ant[0].radius = 0;
-//    display_par.ant[0].rssi_offset = 0;
-//    display_par.ant[0].color = Qt::darkGreen;
-//    display_par.ant[0].displayInfFlag = false;
-//    memset(display_par.ant[0].mac,0x00,8);
-
-//    display_par.ant[1].id = 0x0002;
-//    display_par.ant[1].x = 50;
-//    display_par.ant[1].y = 0;
-//    display_par.ant[1].radius = 0;
-//    display_par.ant[1].rssi_offset = 0;
-//    display_par.ant[1].color = Qt::darkGreen;
-//    display_par.ant[1].displayInfFlag = false;
-//    memset(display_par.ant[1].mac,0x00,8);
-
-//    display_par.ant[2].id = 0x0003;
-//    display_par.ant[2].x = 50;
-//    display_par.ant[2].y = 50;
-//    display_par.ant[2].radius = 0;
-//    display_par.ant[2].rssi_offset = 0;
-//    display_par.ant[2].color = Qt::darkGreen;
-//    display_par.ant[2].displayInfFlag = false;
-//    memset(display_par.ant[2].mac,0x00,8);
-
 
     BLE_virtualAntIdEdit->setText("1");
     BLE_virtualDeviceIdEdit->setText("10");
@@ -5580,7 +5540,7 @@ void MainWindow::on_BLE_addAnt_clicked()
 on_BLE_addAnt_clicked_0:
 
     BLE_displayUpdate();
-
+    BLE_idInfoWriteInFile();
 
 
 }
@@ -5602,6 +5562,7 @@ void MainWindow::on_BLE_deleteAnt_clicked()
            BLE_displayUpdate();
        }
     }
+    BLE_idInfoWriteInFile();
 }
 
 
@@ -5723,7 +5684,7 @@ void MainWindow::BLE_storeData(ushort device_id,ushort ant_id,uchar sequence,cha
                     if(ble_algorithm_par.ble_algorithm[i].ant_id[j] == ant_id){
                         ble_algorithm_par.ble_algorithm[i].rssi[j] = rssi;
                         ble_algorithm_par.ble_algorithm[i].update_flag = true;
-                        BLE_locationCalculator();
+                        //BLE_locationCalculator();
                         return;
                     }
                 }
@@ -5780,22 +5741,25 @@ void MainWindow::BLE_locationCalculator(void){
     uchar i,j,m,n,ant_first,ant_second,ant_third;
     short xA=0,yA=0,xB=0,yB=0,xC=0,yC=0;
     short x,y,x_point,y_point,x_point_previous,y_point_previous;
-    long double distance_AB[2],distance_AC[2],distance_BC[2],distance_last;
-    long double distance_A,distance_B,distance_C;
-    long double rssi_AB,rssi_AC,rssi_BC;
+    double distance_AB[2],distance_AC[2],distance_BC[2],distance_last;
+    double distance_A,distance_B,distance_C;
+    double rssi_AB,rssi_AC,rssi_BC;
     ushort ant_idA,ant_idB,ant_idC;
-    long double ant_rssiA,ant_rssiB,ant_rssiC;
+    double ant_rssiA,ant_rssiB,ant_rssiC;
     short ant_offsetA=0,ant_offsetB=0,ant_offsetC=0;
-    long double len_AB,len_BC,len_AC;
+    double len_AB,len_BC,len_AC,len_A,len_B,len_C;
     QString str;
 
 
 
 
-    //ble_algorithm_par.timer->start(1000);
-    ble_algorithm_par.timer->stop();
+   //ble_algorithm_par.timer->start(1000);
+    //ble_algorithm_par.timer->stop();
     str.clear();
-    BLE_DisplayWithTime("*********************algorithm start*************************");
+    if(BLE_displayLog->isChecked()){
+        str+="\r\n*********************algorithm start*************************";
+    }
+
     for(i=0;i<ALGORITHM_DEVICE_MAX;i++){
         if(ble_algorithm_par.ble_algorithm[i].update_flag == true &&
            ble_algorithm_par.ble_algorithm[i].receive_count >= 3){
@@ -5907,32 +5871,30 @@ void MainWindow::BLE_locationCalculator(void){
             }
 
 
-            //all information is ready
-            if(BLE_displayLog->isChecked())
-            {
-
-                str+="/  \r\n****************ant_idA:0x"+uint16ToHex(ant_idA);
-                str+="  ant_idB:0x"+uint16ToHex(ant_idB);
-                str+="  ant_idC:0x"+uint16ToHex(ant_idC)+"****************\r\n";
-            }
-
             ant_rssiA = -(ant_rssiA+ant_offsetA);
 
             ant_rssiB = -(ant_rssiB+ant_offsetB);
 
             ant_rssiC = -(ant_rssiC+ant_offsetC);
 
-            if(BLE_attenuationcheckBox->isChecked()){
-                //接收灵敏度转换距离
-                if(ant_rssiC>70){
-                    ant_rssiA -=30;
-                    ant_rssiB -=30;
-                    ant_rssiC -=30;
+            //if((ant_rssiA - ant_rssiC)>5)
+            {
+                if(BLE_attenuationcheckBox->isChecked()){
+                    //接收灵敏度转换距离
+//                    if(ant_rssiA>50){
+//                        ant_rssiA -=30;
+//                        ant_rssiB -=30;
+//                        ant_rssiC -=30;
+//                    }
+                    len_A = pow(10, (ant_rssiA -91.2)/20)*1000;
+                    len_B = pow(10, (ant_rssiB -91.2)/20)*1000;
+                    len_C = pow(10, (ant_rssiC -91.2)/20)*1000;
+                    ant_rssiA = len_A;
+                    ant_rssiB = len_B;
+                    ant_rssiC = len_C;
+
+                    //
                 }
-                ant_rssiA = pow(10, (ant_rssiA -91.2)/20)*1000;
-                ant_rssiB = pow(10, (ant_rssiB -91.2)/20)*1000;
-                ant_rssiC = pow(10, (ant_rssiC -91.2)/20)*1000;
-                //
             }
 
             len_AB = sqrt((xA - xB)*(xA - xB)+(yA - yB)*(yA - yB));
@@ -6050,9 +6012,9 @@ void MainWindow::BLE_locationCalculator(void){
                                 y_point = y;
 
                             }
-                            if(BLE_displayLog->isChecked())
+                            //if(BLE_displayLog->isChecked())
                             {
-                                str += QString("\r\nx:%1  y:%2  x_point:%3 y_point:%4").arg(x).arg(y).arg(x_point).arg(y_point);
+                                //str += QString("\r\nx:%1  y:%2  x_point:%3 y_point:%4").arg(x).arg(y).arg(x_point).arg(y_point);
                                 //str += QString("/  distance_last:%1").arg(distance_last);
                                 //str += QString("/  distance_A:%1  distance_B:%2  distance_C:%3").arg((double)distance_A).arg((double)distance_B).arg((double)distance_C);
                                 //str += QString("/  distance_AB[1]:%1  distance_AC[1]:%2  distance_BC[1]:%3\r\n").arg((double)distance_AB[1]).arg((double)distance_AC[1]).arg((double)distance_BC[1]);
@@ -6106,6 +6068,7 @@ void MainWindow::BLE_locationCalculator(void){
                     }
                 }
 
+
                 //**************filter***************************/
 
                 for(j = 0;j<DEVICE_DISPLAY_MAX;j++){
@@ -6136,6 +6099,21 @@ void MainWindow::BLE_locationCalculator(void){
                     }
                 }
             }
+
+            if(BLE_displayLog->isChecked())
+            {
+                distance_A = sqrt((x_point - xA)*(x_point - xA)+(y_point - yA)*(y_point - yA));
+                distance_B = sqrt((x_point - xB)*(x_point - xB)+(y_point - yB)*(y_point - yB));
+                distance_C = sqrt((x_point - xC)*(x_point - xC)+(y_point - yC)*(y_point - yC));
+
+                str+="\r\n/ device_id:0x"+uint16ToHex(ble_algorithm_par.ble_algorithm[i].device_id).toUpper();
+                str+="/ ant_idA:0x"+uint16ToHex(ant_idA).toUpper();
+                str+="/ ant_idB:0x"+uint16ToHex(ant_idB).toUpper();
+                str+="/ ant_idC:0x"+uint16ToHex(ant_idC).toUpper();
+                str+=QString("/ len_A:%1 len_B:%2 len_C:%3").arg((double)len_A).arg((double)len_B).arg((double)len_B);
+                str+= QString("/ distance_A:%1  distance_B:%2  distance_C:%3").arg((double)distance_A).arg((double)distance_B).arg((double)distance_C);
+                str+=QString("/ x_point:%1  y_point:%2").arg(x_point).arg(y_point);
+            }
         }
     }
 
@@ -6143,8 +6121,12 @@ void MainWindow::BLE_locationCalculator(void){
     if(update_flag == true){
         BLE_displayUpdate();
     }
-    BLE_DisplayWithTime(str);
-    BLE_DisplayWithTime("*********************algorithm end*************************");
+    if(BLE_displayLog->isChecked()){
+
+        str+="\r\n*********************algorithm end*************************";
+        BLE_DisplayWithTime(str);
+    }
+
 }
 
 
@@ -6194,23 +6176,107 @@ void MainWindow::on_BLE_virtualSetBt_clicked()
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void MainWindow::on_BLE_virtualRatio_textChanged()
 {
     ble_algorithm_par.ratio = BLE_virtualRatio->toPlainText().toDouble();
 }
+
+
+
+//**************************ant_id information***************************
+
+
+
+
+
+bool MainWindow::BLE_idInfoWriteInFile()
+{
+    ulong i;
+    uchar *ptr;
+    QByteArray buff;
+    buff.clear();
+
+
+
+    ptr = (uchar *)&display_par;
+
+    for(i=0;i<sizeof(display_par);i++)
+    {
+        buff.append(*ptr++);
+    }
+
+
+    QString path = QDir::currentPath();
+    path+="/ant_information.bin";
+    QFile file(path);
+    file.open(QIODevice::ReadWrite);
+    file.write(buff);
+    file.close();
+
+    return true;
+}
+
+
+
+bool MainWindow::BLE_idInfoReadFromFile()
+{
+    ulong i;
+    QByteArray buff;
+    uchar *ptr;
+    buff.clear();
+    QString path = QDir::currentPath();
+    path+="/ant_information.bin";
+    QFile file(path);
+
+
+    if(!file.open(QIODevice::ReadOnly))
+    {
+       //creat a file and wirte the firmware
+       ptr = (uchar *)&display_par;
+       display_par.xy_max = 100;
+       display_par.xy_unit = 10;
+
+       for(i=0;i<DEVICE_DISPLAY_MAX;i++){
+
+           display_par.ant[i].id = 0xFFFF;
+           display_par.ant[i].x = 0x00;
+           display_par.ant[i].y = 0x00;
+           display_par.ant[i].radius = 0x00;
+           display_par.ant[i].rssi_offset = 0x00;
+           display_par.ant[i].color = Qt::white;
+           display_par.ant[i].displayInfFlag = false;
+           memset(display_par.ant[i].mac,0x00,8);
+
+           display_par.device[i].id = 0xFFFF;
+           display_par.device[i].x = 0x00;
+           display_par.device[i].y = 0x00;
+           display_par.device[i].radius = 0x00;
+           display_par.device[i].rssi_offset = 0x00;
+           display_par.device[i].color = Qt::white;
+           display_par.device[i].displayInfFlag = false;
+           memset(display_par.device[i].mac,0x00,8);
+
+       }
+
+       for(i=0;i<sizeof(display_par);i++)
+       {
+           buff.append(*ptr++);
+       }
+
+
+
+
+       QFile fd_creat(path);
+       fd_creat.open(QIODevice::ReadWrite);
+       fd_creat.write(buff);
+       fd_creat.close();
+    }
+    else
+    {
+        buff = file.readAll();
+        file.close();
+        memcpy((uchar *)&display_par,buff.data(),buff.length());
+    }
+    return true;
+}
+

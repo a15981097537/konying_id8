@@ -1,5 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
-<file alias="resources.grc">E:/project/firmware_update_net/project-backup/resources.grc</file>
+<file alias="resources.grc">E:/project/firmware_update_net/project/resources.grc</file>
 </qresource>
 </RCC>
