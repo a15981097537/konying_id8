@@ -534,6 +534,8 @@ public:
     QPushButton *BLE_virtualSetBt;
     QCheckBox *BLE_attenuationcheckBox;
     QCheckBox *BLE_FiltercheckBox;
+    QCheckBox *BLE_AreaCheckBox;
+    QCheckBox *BLE_AreaAloneCheckBox;
     QHBoxLayout *horizontalLayout_85;
     QLabel *label_60;
     QTextEdit *BLE_virtualRatio;
@@ -546,7 +548,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(1298, 689);
+        MainWindow->resize(1298, 709);
         MainWindow->setAutoFillBackground(false);
         MainWindow->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
         MainWindow->setUnifiedTitleAndToolBarOnMac(false);
@@ -3078,6 +3080,16 @@ public:
 
         verticalLayout_74->addWidget(BLE_FiltercheckBox);
 
+        BLE_AreaCheckBox = new QCheckBox(groupBox_25);
+        BLE_AreaCheckBox->setObjectName(QStringLiteral("BLE_AreaCheckBox"));
+
+        verticalLayout_74->addWidget(BLE_AreaCheckBox);
+
+        BLE_AreaAloneCheckBox = new QCheckBox(groupBox_25);
+        BLE_AreaAloneCheckBox->setObjectName(QStringLiteral("BLE_AreaAloneCheckBox"));
+
+        verticalLayout_74->addWidget(BLE_AreaAloneCheckBox);
+
         horizontalLayout_85 = new QHBoxLayout();
         horizontalLayout_85->setObjectName(QStringLiteral("horizontalLayout_85"));
         label_60 = new QLabel(groupBox_25);
@@ -3529,6 +3541,8 @@ public:
         BLE_virtualSetBt->setText(QApplication::translate("MainWindow", "\346\250\241\346\213\237\346\240\207\347\255\276\346\225\260\346\215\256", 0));
         BLE_attenuationcheckBox->setText(QApplication::translate("MainWindow", "\350\241\260\345\207\217\345\205\254\345\274\217", 0));
         BLE_FiltercheckBox->setText(QApplication::translate("MainWindow", "\346\273\244\346\263\242", 0));
+        BLE_AreaCheckBox->setText(QApplication::translate("MainWindow", "\346\230\276\347\244\272\345\214\272\345\237\237", 0));
+        BLE_AreaAloneCheckBox->setText(QApplication::translate("MainWindow", "\345\210\206\345\274\200\346\230\276\347\244\272", 0));
         label_60->setText(QApplication::translate("MainWindow", "\346\257\224\345\200\274", 0));
         function->setTabText(function->indexOf(BLE_map), QApplication::translate("MainWindow", "BLE_map", 0));
     } // retranslateUi

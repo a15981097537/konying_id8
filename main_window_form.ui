@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1298</width>
-    <height>689</height>
+    <height>709</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -4818,6 +4818,20 @@ p, li { white-space: pre-wrap; }
               <widget class="QCheckBox" name="BLE_FiltercheckBox">
                <property name="text">
                 <string>滤波</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="BLE_AreaCheckBox">
+               <property name="text">
+                <string>显示区域</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="BLE_AreaAloneCheckBox">
+               <property name="text">
+                <string>分开显示</string>
                </property>
               </widget>
              </item>

@@ -461,6 +461,7 @@ struct BLE_DEVICE_PAR
 struct BLE_ALGORITHM_PAR
 {
   BLE_DEVICE_PAR ble_algorithm[ALGORITHM_DEVICE_MAX];
+  uchar location_bit[300][300];
   double  ratio;
   QTimer *timer;
 };
@@ -697,7 +698,7 @@ private slots:
     void NET_acceptConnection(); //接受客户端连接
     void NET_displayError(QAbstractSocket::SocketError); //显示错误信息
     void NET_revData();
-    void BLE_locationCalculator(void);
+    void BLE_locationCalculator(ushort id);
 
 
     void storeHistoryLog();

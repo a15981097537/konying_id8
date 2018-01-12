@@ -5362,7 +5362,7 @@ void MainWindow::BLE_DisplayInit(void)
 
 
     ble_algorithm_par.timer = new QTimer(this);
-    connect(ble_algorithm_par.timer,SIGNAL(timeout()),this,SLOT(BLE_locationCalculator()));
+    connect(ble_algorithm_par.timer,SIGNAL(timeout()),this,SLOT(BLE_locationCalculator(0xFFFF)));
     ble_algorithm_par.timer->start(1000);
     // 场景
     QGraphicsScene *scene = new QGraphicsScene;
@@ -5457,6 +5457,32 @@ void MainWindow::BLE_displayUpdate()
                 scene->addText("MAC:"+strToHex(display_par.device[i].mac,8).toUpper())->setPos(x_point+4,y_point+10);
                 scene->addText(QString("OFS:%1").arg(display_par.device[i].rssi_offset))->setPos(x_point+4,y_point+20);
                 scene->addText(QString("RAD:%1").arg(display_par.device[i].radius))->setPos(x_point+4,y_point+30);
+            }
+        }
+    }
+
+    QPixmap pix_bit(3,3);
+    if(BLE_AreaCheckBox->isChecked()){
+        for(short i=-100;i<200;i++){
+            for(short j=-100;j<200;j++){
+                if(ble_algorithm_par.location_bit[i+100][j+100]==3){
+                    pix_bit.fill(Qt::red);
+                    x_point = x_convert(i);
+                    y_point = y_convert(j);
+                    scene->addPixmap(pix_bit)->setPos(x_point-1,y_point-1);
+                }
+                else if(ble_algorithm_par.location_bit[i+100][j+100]==2){
+                    pix_bit.fill(Qt::cyan);
+                    x_point = x_convert(i);
+                    y_point = y_convert(j);
+                    scene->addPixmap(pix_bit)->setPos(x_point-1,y_point-1);
+                }
+                else if(ble_algorithm_par.location_bit[i+100][j+100]==1){
+                    pix_bit.fill(Qt::yellow);
+                    x_point = x_convert(i);
+                    y_point = y_convert(j);
+                    scene->addPixmap(pix_bit)->setPos(x_point-1,y_point-1);
+                }
             }
         }
     }
@@ -5684,7 +5710,7 @@ void MainWindow::BLE_storeData(ushort device_id,ushort ant_id,uchar sequence,cha
                     if(ble_algorithm_par.ble_algorithm[i].ant_id[j] == ant_id){
                         ble_algorithm_par.ble_algorithm[i].rssi[j] = rssi;
                         ble_algorithm_par.ble_algorithm[i].update_flag = true;
-                        //BLE_locationCalculator();
+                        //BLE_locationCalculator(ble_algorithm_par.ble_algorithm[i].device_id);
                         return;
                     }
                 }
@@ -5703,7 +5729,7 @@ void MainWindow::BLE_storeData(ushort device_id,ushort ant_id,uchar sequence,cha
                 //有新的数据接收到，计算定位数据
                 if(ble_algorithm_par.ble_algorithm[i].update_flag == true){
                     //还没有来得及计算位置，就有新的数据
-                    BLE_locationCalculator();
+                    BLE_locationCalculator(ble_algorithm_par.ble_algorithm[i].device_id);
                 }
                 //store new data
                 ble_algorithm_par.ble_algorithm[i].rssi[0] = rssi;
@@ -5736,33 +5762,38 @@ void MainWindow::BLE_storeData(ushort device_id,ushort ant_id,uchar sequence,cha
 }
 
 
-void MainWindow::BLE_locationCalculator(void){
+void MainWindow::BLE_locationCalculator(ushort id){
     bool update_flag = false;
     uchar i,j,m,n,ant_first,ant_second,ant_third;
-    short xA=0,yA=0,xB=0,yB=0,xC=0,yC=0;
+    short xA=0,yA=0,xB=0,yB=0,xC=0,yC=0,x_min,y_min,x_max,y_max;
     short x,y,x_point,y_point,x_point_previous,y_point_previous;
-    double distance_AB[2],distance_AC[2],distance_BC[2],distance_last;
-    double distance_A,distance_B,distance_C;
-    double rssi_AB,rssi_AC,rssi_BC;
+    long double distance_AB[2],distance_AC[2],distance_BC[2],distance_last0,distance_last1;
+    long double distance_A,distance_B,distance_C,distance_A_last,distance_B_last,distance_C_last;
+    long double rssi_AB,rssi_AC,rssi_BC;
     ushort ant_idA,ant_idB,ant_idC;
-    double ant_rssiA,ant_rssiB,ant_rssiC;
+    long double ant_rssiA,ant_rssiB,ant_rssiC;
     short ant_offsetA=0,ant_offsetB=0,ant_offsetC=0;
-    double len_AB,len_BC,len_AC,len_A,len_B,len_C;
+    long double len_AB,len_BC,len_AC,len_A,len_B,len_C;
     QString str;
 
 
 
 
    //ble_algorithm_par.timer->start(1000);
-    //ble_algorithm_par.timer->stop();
+    ble_algorithm_par.timer->stop();
     str.clear();
     if(BLE_displayLog->isChecked()){
         str+="\r\n*********************algorithm start*************************";
     }
 
     for(i=0;i<ALGORITHM_DEVICE_MAX;i++){
-        if(ble_algorithm_par.ble_algorithm[i].update_flag == true &&
-           ble_algorithm_par.ble_algorithm[i].receive_count >= 3){
+        if((ble_algorithm_par.ble_algorithm[i].device_id != id)&&
+           (id != 0xFFFF)){
+            continue;
+        }
+
+        if((ble_algorithm_par.ble_algorithm[i].update_flag == true) &&
+           (ble_algorithm_par.ble_algorithm[i].receive_count >= 3)){
             update_flag = true;
             ble_algorithm_par.ble_algorithm[i].update_flag = false;
 
@@ -5871,11 +5902,11 @@ void MainWindow::BLE_locationCalculator(void){
             }
 
 
-            ant_rssiA = -(ant_rssiA+ant_offsetA);
+            ant_rssiA = -(ant_rssiA+ant_offsetA)+20;
 
-            ant_rssiB = -(ant_rssiB+ant_offsetB);
+            ant_rssiB = -(ant_rssiB+ant_offsetB)+20;
 
-            ant_rssiC = -(ant_rssiC+ant_offsetC);
+            ant_rssiC = -(ant_rssiC+ant_offsetC)+20;
 
             //if((ant_rssiA - ant_rssiC)>5)
             {
@@ -5931,10 +5962,37 @@ void MainWindow::BLE_locationCalculator(void){
 
 
 
-            distance_last = 1000;
+            distance_last0 = 1000;
+            distance_last1 = 1000;
 
-            for(x=-100;x<200;x++){
-                for(y=-100;y<200;y++){
+            //find max and min x
+            if(xA>xB){
+                x_min = xB;
+                x_max = xA;
+            }
+            else {
+                x_min = xA;
+                x_max = xB;
+            }
+
+            if(xC>x_max)x_max = xC;
+            else if(xC<x_min)x_min = xC;
+            //find max and min y
+            if(yA>yB){
+                y_min = yB;
+                y_max = yA;
+            }
+            else {
+                y_min = yA;
+                y_max = yB;
+            }
+
+            if(yC>y_max)y_max = yC;
+            else if(yC<y_min)y_min = yC;
+
+
+            for(x=x_min;x<=x_max;x++){
+                for(y=y_min;y<=y_max;y++){
 
 
 //                    if(((x==xA)&&(y==yA))||((x==xB)&&(y==yB))||((x==xC)&&(y==yC))){
@@ -5943,6 +6001,7 @@ void MainWindow::BLE_locationCalculator(void){
                     distance_A = sqrt((x - xA)*(x - xA)+(y - yA)*(y - yA));
                     distance_B = sqrt((x - xB)*(x - xB)+(y - yB)*(y - yB));
                     distance_C = sqrt((x - xC)*(x - xC)+(y - yC)*(y - yC));
+
 
 
 
@@ -5999,26 +6058,43 @@ void MainWindow::BLE_locationCalculator(void){
                     }
 
 
-                    if((distance_AB[1]<ble_algorithm_par.ratio) && (distance_AC[1]<ble_algorithm_par.ratio) && (distance_BC[1]<ble_algorithm_par.ratio))
-                    {
-                        if(((len_AB+len_AC+len_BC))>(distance_A+distance_B+distance_C))
-                        //if((distance_A<2*ant_rssiA)&&(distance_B<2*ant_rssiB)&&(distance_C<2*ant_rssiC))
-                        {
+//                    distance_AB[1] = fabs(rssi_AB-distance_AB[0]);
+//                    distance_AC[1] = fabs(rssi_AC-distance_AC[0]);
+//                    distance_BC[1] = fabs(rssi_BC-distance_BC[0]);
 
-                            if(distance_last > (distance_AB[1]+distance_AC[1]+distance_BC[1]))
-                            {
-                                distance_last = distance_AB[1]+distance_AC[1]+distance_BC[1];
+
+
+                    ble_algorithm_par.location_bit[x+100][y+100]=0;
+                    if(BLE_AreaAloneCheckBox->isChecked()==true){
+                        if((distance_AB[1]<ble_algorithm_par.ratio)){
+                            ble_algorithm_par.location_bit[x+100][y+100]=1;
+                        }
+                        if((distance_AC[1]<ble_algorithm_par.ratio)){
+                            ble_algorithm_par.location_bit[x+100][y+100]=2;
+                        }
+                        if((distance_BC[1]<ble_algorithm_par.ratio)){
+                            ble_algorithm_par.location_bit[x+100][y+100]=3;
+                        }
+                    }
+                    if((distance_AB[1]<ble_algorithm_par.ratio) && (distance_AC[1]<ble_algorithm_par.ratio) && (distance_BC[1]<ble_algorithm_par.ratio)){
+                        if(((len_AB+len_AC+len_BC))>(distance_A+distance_B+distance_C)){
+                            if(distance_last0 > (distance_AB[1]+distance_AC[1]+distance_BC[1])){
+                                distance_last0 = (distance_AB[1]+distance_AC[1]+distance_BC[1]);
                                 x_point = x;
                                 y_point = y;
 
+                                distance_A_last = distance_A;
+                                distance_B_last = distance_B;
+                                distance_C_last = distance_C;
+                                if(BLE_AreaAloneCheckBox->isChecked()==false)ble_algorithm_par.location_bit[x+100][y+100]=1;
                             }
-                            //if(BLE_displayLog->isChecked())
-                            {
-                                //str += QString("\r\nx:%1  y:%2  x_point:%3 y_point:%4").arg(x).arg(y).arg(x_point).arg(y_point);
-                                //str += QString("/  distance_last:%1").arg(distance_last);
-                                //str += QString("/  distance_A:%1  distance_B:%2  distance_C:%3").arg((double)distance_A).arg((double)distance_B).arg((double)distance_C);
-                                //str += QString("/  distance_AB[1]:%1  distance_AC[1]:%2  distance_BC[1]:%3\r\n").arg((double)distance_AB[1]).arg((double)distance_AC[1]).arg((double)distance_BC[1]);
+                            else {
+                                if(BLE_AreaAloneCheckBox->isChecked()==false)ble_algorithm_par.location_bit[x+100][y+100]=2;
                             }
+
+                        }
+                        else {
+                            if(BLE_AreaAloneCheckBox->isChecked()==false)ble_algorithm_par.location_bit[x+100][y+100]=3;
                         }
                     }
                 }
@@ -6031,7 +6107,7 @@ void MainWindow::BLE_locationCalculator(void){
                 //**************filter***************************/
                 if(BLE_FiltercheckBox->isChecked()){
                     if((x_point_previous!=1000)&&(y_point_previous!=1000)){
-                        distance_last = sqrt((x_point - x_point_previous)*(x_point - x_point_previous)+(y_point - y_point_previous)*(y_point - y_point_previous));
+                        distance_last0 = sqrt((x_point - x_point_previous)*(x_point - x_point_previous)+(y_point - y_point_previous)*(y_point - y_point_previous));
 
 //                        str += QString("\r\nx_point_previous:%1  y_point_previous:%2 ").arg(x_point_previous).arg(y_point_previous);
 //                        str += QString("\r\nx_point:         %1  y_point:         %2   len:%3").arg(x_point).arg(y_point).arg((double)distance_last);
@@ -6042,23 +6118,23 @@ void MainWindow::BLE_locationCalculator(void){
 //                        }
 
 
-                        if(distance_last>30){
+                        if(distance_last0>30){
                             x_point = x_point_previous+(x_point-x_point_previous)/8;
                             y_point = y_point_previous+(y_point-y_point_previous)/8;
                         }
-                        else if(distance_last>20){
+                        else if(distance_last0>20){
                             x_point = x_point_previous+(x_point-x_point_previous)/7;
                             y_point = y_point_previous+(y_point-y_point_previous)/7;
                         }
-                        else if(distance_last>10){
+                        else if(distance_last0>10){
                             x_point = x_point_previous+(x_point-x_point_previous)/5;
                             y_point = y_point_previous+(y_point-y_point_previous)/5;
                         }
-                        else if(distance_last>5){
+                        else if(distance_last0>5){
                             x_point = x_point_previous+(x_point-x_point_previous)/3;
                             y_point = y_point_previous+(y_point-y_point_previous)/3;
                         }
-                        else if(distance_last>2){
+                        else if(distance_last0>2){
                             x_point = x_point_previous+(x_point-x_point_previous)/2;
                             y_point = y_point_previous+(y_point-y_point_previous)/2;
                         }
@@ -6102,18 +6178,16 @@ void MainWindow::BLE_locationCalculator(void){
 
             if(BLE_displayLog->isChecked())
             {
-                distance_A = sqrt((x_point - xA)*(x_point - xA)+(y_point - yA)*(y_point - yA));
-                distance_B = sqrt((x_point - xB)*(x_point - xB)+(y_point - yB)*(y_point - yB));
-                distance_C = sqrt((x_point - xC)*(x_point - xC)+(y_point - yC)*(y_point - yC));
 
                 str+="\r\n/ device_id:0x"+uint16ToHex(ble_algorithm_par.ble_algorithm[i].device_id).toUpper();
                 str+="/ ant_idA:0x"+uint16ToHex(ant_idA).toUpper();
                 str+="/ ant_idB:0x"+uint16ToHex(ant_idB).toUpper();
                 str+="/ ant_idC:0x"+uint16ToHex(ant_idC).toUpper();
                 str+=QString("/ len_A:%1 len_B:%2 len_C:%3").arg((double)len_A).arg((double)len_B).arg((double)len_B);
-                str+= QString("/ distance_A:%1  distance_B:%2  distance_C:%3").arg((double)distance_A).arg((double)distance_B).arg((double)distance_C);
+                str+= QString("/ distance_A:%1  distance_B:%2  distance_C:%3").arg((double)distance_A_last).arg((double)distance_B_last).arg((double)distance_C_last);
                 str+=QString("/ x_point:%1  y_point:%2").arg(x_point).arg(y_point);
             }
+            break;
         }
     }
 

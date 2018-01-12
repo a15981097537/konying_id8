@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[144];
-    char stringdata0[3546];
+    QByteArrayData data[145];
+    char stringdata0[3549];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -84,95 +84,96 @@ QT_MOC_LITERAL(51, 916, 16), // "NET_displayError"
 QT_MOC_LITERAL(52, 933, 28), // "QAbstractSocket::SocketError"
 QT_MOC_LITERAL(53, 962, 11), // "NET_revData"
 QT_MOC_LITERAL(54, 974, 22), // "BLE_locationCalculator"
-QT_MOC_LITERAL(55, 997, 15), // "storeHistoryLog"
-QT_MOC_LITERAL(56, 1013, 21), // "on_bt_netSend_clicked"
-QT_MOC_LITERAL(57, 1035, 20), // "on_bt_listen_clicked"
-QT_MOC_LITERAL(58, 1056, 24), // "on_bt_stopListen_clicked"
-QT_MOC_LITERAL(59, 1081, 22), // "on_bt_searchId_clicked"
-QT_MOC_LITERAL(60, 1104, 24), // "on_export_idList_clicked"
-QT_MOC_LITERAL(61, 1129, 19), // "on_bt_clear_clicked"
-QT_MOC_LITERAL(62, 1149, 43), // "on_comunication_protocal_curr..."
-QT_MOC_LITERAL(63, 1193, 24), // "on_bt_search_net_clicked"
-QT_MOC_LITERAL(64, 1218, 45), // "on_localtionIdSelection_windo..."
-QT_MOC_LITERAL(65, 1264, 8), // "iconText"
-QT_MOC_LITERAL(66, 1273, 47), // "on_localtionIdSelection_4_win..."
-QT_MOC_LITERAL(67, 1321, 40), // "on_localtionFiltId_windowIcon..."
-QT_MOC_LITERAL(68, 1362, 41), // "on_localtionFiltStr_windowIco..."
-QT_MOC_LITERAL(69, 1404, 30), // "on_localtionFiltId_textChanged"
-QT_MOC_LITERAL(70, 1435, 31), // "on_localtionFiltStr_textChanged"
-QT_MOC_LITERAL(71, 1467, 30), // "on_locationStopDisplay_clicked"
-QT_MOC_LITERAL(72, 1498, 7), // "checked"
-QT_MOC_LITERAL(73, 1506, 25), // "on_coolFiltId_textChanged"
-QT_MOC_LITERAL(74, 1532, 26), // "on_coolFiltStr_textChanged"
-QT_MOC_LITERAL(75, 1559, 20), // "on_coolGetSn_clicked"
-QT_MOC_LITERAL(76, 1580, 28), // "on_coolSetRepTime_Bt_clicked"
-QT_MOC_LITERAL(77, 1609, 33), // "on_coolTemVerification_Bt_cli..."
-QT_MOC_LITERAL(78, 1643, 33), // "on_coolHumVerification_Bt_cli..."
-QT_MOC_LITERAL(79, 1677, 21), // "on_coolDisarm_clicked"
-QT_MOC_LITERAL(80, 1699, 28), // "on_coolGetTempreture_clicked"
-QT_MOC_LITERAL(81, 1728, 26), // "on_coolTemAlarm_Bt_clicked"
-QT_MOC_LITERAL(82, 1755, 23), // "on_coolSetSn_Bt_clicked"
-QT_MOC_LITERAL(83, 1779, 31), // "on_coolTemAlarmH_Edit_destroyed"
-QT_MOC_LITERAL(84, 1811, 30), // "on_networkResetIdTable_clicked"
-QT_MOC_LITERAL(85, 1842, 21), // "on_bt_clearId_clicked"
-QT_MOC_LITERAL(86, 1864, 27), // "on_energyFiltId_textChanged"
-QT_MOC_LITERAL(87, 1892, 28), // "on_energyFiltStr_textChanged"
-QT_MOC_LITERAL(88, 1921, 31), // "on_energyGetMeasurement_clicked"
-QT_MOC_LITERAL(89, 1953, 30), // "on_energySetRepTime_Bt_clicked"
-QT_MOC_LITERAL(90, 1984, 19), // "on_StoreDir_clicked"
-QT_MOC_LITERAL(91, 2004, 30), // "on_shortAddr_currentRowChanged"
-QT_MOC_LITERAL(92, 2035, 10), // "currentRow"
-QT_MOC_LITERAL(93, 2046, 24), // "on_shortAddr_itemChanged"
-QT_MOC_LITERAL(94, 2071, 16), // "QListWidgetItem*"
-QT_MOC_LITERAL(95, 2088, 4), // "item"
-QT_MOC_LITERAL(96, 2093, 22), // "on_shortAddr_activated"
-QT_MOC_LITERAL(97, 2116, 26), // "on_shortAddr_itemActivated"
-QT_MOC_LITERAL(98, 2143, 30), // "on_bt_setHeartBeatTime_clicked"
-QT_MOC_LITERAL(99, 2174, 31), // "on_injectionTemAlarm_Bt_clicked"
-QT_MOC_LITERAL(100, 2206, 28), // "on_injectionSetSn_Bt_clicked"
-QT_MOC_LITERAL(101, 2235, 33), // "on_injectionSetRepTime_Bt_cli..."
-QT_MOC_LITERAL(102, 2269, 25), // "on_injectionGetSn_clicked"
-QT_MOC_LITERAL(103, 2295, 33), // "on_injectionSetSpeaker_Bt_cli..."
-QT_MOC_LITERAL(104, 2329, 30), // "on_injectionFiltId_textChanged"
-QT_MOC_LITERAL(105, 2360, 31), // "on_injectionFiltStr_textChanged"
-QT_MOC_LITERAL(106, 2392, 27), // "on_sosSetRepTime_Bt_clicked"
-QT_MOC_LITERAL(107, 2420, 25), // "on_sosFiltStr_textChanged"
-QT_MOC_LITERAL(108, 2446, 24), // "on_sosFiltId_textChanged"
-QT_MOC_LITERAL(109, 2471, 28), // "on_injectionStart_Bt_clicked"
-QT_MOC_LITERAL(110, 2500, 27), // "on_injectionStop_Bt_clicked"
-QT_MOC_LITERAL(111, 2528, 29), // "on_injectionFinish_Bt_clicked"
-QT_MOC_LITERAL(112, 2558, 33), // "on_injectionSetTotalDi_Bt_cli..."
-QT_MOC_LITERAL(113, 2592, 37), // "on_injectionSetStopTimeOut_Bt..."
-QT_MOC_LITERAL(114, 2630, 42), // "on_injectionGetDeviceParamete..."
-QT_MOC_LITERAL(115, 2673, 29), // "on_injectionDiInit_Bt_clicked"
-QT_MOC_LITERAL(116, 2703, 28), // "on_injectionSetDi_Bt_clicked"
-QT_MOC_LITERAL(117, 2732, 30), // "on_injectionSetName_Bt_clicked"
-QT_MOC_LITERAL(118, 2763, 26), // "on_export_idList_2_clicked"
-QT_MOC_LITERAL(119, 2790, 26), // "on_export_idList_3_clicked"
-QT_MOC_LITERAL(120, 2817, 35), // "on_pushButton_requestNetPar_c..."
-QT_MOC_LITERAL(121, 2853, 31), // "on_pushButton_setNetPar_clicked"
-QT_MOC_LITERAL(122, 2885, 32), // "on_localtionFiltId_1_textChanged"
-QT_MOC_LITERAL(123, 2918, 32), // "on_localtionFiltId_2_textChanged"
-QT_MOC_LITERAL(124, 2951, 32), // "on_localtionFiltId_3_textChanged"
-QT_MOC_LITERAL(125, 2984, 32), // "on_localtionFiltId_4_textChanged"
-QT_MOC_LITERAL(126, 3017, 32), // "on_bt_setHeartBeatTime_3_clicked"
-QT_MOC_LITERAL(127, 3050, 25), // "on_BLE_FiltId_textChanged"
-QT_MOC_LITERAL(128, 3076, 27), // "on_BLE_FiltId_1_textChanged"
-QT_MOC_LITERAL(129, 3104, 27), // "on_BLE_FiltId_2_textChanged"
-QT_MOC_LITERAL(130, 3132, 27), // "on_BLE_FiltId_3_textChanged"
-QT_MOC_LITERAL(131, 3160, 27), // "on_BLE_FiltId_4_textChanged"
-QT_MOC_LITERAL(132, 3188, 26), // "on_BLE_FiltStr_textChanged"
-QT_MOC_LITERAL(133, 3215, 21), // "on_BLE_addAnt_clicked"
-QT_MOC_LITERAL(134, 3237, 24), // "on_BLE_deleteAnt_clicked"
-QT_MOC_LITERAL(135, 3262, 27), // "on_BLE__set125KRssi_clicked"
-QT_MOC_LITERAL(136, 3290, 32), // "on_horizontalSlider_valueChanged"
-QT_MOC_LITERAL(137, 3323, 28), // "on_BLE_showDeviceInf_clicked"
-QT_MOC_LITERAL(138, 3352, 28), // "on_BLE_hideDeviceInf_clicked"
-QT_MOC_LITERAL(139, 3381, 31), // "on_BLE_showAllDeviceInf_clicked"
-QT_MOC_LITERAL(140, 3413, 31), // "on_BLE_hideAllDeviceInf_clicked"
-QT_MOC_LITERAL(141, 3445, 40), // "on_BLE_rssiCalculatorSlider_v..."
-QT_MOC_LITERAL(142, 3486, 27), // "on_BLE_virtualSetBt_clicked"
-QT_MOC_LITERAL(143, 3514, 31) // "on_BLE_virtualRatio_textChanged"
+QT_MOC_LITERAL(55, 997, 2), // "id"
+QT_MOC_LITERAL(56, 1000, 15), // "storeHistoryLog"
+QT_MOC_LITERAL(57, 1016, 21), // "on_bt_netSend_clicked"
+QT_MOC_LITERAL(58, 1038, 20), // "on_bt_listen_clicked"
+QT_MOC_LITERAL(59, 1059, 24), // "on_bt_stopListen_clicked"
+QT_MOC_LITERAL(60, 1084, 22), // "on_bt_searchId_clicked"
+QT_MOC_LITERAL(61, 1107, 24), // "on_export_idList_clicked"
+QT_MOC_LITERAL(62, 1132, 19), // "on_bt_clear_clicked"
+QT_MOC_LITERAL(63, 1152, 43), // "on_comunication_protocal_curr..."
+QT_MOC_LITERAL(64, 1196, 24), // "on_bt_search_net_clicked"
+QT_MOC_LITERAL(65, 1221, 45), // "on_localtionIdSelection_windo..."
+QT_MOC_LITERAL(66, 1267, 8), // "iconText"
+QT_MOC_LITERAL(67, 1276, 47), // "on_localtionIdSelection_4_win..."
+QT_MOC_LITERAL(68, 1324, 40), // "on_localtionFiltId_windowIcon..."
+QT_MOC_LITERAL(69, 1365, 41), // "on_localtionFiltStr_windowIco..."
+QT_MOC_LITERAL(70, 1407, 30), // "on_localtionFiltId_textChanged"
+QT_MOC_LITERAL(71, 1438, 31), // "on_localtionFiltStr_textChanged"
+QT_MOC_LITERAL(72, 1470, 30), // "on_locationStopDisplay_clicked"
+QT_MOC_LITERAL(73, 1501, 7), // "checked"
+QT_MOC_LITERAL(74, 1509, 25), // "on_coolFiltId_textChanged"
+QT_MOC_LITERAL(75, 1535, 26), // "on_coolFiltStr_textChanged"
+QT_MOC_LITERAL(76, 1562, 20), // "on_coolGetSn_clicked"
+QT_MOC_LITERAL(77, 1583, 28), // "on_coolSetRepTime_Bt_clicked"
+QT_MOC_LITERAL(78, 1612, 33), // "on_coolTemVerification_Bt_cli..."
+QT_MOC_LITERAL(79, 1646, 33), // "on_coolHumVerification_Bt_cli..."
+QT_MOC_LITERAL(80, 1680, 21), // "on_coolDisarm_clicked"
+QT_MOC_LITERAL(81, 1702, 28), // "on_coolGetTempreture_clicked"
+QT_MOC_LITERAL(82, 1731, 26), // "on_coolTemAlarm_Bt_clicked"
+QT_MOC_LITERAL(83, 1758, 23), // "on_coolSetSn_Bt_clicked"
+QT_MOC_LITERAL(84, 1782, 31), // "on_coolTemAlarmH_Edit_destroyed"
+QT_MOC_LITERAL(85, 1814, 30), // "on_networkResetIdTable_clicked"
+QT_MOC_LITERAL(86, 1845, 21), // "on_bt_clearId_clicked"
+QT_MOC_LITERAL(87, 1867, 27), // "on_energyFiltId_textChanged"
+QT_MOC_LITERAL(88, 1895, 28), // "on_energyFiltStr_textChanged"
+QT_MOC_LITERAL(89, 1924, 31), // "on_energyGetMeasurement_clicked"
+QT_MOC_LITERAL(90, 1956, 30), // "on_energySetRepTime_Bt_clicked"
+QT_MOC_LITERAL(91, 1987, 19), // "on_StoreDir_clicked"
+QT_MOC_LITERAL(92, 2007, 30), // "on_shortAddr_currentRowChanged"
+QT_MOC_LITERAL(93, 2038, 10), // "currentRow"
+QT_MOC_LITERAL(94, 2049, 24), // "on_shortAddr_itemChanged"
+QT_MOC_LITERAL(95, 2074, 16), // "QListWidgetItem*"
+QT_MOC_LITERAL(96, 2091, 4), // "item"
+QT_MOC_LITERAL(97, 2096, 22), // "on_shortAddr_activated"
+QT_MOC_LITERAL(98, 2119, 26), // "on_shortAddr_itemActivated"
+QT_MOC_LITERAL(99, 2146, 30), // "on_bt_setHeartBeatTime_clicked"
+QT_MOC_LITERAL(100, 2177, 31), // "on_injectionTemAlarm_Bt_clicked"
+QT_MOC_LITERAL(101, 2209, 28), // "on_injectionSetSn_Bt_clicked"
+QT_MOC_LITERAL(102, 2238, 33), // "on_injectionSetRepTime_Bt_cli..."
+QT_MOC_LITERAL(103, 2272, 25), // "on_injectionGetSn_clicked"
+QT_MOC_LITERAL(104, 2298, 33), // "on_injectionSetSpeaker_Bt_cli..."
+QT_MOC_LITERAL(105, 2332, 30), // "on_injectionFiltId_textChanged"
+QT_MOC_LITERAL(106, 2363, 31), // "on_injectionFiltStr_textChanged"
+QT_MOC_LITERAL(107, 2395, 27), // "on_sosSetRepTime_Bt_clicked"
+QT_MOC_LITERAL(108, 2423, 25), // "on_sosFiltStr_textChanged"
+QT_MOC_LITERAL(109, 2449, 24), // "on_sosFiltId_textChanged"
+QT_MOC_LITERAL(110, 2474, 28), // "on_injectionStart_Bt_clicked"
+QT_MOC_LITERAL(111, 2503, 27), // "on_injectionStop_Bt_clicked"
+QT_MOC_LITERAL(112, 2531, 29), // "on_injectionFinish_Bt_clicked"
+QT_MOC_LITERAL(113, 2561, 33), // "on_injectionSetTotalDi_Bt_cli..."
+QT_MOC_LITERAL(114, 2595, 37), // "on_injectionSetStopTimeOut_Bt..."
+QT_MOC_LITERAL(115, 2633, 42), // "on_injectionGetDeviceParamete..."
+QT_MOC_LITERAL(116, 2676, 29), // "on_injectionDiInit_Bt_clicked"
+QT_MOC_LITERAL(117, 2706, 28), // "on_injectionSetDi_Bt_clicked"
+QT_MOC_LITERAL(118, 2735, 30), // "on_injectionSetName_Bt_clicked"
+QT_MOC_LITERAL(119, 2766, 26), // "on_export_idList_2_clicked"
+QT_MOC_LITERAL(120, 2793, 26), // "on_export_idList_3_clicked"
+QT_MOC_LITERAL(121, 2820, 35), // "on_pushButton_requestNetPar_c..."
+QT_MOC_LITERAL(122, 2856, 31), // "on_pushButton_setNetPar_clicked"
+QT_MOC_LITERAL(123, 2888, 32), // "on_localtionFiltId_1_textChanged"
+QT_MOC_LITERAL(124, 2921, 32), // "on_localtionFiltId_2_textChanged"
+QT_MOC_LITERAL(125, 2954, 32), // "on_localtionFiltId_3_textChanged"
+QT_MOC_LITERAL(126, 2987, 32), // "on_localtionFiltId_4_textChanged"
+QT_MOC_LITERAL(127, 3020, 32), // "on_bt_setHeartBeatTime_3_clicked"
+QT_MOC_LITERAL(128, 3053, 25), // "on_BLE_FiltId_textChanged"
+QT_MOC_LITERAL(129, 3079, 27), // "on_BLE_FiltId_1_textChanged"
+QT_MOC_LITERAL(130, 3107, 27), // "on_BLE_FiltId_2_textChanged"
+QT_MOC_LITERAL(131, 3135, 27), // "on_BLE_FiltId_3_textChanged"
+QT_MOC_LITERAL(132, 3163, 27), // "on_BLE_FiltId_4_textChanged"
+QT_MOC_LITERAL(133, 3191, 26), // "on_BLE_FiltStr_textChanged"
+QT_MOC_LITERAL(134, 3218, 21), // "on_BLE_addAnt_clicked"
+QT_MOC_LITERAL(135, 3240, 24), // "on_BLE_deleteAnt_clicked"
+QT_MOC_LITERAL(136, 3265, 27), // "on_BLE__set125KRssi_clicked"
+QT_MOC_LITERAL(137, 3293, 32), // "on_horizontalSlider_valueChanged"
+QT_MOC_LITERAL(138, 3326, 28), // "on_BLE_showDeviceInf_clicked"
+QT_MOC_LITERAL(139, 3355, 28), // "on_BLE_hideDeviceInf_clicked"
+QT_MOC_LITERAL(140, 3384, 31), // "on_BLE_showAllDeviceInf_clicked"
+QT_MOC_LITERAL(141, 3416, 31), // "on_BLE_hideAllDeviceInf_clicked"
+QT_MOC_LITERAL(142, 3448, 40), // "on_BLE_rssiCalculatorSlider_v..."
+QT_MOC_LITERAL(143, 3489, 27), // "on_BLE_virtualSetBt_clicked"
+QT_MOC_LITERAL(144, 3517, 31) // "on_BLE_virtualRatio_textChanged"
 
     },
     "MainWindow\0about\0\0applyPortOptions\0"
@@ -203,7 +204,7 @@ QT_MOC_LITERAL(143, 3514, 31) // "on_BLE_virtualRatio_textChanged"
     "pressUartData\0NET_newListen\0"
     "NET_acceptConnection\0NET_displayError\0"
     "QAbstractSocket::SocketError\0NET_revData\0"
-    "BLE_locationCalculator\0storeHistoryLog\0"
+    "BLE_locationCalculator\0id\0storeHistoryLog\0"
     "on_bt_netSend_clicked\0on_bt_listen_clicked\0"
     "on_bt_stopListen_clicked\0"
     "on_bt_searchId_clicked\0on_export_idList_clicked\0"
@@ -337,91 +338,91 @@ static const uint qt_meta_data_MainWindow[] = {
       50,    0,  698,    2, 0x08 /* Private */,
       51,    1,  699,    2, 0x08 /* Private */,
       53,    0,  702,    2, 0x08 /* Private */,
-      54,    0,  703,    2, 0x08 /* Private */,
-      55,    0,  704,    2, 0x08 /* Private */,
-      56,    0,  705,    2, 0x08 /* Private */,
-      57,    0,  706,    2, 0x08 /* Private */,
-      58,    0,  707,    2, 0x08 /* Private */,
-      59,    0,  708,    2, 0x08 /* Private */,
-      60,    0,  709,    2, 0x08 /* Private */,
-      61,    0,  710,    2, 0x08 /* Private */,
-      62,    1,  711,    2, 0x08 /* Private */,
-      63,    0,  714,    2, 0x08 /* Private */,
-      64,    1,  715,    2, 0x08 /* Private */,
-      66,    1,  718,    2, 0x08 /* Private */,
-      67,    1,  721,    2, 0x08 /* Private */,
-      68,    1,  724,    2, 0x08 /* Private */,
-      69,    0,  727,    2, 0x08 /* Private */,
-      70,    0,  728,    2, 0x08 /* Private */,
-      71,    1,  729,    2, 0x08 /* Private */,
-      73,    0,  732,    2, 0x08 /* Private */,
-      74,    0,  733,    2, 0x08 /* Private */,
-      75,    0,  734,    2, 0x08 /* Private */,
-      76,    0,  735,    2, 0x08 /* Private */,
-      77,    0,  736,    2, 0x08 /* Private */,
-      78,    0,  737,    2, 0x08 /* Private */,
-      79,    0,  738,    2, 0x08 /* Private */,
-      80,    0,  739,    2, 0x08 /* Private */,
-      81,    0,  740,    2, 0x08 /* Private */,
-      82,    0,  741,    2, 0x08 /* Private */,
-      83,    0,  742,    2, 0x08 /* Private */,
-      84,    0,  743,    2, 0x08 /* Private */,
-      85,    0,  744,    2, 0x08 /* Private */,
-      86,    0,  745,    2, 0x08 /* Private */,
-      87,    0,  746,    2, 0x08 /* Private */,
-      88,    0,  747,    2, 0x08 /* Private */,
-      89,    0,  748,    2, 0x08 /* Private */,
-      90,    0,  749,    2, 0x08 /* Private */,
-      91,    1,  750,    2, 0x08 /* Private */,
-      93,    1,  753,    2, 0x08 /* Private */,
-      96,    1,  756,    2, 0x08 /* Private */,
-      97,    1,  759,    2, 0x08 /* Private */,
-      98,    0,  762,    2, 0x08 /* Private */,
-      99,    0,  763,    2, 0x08 /* Private */,
-     100,    0,  764,    2, 0x08 /* Private */,
-     101,    0,  765,    2, 0x08 /* Private */,
-     102,    0,  766,    2, 0x08 /* Private */,
-     103,    0,  767,    2, 0x08 /* Private */,
-     104,    0,  768,    2, 0x08 /* Private */,
-     105,    0,  769,    2, 0x08 /* Private */,
-     106,    0,  770,    2, 0x08 /* Private */,
-     107,    0,  771,    2, 0x08 /* Private */,
-     108,    0,  772,    2, 0x08 /* Private */,
-     109,    0,  773,    2, 0x08 /* Private */,
-     110,    0,  774,    2, 0x08 /* Private */,
-     111,    0,  775,    2, 0x08 /* Private */,
-     112,    0,  776,    2, 0x08 /* Private */,
-     113,    0,  777,    2, 0x08 /* Private */,
-     114,    0,  778,    2, 0x08 /* Private */,
-     115,    0,  779,    2, 0x08 /* Private */,
-     116,    0,  780,    2, 0x08 /* Private */,
-     117,    0,  781,    2, 0x08 /* Private */,
-     118,    0,  782,    2, 0x08 /* Private */,
-     119,    0,  783,    2, 0x08 /* Private */,
-     120,    0,  784,    2, 0x08 /* Private */,
-     121,    0,  785,    2, 0x08 /* Private */,
-     122,    0,  786,    2, 0x08 /* Private */,
-     123,    0,  787,    2, 0x08 /* Private */,
-     124,    0,  788,    2, 0x08 /* Private */,
-     125,    0,  789,    2, 0x08 /* Private */,
-     126,    0,  790,    2, 0x08 /* Private */,
-     127,    0,  791,    2, 0x08 /* Private */,
-     128,    0,  792,    2, 0x08 /* Private */,
-     129,    0,  793,    2, 0x08 /* Private */,
-     130,    0,  794,    2, 0x08 /* Private */,
-     131,    0,  795,    2, 0x08 /* Private */,
-     132,    0,  796,    2, 0x08 /* Private */,
-     133,    0,  797,    2, 0x08 /* Private */,
-     134,    0,  798,    2, 0x08 /* Private */,
-     135,    0,  799,    2, 0x08 /* Private */,
-     136,    1,  800,    2, 0x08 /* Private */,
-     137,    0,  803,    2, 0x08 /* Private */,
-     138,    0,  804,    2, 0x08 /* Private */,
-     139,    0,  805,    2, 0x08 /* Private */,
-     140,    0,  806,    2, 0x08 /* Private */,
-     141,    1,  807,    2, 0x08 /* Private */,
-     142,    0,  810,    2, 0x08 /* Private */,
-     143,    0,  811,    2, 0x08 /* Private */,
+      54,    1,  703,    2, 0x08 /* Private */,
+      56,    0,  706,    2, 0x08 /* Private */,
+      57,    0,  707,    2, 0x08 /* Private */,
+      58,    0,  708,    2, 0x08 /* Private */,
+      59,    0,  709,    2, 0x08 /* Private */,
+      60,    0,  710,    2, 0x08 /* Private */,
+      61,    0,  711,    2, 0x08 /* Private */,
+      62,    0,  712,    2, 0x08 /* Private */,
+      63,    1,  713,    2, 0x08 /* Private */,
+      64,    0,  716,    2, 0x08 /* Private */,
+      65,    1,  717,    2, 0x08 /* Private */,
+      67,    1,  720,    2, 0x08 /* Private */,
+      68,    1,  723,    2, 0x08 /* Private */,
+      69,    1,  726,    2, 0x08 /* Private */,
+      70,    0,  729,    2, 0x08 /* Private */,
+      71,    0,  730,    2, 0x08 /* Private */,
+      72,    1,  731,    2, 0x08 /* Private */,
+      74,    0,  734,    2, 0x08 /* Private */,
+      75,    0,  735,    2, 0x08 /* Private */,
+      76,    0,  736,    2, 0x08 /* Private */,
+      77,    0,  737,    2, 0x08 /* Private */,
+      78,    0,  738,    2, 0x08 /* Private */,
+      79,    0,  739,    2, 0x08 /* Private */,
+      80,    0,  740,    2, 0x08 /* Private */,
+      81,    0,  741,    2, 0x08 /* Private */,
+      82,    0,  742,    2, 0x08 /* Private */,
+      83,    0,  743,    2, 0x08 /* Private */,
+      84,    0,  744,    2, 0x08 /* Private */,
+      85,    0,  745,    2, 0x08 /* Private */,
+      86,    0,  746,    2, 0x08 /* Private */,
+      87,    0,  747,    2, 0x08 /* Private */,
+      88,    0,  748,    2, 0x08 /* Private */,
+      89,    0,  749,    2, 0x08 /* Private */,
+      90,    0,  750,    2, 0x08 /* Private */,
+      91,    0,  751,    2, 0x08 /* Private */,
+      92,    1,  752,    2, 0x08 /* Private */,
+      94,    1,  755,    2, 0x08 /* Private */,
+      97,    1,  758,    2, 0x08 /* Private */,
+      98,    1,  761,    2, 0x08 /* Private */,
+      99,    0,  764,    2, 0x08 /* Private */,
+     100,    0,  765,    2, 0x08 /* Private */,
+     101,    0,  766,    2, 0x08 /* Private */,
+     102,    0,  767,    2, 0x08 /* Private */,
+     103,    0,  768,    2, 0x08 /* Private */,
+     104,    0,  769,    2, 0x08 /* Private */,
+     105,    0,  770,    2, 0x08 /* Private */,
+     106,    0,  771,    2, 0x08 /* Private */,
+     107,    0,  772,    2, 0x08 /* Private */,
+     108,    0,  773,    2, 0x08 /* Private */,
+     109,    0,  774,    2, 0x08 /* Private */,
+     110,    0,  775,    2, 0x08 /* Private */,
+     111,    0,  776,    2, 0x08 /* Private */,
+     112,    0,  777,    2, 0x08 /* Private */,
+     113,    0,  778,    2, 0x08 /* Private */,
+     114,    0,  779,    2, 0x08 /* Private */,
+     115,    0,  780,    2, 0x08 /* Private */,
+     116,    0,  781,    2, 0x08 /* Private */,
+     117,    0,  782,    2, 0x08 /* Private */,
+     118,    0,  783,    2, 0x08 /* Private */,
+     119,    0,  784,    2, 0x08 /* Private */,
+     120,    0,  785,    2, 0x08 /* Private */,
+     121,    0,  786,    2, 0x08 /* Private */,
+     122,    0,  787,    2, 0x08 /* Private */,
+     123,    0,  788,    2, 0x08 /* Private */,
+     124,    0,  789,    2, 0x08 /* Private */,
+     125,    0,  790,    2, 0x08 /* Private */,
+     126,    0,  791,    2, 0x08 /* Private */,
+     127,    0,  792,    2, 0x08 /* Private */,
+     128,    0,  793,    2, 0x08 /* Private */,
+     129,    0,  794,    2, 0x08 /* Private */,
+     130,    0,  795,    2, 0x08 /* Private */,
+     131,    0,  796,    2, 0x08 /* Private */,
+     132,    0,  797,    2, 0x08 /* Private */,
+     133,    0,  798,    2, 0x08 /* Private */,
+     134,    0,  799,    2, 0x08 /* Private */,
+     135,    0,  800,    2, 0x08 /* Private */,
+     136,    0,  801,    2, 0x08 /* Private */,
+     137,    1,  802,    2, 0x08 /* Private */,
+     138,    0,  805,    2, 0x08 /* Private */,
+     139,    0,  806,    2, 0x08 /* Private */,
+     140,    0,  807,    2, 0x08 /* Private */,
+     141,    0,  808,    2, 0x08 /* Private */,
+     142,    1,  809,    2, 0x08 /* Private */,
+     143,    0,  812,    2, 0x08 /* Private */,
+     144,    0,  813,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
@@ -463,7 +464,7 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void,
     QMetaType::Void, 0x80000000 | 52,    2,
     QMetaType::Void,
-    QMetaType::Void,
+    QMetaType::Void, QMetaType::UShort,   55,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -473,16 +474,13 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void,
     QMetaType::Void, QMetaType::QString,   29,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QString,   65,
-    QMetaType::Void, QMetaType::QString,   65,
-    QMetaType::Void, QMetaType::QString,   65,
-    QMetaType::Void, QMetaType::QString,   65,
+    QMetaType::Void, QMetaType::QString,   66,
+    QMetaType::Void, QMetaType::QString,   66,
+    QMetaType::Void, QMetaType::QString,   66,
+    QMetaType::Void, QMetaType::QString,   66,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Bool,   72,
-    QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void,
+    QMetaType::Void, QMetaType::Bool,   73,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -498,10 +496,13 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Int,   92,
-    QMetaType::Void, 0x80000000 | 94,   95,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::Int,   93,
+    QMetaType::Void, 0x80000000 | 95,   96,
     QMetaType::Void, QMetaType::QModelIndex,   44,
-    QMetaType::Void, 0x80000000 | 94,   95,
+    QMetaType::Void, 0x80000000 | 95,   96,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -599,7 +600,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 36: _t->NET_acceptConnection(); break;
         case 37: _t->NET_displayError((*reinterpret_cast< QAbstractSocket::SocketError(*)>(_a[1]))); break;
         case 38: _t->NET_revData(); break;
-        case 39: _t->BLE_locationCalculator(); break;
+        case 39: _t->BLE_locationCalculator((*reinterpret_cast< ushort(*)>(_a[1]))); break;
         case 40: _t->storeHistoryLog(); break;
         case 41: _t->on_bt_netSend_clicked(); break;
         case 42: _t->on_bt_listen_clicked(); break;
