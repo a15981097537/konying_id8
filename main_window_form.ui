@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1298</width>
-    <height>709</height>
+    <height>731</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -4557,22 +4557,6 @@ p, li { white-space: pre-wrap; }
               </layout>
              </item>
              <item>
-              <spacer name="verticalSpacer_11">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Fixed</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
               <widget class="QLabel" name="BLE_rssiCalculatorLabel">
                <property name="text">
                 <string>天线校准0dBm</string>
@@ -4639,22 +4623,6 @@ p, li { white-space: pre-wrap; }
                 <string>隐藏所有节点信息</string>
                </property>
               </widget>
-             </item>
-             <item>
-              <spacer name="verticalSpacer_10">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Fixed</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
              </item>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_76">
@@ -4810,14 +4778,35 @@ p, li { white-space: pre-wrap; }
              <item>
               <widget class="QCheckBox" name="BLE_attenuationcheckBox">
                <property name="text">
-                <string>衰减公式</string>
+                <string>衰减算法</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="BLE_attenuationWithoutCentercheckBox">
+               <property name="text">
+                <string>中心不衰减算法</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QCheckBox" name="BLE_FiltercheckBox">
                <property name="text">
-                <string>滤波</string>
+                <string>滤波算法</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="BLE_xyPointCheckBox">
+               <property name="text">
+                <string>限制xy坐标</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="BLE_radiusCheckBox">
+               <property name="text">
+                <string>限制圆半径</string>
                </property>
               </widget>
              </item>

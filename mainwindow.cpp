@@ -5764,7 +5764,7 @@ void MainWindow::BLE_storeData(ushort device_id,ushort ant_id,uchar sequence,cha
 
 void MainWindow::BLE_locationCalculator(ushort id){
     bool update_flag = false;
-    uchar i,j,m,n,ant_first,ant_second,ant_third;
+    uchar i,j,m,ant_first,ant_second,ant_third;
     short xA=0,yA=0,xB=0,yB=0,xC=0,yC=0,x_min,y_min,x_max,y_max;
     short x,y,x_point,y_point,x_point_previous,y_point_previous;
     long double distance_AB[2],distance_AC[2],distance_BC[2],distance_last0,distance_last1;
@@ -5908,25 +5908,29 @@ void MainWindow::BLE_locationCalculator(ushort id){
 
             ant_rssiC = -(ant_rssiC+ant_offsetC)+20;
 
+            len_A = ant_rssiA;
+            len_B = ant_rssiB;
+            len_C = ant_rssiC;
+
             //if((ant_rssiA - ant_rssiC)>5)
             {
                 if(BLE_attenuationcheckBox->isChecked()){
                     //接收灵敏度转换距离
-//                    if(ant_rssiA>50){
-//                        ant_rssiA -=30;
-//                        ant_rssiB -=30;
-//                        ant_rssiC -=30;
-//                    }
-                    len_A = pow(10, (ant_rssiA -91.2)/20)*1000;
-                    len_B = pow(10, (ant_rssiB -91.2)/20)*1000;
-                    len_C = pow(10, (ant_rssiC -91.2)/20)*1000;
-                    ant_rssiA = len_A;
-                    ant_rssiB = len_B;
-                    ant_rssiC = len_C;
-
-                    //
+                    len_A = pow(10, (len_A -91.2)/20)*1000;
+                    len_B = pow(10, (len_B -91.2)/20)*1000;
+                    len_C = pow(10, (len_C -91.2)/20)*1000;
+                    if(BLE_attenuationWithoutCentercheckBox->isChecked()&&((ant_rssiC-ant_rssiA)<10)&&(ant_rssiA>50)){
+                        len_A = ant_rssiA;
+                        len_B = ant_rssiB;
+                        len_C = ant_rssiC;
+                    }
                 }
             }
+
+
+
+
+
 
             len_AB = sqrt((xA - xB)*(xA - xB)+(yA - yB)*(yA - yB));
             len_AC = sqrt((xA - xC)*(xA - xC)+(yA - yC)*(yA - yC));
@@ -5934,36 +5938,37 @@ void MainWindow::BLE_locationCalculator(ushort id){
 
 
 
-            if(ant_rssiA<=0)ant_rssiA = 1;
-            if(ant_rssiB<=0)ant_rssiB = 1;
-            if(ant_rssiC<=0)ant_rssiC = 1;
+            if(len_A<=0)len_A = 1;
+            if(len_B<=0)len_B = 1;
+            if(len_C<=0)len_C = 1;
 
 
-            if(ant_rssiA>ant_rssiB){
-                rssi_AB = ant_rssiA/ant_rssiB;
+            if(len_A>len_B){
+                rssi_AB = len_A/len_B;
             }
             else {
-                rssi_AB = ant_rssiB/ant_rssiA;
+                rssi_AB = len_B/len_A;
             }
 
-            if(ant_rssiA>ant_rssiC){
-                rssi_AC = ant_rssiA/ant_rssiC;
+            if(len_A>len_C){
+                rssi_AC = len_A/len_C;
             }
             else {
-                rssi_AC = ant_rssiC/ant_rssiA;
+                rssi_AC = len_C/len_A;
             }
 
-            if(ant_rssiB>ant_rssiC){
-                rssi_BC = ant_rssiB/ant_rssiC;
+            if(len_B>len_C){
+                rssi_BC = len_B/len_C;
             }
             else {
-                rssi_BC = ant_rssiC/ant_rssiB;
+                rssi_BC = len_C/len_B;
             }
 
 
 
             distance_last0 = 1000;
             distance_last1 = 1000;
+
 
             //find max and min x
             if(xA>xB){
@@ -5991,9 +5996,14 @@ void MainWindow::BLE_locationCalculator(ushort id){
             else if(yC<y_min)y_min = yC;
 
 
-            for(x=x_min;x<=x_max;x++){
-                for(y=y_min;y<=y_max;y++){
-
+            for(x=-100;x<200;x++){
+                if(BLE_xyPointCheckBox->isChecked()){
+                    if((x<x_min)||(x>x_max))continue;
+                }
+                for(y=-100;y<200;y++){
+                    if(BLE_xyPointCheckBox->isChecked()){
+                        if((y<y_min)||(y>y_max))continue;
+                    }
 
 //                    if(((x==xA)&&(y==yA))||((x==xB)&&(y==yB))||((x==xC)&&(y==yC))){
 //                        continue;
@@ -6002,7 +6012,11 @@ void MainWindow::BLE_locationCalculator(ushort id){
                     distance_B = sqrt((x - xB)*(x - xB)+(y - yB)*(y - yB));
                     distance_C = sqrt((x - xC)*(x - xC)+(y - yC)*(y - yC));
 
-
+                    if(BLE_radiusCheckBox->isChecked()){
+                        if((distance_A>len_AB)&&(distance_A>len_AC))continue;;
+                        if((distance_B>len_AB)&&(distance_B>len_BC))continue;;
+                        if((distance_C>len_AC)&&(distance_C>len_BC))continue;;
+                    }
 
 
                     if(distance_A<=0)distance_A =0.000001;
@@ -6011,21 +6025,21 @@ void MainWindow::BLE_locationCalculator(ushort id){
 
 
 
-                    if(ant_rssiA>ant_rssiB){
+                    if(len_A>len_B){
                         distance_AB[0] = distance_A / distance_B;
                     }
                     else {
                         distance_AB[0] = distance_B / distance_A;
                     }
 
-                    if(ant_rssiA>ant_rssiC){
+                    if(len_A>len_C){
                         distance_AC[0] = distance_A / distance_C;
                     }
                     else {
                         distance_AC[0] = distance_C / distance_A;
                     }
 
-                    if(ant_rssiB>ant_rssiC){
+                    if(len_B>len_C){
                         distance_BC[0] = distance_B / distance_C;
                     }
                     else {

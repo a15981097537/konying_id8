@@ -509,7 +509,6 @@ public:
     QHBoxLayout *horizontalLayout_69;
     QPushButton *BLE_addAnt;
     QPushButton *BLE_deleteAnt;
-    QSpacerItem *verticalSpacer_11;
     QLabel *BLE_rssiCalculatorLabel;
     QSlider *BLE_rssiCalculatorSlider;
     QLabel *BLE_roundMeter;
@@ -518,7 +517,6 @@ public:
     QPushButton *BLE_hideDeviceInf;
     QPushButton *BLE_showAllDeviceInf;
     QPushButton *BLE_hideAllDeviceInf;
-    QSpacerItem *verticalSpacer_10;
     QHBoxLayout *horizontalLayout_76;
     QLabel *label_56;
     QTextEdit *BLE_virtualAntIdEdit;
@@ -533,7 +531,10 @@ public:
     QTextEdit *BLE_virtualRssiEdit;
     QPushButton *BLE_virtualSetBt;
     QCheckBox *BLE_attenuationcheckBox;
+    QCheckBox *BLE_attenuationWithoutCentercheckBox;
     QCheckBox *BLE_FiltercheckBox;
+    QCheckBox *BLE_xyPointCheckBox;
+    QCheckBox *BLE_radiusCheckBox;
     QCheckBox *BLE_AreaCheckBox;
     QCheckBox *BLE_AreaAloneCheckBox;
     QHBoxLayout *horizontalLayout_85;
@@ -548,7 +549,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(1298, 709);
+        MainWindow->resize(1298, 731);
         MainWindow->setAutoFillBackground(false);
         MainWindow->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
         MainWindow->setUnifiedTitleAndToolBarOnMac(false);
@@ -2935,10 +2936,6 @@ public:
 
         verticalLayout_74->addLayout(horizontalLayout_69);
 
-        verticalSpacer_11 = new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Fixed);
-
-        verticalLayout_74->addItem(verticalSpacer_11);
-
         BLE_rssiCalculatorLabel = new QLabel(groupBox_25);
         BLE_rssiCalculatorLabel->setObjectName(QStringLiteral("BLE_rssiCalculatorLabel"));
 
@@ -2984,10 +2981,6 @@ public:
         BLE_hideAllDeviceInf->setObjectName(QStringLiteral("BLE_hideAllDeviceInf"));
 
         verticalLayout_74->addWidget(BLE_hideAllDeviceInf);
-
-        verticalSpacer_10 = new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Fixed);
-
-        verticalLayout_74->addItem(verticalSpacer_10);
 
         horizontalLayout_76 = new QHBoxLayout();
         horizontalLayout_76->setObjectName(QStringLiteral("horizontalLayout_76"));
@@ -3075,10 +3068,25 @@ public:
 
         verticalLayout_74->addWidget(BLE_attenuationcheckBox);
 
+        BLE_attenuationWithoutCentercheckBox = new QCheckBox(groupBox_25);
+        BLE_attenuationWithoutCentercheckBox->setObjectName(QStringLiteral("BLE_attenuationWithoutCentercheckBox"));
+
+        verticalLayout_74->addWidget(BLE_attenuationWithoutCentercheckBox);
+
         BLE_FiltercheckBox = new QCheckBox(groupBox_25);
         BLE_FiltercheckBox->setObjectName(QStringLiteral("BLE_FiltercheckBox"));
 
         verticalLayout_74->addWidget(BLE_FiltercheckBox);
+
+        BLE_xyPointCheckBox = new QCheckBox(groupBox_25);
+        BLE_xyPointCheckBox->setObjectName(QStringLiteral("BLE_xyPointCheckBox"));
+
+        verticalLayout_74->addWidget(BLE_xyPointCheckBox);
+
+        BLE_radiusCheckBox = new QCheckBox(groupBox_25);
+        BLE_radiusCheckBox->setObjectName(QStringLiteral("BLE_radiusCheckBox"));
+
+        verticalLayout_74->addWidget(BLE_radiusCheckBox);
 
         BLE_AreaCheckBox = new QCheckBox(groupBox_25);
         BLE_AreaCheckBox->setObjectName(QStringLiteral("BLE_AreaCheckBox"));
@@ -3539,8 +3547,11 @@ public:
         label_59->setText(QApplication::translate("MainWindow", "\345\272\217\345\210\227\345\217\267", 0));
         label_58->setText(QApplication::translate("MainWindow", "RSSI", 0));
         BLE_virtualSetBt->setText(QApplication::translate("MainWindow", "\346\250\241\346\213\237\346\240\207\347\255\276\346\225\260\346\215\256", 0));
-        BLE_attenuationcheckBox->setText(QApplication::translate("MainWindow", "\350\241\260\345\207\217\345\205\254\345\274\217", 0));
-        BLE_FiltercheckBox->setText(QApplication::translate("MainWindow", "\346\273\244\346\263\242", 0));
+        BLE_attenuationcheckBox->setText(QApplication::translate("MainWindow", "\350\241\260\345\207\217\347\256\227\346\263\225", 0));
+        BLE_attenuationWithoutCentercheckBox->setText(QApplication::translate("MainWindow", "\344\270\255\345\277\203\344\270\215\350\241\260\345\207\217\347\256\227\346\263\225", 0));
+        BLE_FiltercheckBox->setText(QApplication::translate("MainWindow", "\346\273\244\346\263\242\347\256\227\346\263\225", 0));
+        BLE_xyPointCheckBox->setText(QApplication::translate("MainWindow", "\351\231\220\345\210\266xy\345\235\220\346\240\207", 0));
+        BLE_radiusCheckBox->setText(QApplication::translate("MainWindow", "\351\231\220\345\210\266\345\234\206\345\215\212\345\276\204", 0));
         BLE_AreaCheckBox->setText(QApplication::translate("MainWindow", "\346\230\276\347\244\272\345\214\272\345\237\237", 0));
         BLE_AreaAloneCheckBox->setText(QApplication::translate("MainWindow", "\345\210\206\345\274\200\346\230\276\347\244\272", 0));
         label_60->setText(QApplication::translate("MainWindow", "\346\257\224\345\200\274", 0));
