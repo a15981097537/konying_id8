@@ -130,12 +130,14 @@ struct UR_PAR
 //device type
 enum
 {
-    cmd_heartBeat = 0x10,      //
-    cmd_config = 0x20,  //
-    cmd_control = 0x30,//
-    cmd_app = 0x40,  //
-    cmd_idRequest = 0x50,           //
-    cmd_network = 0x60               //
+    cmd_heartBeat       = 0x10,      //
+    cmd_config          = 0x20,  //
+    cmd_control         = 0x30,//
+    cmd_app             = 0x40,  //
+    cmd_idRequest       = 0x50,           //
+    cmd_network         = 0x60,               //
+    cmd_bleData         = 0x70,
+    cmd_json            = 0x80
 };
 
 
@@ -458,11 +460,21 @@ struct BLE_DEVICE_PAR
     char rssi[ALGORITHM_ANT_MAX];
 };
 
-struct BLE_ALGORITHM_PAR
+
+struct ALGORITHM_CACULATER_PAR{
+    double  ratio;
+    bool translate;
+    bool translate_center;
+    bool filter;
+    bool limit_xy;
+    bool limit_r;
+    double compare;
+};
+struct BLE_ALGORITHM
 {
   BLE_DEVICE_PAR ble_algorithm[ALGORITHM_DEVICE_MAX];
   uchar location_bit[300][300];
-  double  ratio;
+  ALGORITHM_CACULATER_PAR par;
   QTimer *timer;
 };
 
@@ -530,7 +542,7 @@ private:
     RF_SEND rf_send;
     HISTORY_PAR history_par;
     DISPLAY_PAR display_par;
-    BLE_ALGORITHM_PAR ble_algorithm_par;
+    BLE_ALGORITHM ble_algorithm;
 
 	bool bRTS;
 	bool bDTR;
@@ -546,6 +558,7 @@ private:
     void user_init();
     void UART_send(QByteArray src);
     void pressCmdData(uchar *data , ushort size);
+    void processJsonData(QByteArray datas);
     void pressOldCmdData(uchar *data , ushort size);
     void DisplayWithTime(const QString &text);
     void DisplayWithNoTime(const QString &text);
@@ -553,6 +566,7 @@ private:
     QString uint16ToHex(ushort data);
     QString uint32ToHex(uint data);
     QString strToHex(uchar *data , ushort len);
+    ushort hexToUint8(QString str,uint start);
     void rcmdSetHeartbeatTime(ushort gateway_id,ushort device_id);
     void rcmdSendsendPacket(ushort gateway_id,ushort device_id,ushort packet);
     void rcmdSendFirInf(ushort gateway_id,ushort device_id);

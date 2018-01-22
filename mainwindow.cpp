@@ -1887,6 +1887,196 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
             break;
         }
     }
+    else if(iot_frame.cmd == cmd_bleData){
+
+    }
+    else if(iot_frame.cmd == cmd_json){
+        buff.clear();
+        for(i = 0; i < iot_frame.length;i++)
+        {
+            buff.append(iot_frame.data[i]);
+        }
+        processJsonData(buff);
+    }
+}
+
+void MainWindow::processJsonData(QByteArray datas){
+    ushort j;
+    QJsonParseError jsonError;
+    QJsonValue value;
+    QJsonObject object;
+    QString str;
+    QJsonArray array;
+    QJsonDocument doucment = QJsonDocument::fromJson(datas, &jsonError);  // 转化为 JSON 文档
+    if (!doucment.isNull() && (jsonError.error == QJsonParseError::NoError)) {  // 解析未发生错误
+        if (doucment.isObject()) {  // JSON 文档为对象
+            object = doucment.object();  // 转化为对象
+            if(object.contains("cmd")){//命令
+                value = object.value("cmd");
+                str = value.toString();
+                if(str == "device_par"){//设备参数
+                    if(object.contains("operation")) {
+                        value = object.value("operation");
+                        if(value.isString() && value.toString()=="w_req") {//写请求
+                            if (object.contains("par")) {
+                                value = object.value("par");
+                                if (value.isArray()) {//数组
+                                    array = value.toArray();
+                                    int nSize = array.size();
+                                    for (int i = 0; i < nSize; ++i) {//遍历数组
+                                        value = array.at(i);
+                                        if (value.isObject()) {//
+                                            DEVICE_DISPLAY_PAR *dev_par = NULL;
+                                            ushort dev_id;
+                                            object = value.toObject();
+                                            if (object.contains("dev")) {
+                                                value = object.value("dev");
+                                                if (value.isString()==false || value.toString() != "ant") {
+                                                    return;
+                                                }
+                                            }
+                                            else return;
+
+
+                                            //get id
+                                            if (object.contains("id")) {
+                                                value = object.value("id");
+                                                if (value.isDouble()) {
+                                                    dev_id = value.toVariant().toByteArray().toUShort();
+                                                }
+                                                else return;
+                                            }
+                                            else return;
+
+                                            for(j=0;j<DEVICE_DISPLAY_MAX;j++){
+                                                if(display_par.ant[j].id == dev_id){
+                                                    dev_par = &display_par.ant[j];
+                                                    break;
+                                                }
+                                            }
+
+                                            if(dev_par == NULL){
+                                                for(j=0;j<DEVICE_DISPLAY_MAX;j++){
+                                                    if(display_par.ant[j].id == 0xFFFF){
+                                                        dev_par = &display_par.ant[j];
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            if(dev_par != NULL){
+                                                dev_par->id = dev_id;
+                                            }
+                                            else return;
+
+                                            if (object.contains("x_point")) {
+                                                value = object.value("x_point");
+                                                if (value.isDouble()) {
+                                                    dev_par->x = value.toVariant().toByteArray().toShort();
+                                                }
+                                            }
+
+                                            if (object.contains("y_point")) {
+                                                value = object.value("y_point");
+                                                if (value.isDouble()) {
+                                                    dev_par->y = value.toVariant().toByteArray().toShort();
+                                                }
+                                            }
+
+                                            if (object.contains("offset")) {
+                                                value = object.value("offset");
+                                                if (value.isDouble()) {
+                                                    dev_par->rssi_offset = value.toVariant().toByteArray().toShort();
+                                                }
+                                            }
+
+                                            if (object.contains("mac")) {
+                                                value = object.value("mac");
+                                                if (value.isString()&&value.toString().length() == 16) {
+                                                    str = value.toString();
+                                                    dev_par->mac[0] = hexToUint8(str,0);
+                                                    dev_par->mac[1] = hexToUint8(str,2);
+                                                    dev_par->mac[2] = hexToUint8(str,4);
+                                                    dev_par->mac[3] = hexToUint8(str,6);
+                                                    dev_par->mac[4] = hexToUint8(str,8);
+                                                    dev_par->mac[5] = hexToUint8(str,10);
+                                                    dev_par->mac[6] = hexToUint8(str,12);
+                                                    dev_par->mac[7] = hexToUint8(str,14);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else if(value.isString() && value.toString()=="w_res"){
+
+                        }
+                        else if(value.isString() && value.toString()=="r_req"){
+                            //read request ,it will return the device par
+                        }
+                        else if(value.isString() && value.toString()=="r_res"){
+
+                        }
+                    }
+                }
+                else if(str == "algorithm_par"){//设备参数
+                    if(object.contains("operation")) {
+                        value = object.value("operation");
+                        if(value.isString() && value.toString()=="w_req") {//写请求
+                            if(object.contains("translate")){
+                                value = object.value("translate");
+                                if(value.isBool()){
+                                    ble_algorithm.par.translate = value.toBool();
+                                }
+                            }
+                            if(object.contains("translate center")){
+                                value = object.value("translate center");
+                                if(value.isBool()){
+                                    ble_algorithm.par.translate_center = value.toBool();
+                                }
+                            }
+                            if(object.contains("filter")){
+                                value = object.value("filter");
+                                if(value.isBool()){
+                                    ble_algorithm.par.filter = value.toBool();
+                                }
+                            }
+                            if(object.contains("limit xy")){
+                                value = object.value("limit xy");
+                                if(value.isBool()){
+                                    ble_algorithm.par.limit_xy = value.toBool();
+                                }
+                            }
+                            if(object.contains("limit r")){
+                                value = object.value("limit r");
+                                if(value.isBool()){
+                                    ble_algorithm.par.limit_r = value.toBool();
+                                }
+                            }
+                            if (object.contains("compare")) {
+                                value = object.value("compare");
+                                if (value.isDouble()) {
+                                    ble_algorithm.par.compare = value.toDouble();
+                                }
+                            }
+                        }
+                        else if(value.isString() && value.toString()=="w_res"){
+
+                        }
+                        else if(value.isString() && value.toString()=="r_req"){
+
+                        }
+                        else if(value.isString() && value.toString()=="r_res"){
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+    else {
+        NET_DisplayWithNoTime(jsonError.errorString());
+    }
 }
 
 
@@ -1925,7 +2115,11 @@ QString MainWindow::strToHex(uchar *data , ushort len)
     return buff.toHex();
 }
 
-
+ushort MainWindow::hexToUint8(QString str,uint start){
+    str.remove(0,start-1);
+    str.remove(2,str.length());
+    return str.toUShort(Q_NULLPTR,16);
+}
 void MainWindow::DisplayWithTime(const QString &text)
 {
 
@@ -5349,21 +5543,21 @@ void MainWindow::BLE_DisplayInit(void)
 
     for(i = 0;i<ALGORITHM_DEVICE_MAX;i++){
 
-        ble_algorithm_par.ble_algorithm[i].receive_count = 0;
-        ble_algorithm_par.ble_algorithm[i].device_id = 0xFFFF;
-        ble_algorithm_par.ble_algorithm[i].sequence = 0;
-        ble_algorithm_par.ble_algorithm[i].update_flag = false;
+        ble_algorithm.ble_algorithm[i].receive_count = 0;
+        ble_algorithm.ble_algorithm[i].device_id = 0xFFFF;
+        ble_algorithm.ble_algorithm[i].sequence = 0;
+        ble_algorithm.ble_algorithm[i].update_flag = false;
         for(j = 0;j<ALGORITHM_ANT_MAX;j++){
-            ble_algorithm_par.ble_algorithm[i].ant_id[j] = 0xFFFF;
-            ble_algorithm_par.ble_algorithm[i].rssi[j] = -100;
+            ble_algorithm.ble_algorithm[i].ant_id[j] = 0xFFFF;
+            ble_algorithm.ble_algorithm[i].rssi[j] = -100;
         }
 
     }
 
 
-    ble_algorithm_par.timer = new QTimer(this);
-    connect(ble_algorithm_par.timer,SIGNAL(timeout()),this,SLOT(BLE_locationCalculator(0xFFFF)));
-    ble_algorithm_par.timer->start(1000);
+    ble_algorithm.timer = new QTimer(this);
+    connect(ble_algorithm.timer,SIGNAL(timeout()),this,SLOT(BLE_locationCalculator(0xFFFF)));
+    ble_algorithm.timer->start(1000);
     // 场景
     QGraphicsScene *scene = new QGraphicsScene;
 
@@ -5465,19 +5659,19 @@ void MainWindow::BLE_displayUpdate()
     if(BLE_AreaCheckBox->isChecked()){
         for(short i=-100;i<200;i++){
             for(short j=-100;j<200;j++){
-                if(ble_algorithm_par.location_bit[i+100][j+100]==3){
+                if(ble_algorithm.location_bit[i+100][j+100]==3){
                     pix_bit.fill(Qt::red);
                     x_point = x_convert(i);
                     y_point = y_convert(j);
                     scene->addPixmap(pix_bit)->setPos(x_point-1,y_point-1);
                 }
-                else if(ble_algorithm_par.location_bit[i+100][j+100]==2){
+                else if(ble_algorithm.location_bit[i+100][j+100]==2){
                     pix_bit.fill(Qt::cyan);
                     x_point = x_convert(i);
                     y_point = y_convert(j);
                     scene->addPixmap(pix_bit)->setPos(x_point-1,y_point-1);
                 }
-                else if(ble_algorithm_par.location_bit[i+100][j+100]==1){
+                else if(ble_algorithm.location_bit[i+100][j+100]==1){
                     pix_bit.fill(Qt::yellow);
                     x_point = x_convert(i);
                     y_point = y_convert(j);
@@ -5704,39 +5898,39 @@ void MainWindow::BLE_storeData(ushort device_id,ushort ant_id,uchar sequence,cha
     }
     for(uchar i=0;i<ALGORITHM_DEVICE_MAX;i++)
     {
-        if(ble_algorithm_par.ble_algorithm[i].device_id == device_id){
-            if(ble_algorithm_par.ble_algorithm[i].sequence == sequence){
-                for(uchar j = 0;j<ble_algorithm_par.ble_algorithm[i].receive_count;j++){
-                    if(ble_algorithm_par.ble_algorithm[i].ant_id[j] == ant_id){
-                        ble_algorithm_par.ble_algorithm[i].rssi[j] = rssi;
-                        ble_algorithm_par.ble_algorithm[i].update_flag = true;
-                        //BLE_locationCalculator(ble_algorithm_par.ble_algorithm[i].device_id);
+        if(ble_algorithm.ble_algorithm[i].device_id == device_id){
+            if(ble_algorithm.ble_algorithm[i].sequence == sequence){
+                for(uchar j = 0;j<ble_algorithm.ble_algorithm[i].receive_count;j++){
+                    if(ble_algorithm.ble_algorithm[i].ant_id[j] == ant_id){
+                        ble_algorithm.ble_algorithm[i].rssi[j] = rssi;
+                        ble_algorithm.ble_algorithm[i].update_flag = true;
+                        //BLE_locationCalculator(ble_algorithm.ble_algorithm[i].device_id);
                         return;
                     }
                 }
 
-                if(ble_algorithm_par.ble_algorithm[i].receive_count>=ALGORITHM_ANT_MAX){
-                    ble_algorithm_par.ble_algorithm[i].receive_count = 0;
+                if(ble_algorithm.ble_algorithm[i].receive_count>=ALGORITHM_ANT_MAX){
+                    ble_algorithm.ble_algorithm[i].receive_count = 0;
                 }
-                ble_algorithm_par.ble_algorithm[i].rssi[ble_algorithm_par.ble_algorithm[i].receive_count] = rssi;
-                ble_algorithm_par.ble_algorithm[i].ant_id[ble_algorithm_par.ble_algorithm[i].receive_count] = ant_id;
-                ble_algorithm_par.ble_algorithm[i].receive_count++;
-                ble_algorithm_par.ble_algorithm[i].update_flag = true;
+                ble_algorithm.ble_algorithm[i].rssi[ble_algorithm.ble_algorithm[i].receive_count] = rssi;
+                ble_algorithm.ble_algorithm[i].ant_id[ble_algorithm.ble_algorithm[i].receive_count] = ant_id;
+                ble_algorithm.ble_algorithm[i].receive_count++;
+                ble_algorithm.ble_algorithm[i].update_flag = true;
                 return ;
             }
-            else if(ble_algorithm_par.ble_algorithm[i].sequence < sequence ||
-                   ble_algorithm_par.ble_algorithm[i].sequence > (sequence+3)){
+            else if(ble_algorithm.ble_algorithm[i].sequence < sequence ||
+                   ble_algorithm.ble_algorithm[i].sequence > (sequence+3)){
                 //有新的数据接收到，计算定位数据
-                if(ble_algorithm_par.ble_algorithm[i].update_flag == true){
+                if(ble_algorithm.ble_algorithm[i].update_flag == true){
                     //还没有来得及计算位置，就有新的数据
-                    BLE_locationCalculator(ble_algorithm_par.ble_algorithm[i].device_id);
+                    BLE_locationCalculator(ble_algorithm.ble_algorithm[i].device_id);
                 }
                 //store new data
-                ble_algorithm_par.ble_algorithm[i].rssi[0] = rssi;
-                ble_algorithm_par.ble_algorithm[i].ant_id[0] = ant_id;
-                ble_algorithm_par.ble_algorithm[i].receive_count=1;
-                ble_algorithm_par.ble_algorithm[i].sequence = sequence;
-                ble_algorithm_par.ble_algorithm[i].update_flag = true;
+                ble_algorithm.ble_algorithm[i].rssi[0] = rssi;
+                ble_algorithm.ble_algorithm[i].ant_id[0] = ant_id;
+                ble_algorithm.ble_algorithm[i].receive_count=1;
+                ble_algorithm.ble_algorithm[i].sequence = sequence;
+                ble_algorithm.ble_algorithm[i].update_flag = true;
 
                 return;
             }
@@ -5747,14 +5941,14 @@ void MainWindow::BLE_storeData(ushort device_id,ushort ant_id,uchar sequence,cha
     }
     for(uchar i=0;i<ALGORITHM_DEVICE_MAX;i++)
     {
-        if(ble_algorithm_par.ble_algorithm[i].device_id == 0xFFFF){
+        if(ble_algorithm.ble_algorithm[i].device_id == 0xFFFF){
             //store new data
-            ble_algorithm_par.ble_algorithm[i].device_id = device_id;
-            ble_algorithm_par.ble_algorithm[i].rssi[0] = rssi;
-            ble_algorithm_par.ble_algorithm[i].ant_id[0] = ant_id;
-            ble_algorithm_par.ble_algorithm[i].receive_count=1;
-            ble_algorithm_par.ble_algorithm[i].sequence = sequence;
-            ble_algorithm_par.ble_algorithm[i].update_flag = true;
+            ble_algorithm.ble_algorithm[i].device_id = device_id;
+            ble_algorithm.ble_algorithm[i].rssi[0] = rssi;
+            ble_algorithm.ble_algorithm[i].ant_id[0] = ant_id;
+            ble_algorithm.ble_algorithm[i].receive_count=1;
+            ble_algorithm.ble_algorithm[i].sequence = sequence;
+            ble_algorithm.ble_algorithm[i].update_flag = true;
 
             return;
         }
@@ -5779,23 +5973,23 @@ void MainWindow::BLE_locationCalculator(ushort id){
 
 
 
-   //ble_algorithm_par.timer->start(1000);
-    ble_algorithm_par.timer->stop();
+   //ble_algorithm.timer->start(1000);
+    ble_algorithm.timer->stop();
     str.clear();
     if(BLE_displayLog->isChecked()){
         str+="\r\n*********************algorithm start*************************";
     }
 
     for(i=0;i<ALGORITHM_DEVICE_MAX;i++){
-        if((ble_algorithm_par.ble_algorithm[i].device_id != id)&&
+        if((ble_algorithm.ble_algorithm[i].device_id != id)&&
            (id != 0xFFFF)){
             continue;
         }
 
-        if((ble_algorithm_par.ble_algorithm[i].update_flag == true) &&
-           (ble_algorithm_par.ble_algorithm[i].receive_count >= 3)){
+        if((ble_algorithm.ble_algorithm[i].update_flag == true) &&
+           (ble_algorithm.ble_algorithm[i].receive_count >= 3)){
             update_flag = true;
-            ble_algorithm_par.ble_algorithm[i].update_flag = false;
+            ble_algorithm.ble_algorithm[i].update_flag = false;
 
 //            for(j = 0;j<DEVICE_DISPLAY_MAX;j++){
 //                //clear last location data
@@ -5819,29 +6013,29 @@ void MainWindow::BLE_locationCalculator(ushort id){
             ant_rssiB = -1000;
             ant_rssiC = -1000;
 
-            for(m = 0;m< ble_algorithm_par.ble_algorithm[i].receive_count;m++){
+            for(m = 0;m< ble_algorithm.ble_algorithm[i].receive_count;m++){
                 //选择rssi第一大的天线
-                if(ant_rssiA<ble_algorithm_par.ble_algorithm[i].rssi[m]){
+                if(ant_rssiA<ble_algorithm.ble_algorithm[i].rssi[m]){
                     ant_first = m;
-                    ant_rssiA = ble_algorithm_par.ble_algorithm[i].rssi[m];
+                    ant_rssiA = ble_algorithm.ble_algorithm[i].rssi[m];
                 }
             }
 
-            for(m = 0;m< ble_algorithm_par.ble_algorithm[i].receive_count;m++){
+            for(m = 0;m< ble_algorithm.ble_algorithm[i].receive_count;m++){
                 //选择rssi第二大的天线
                 if(m==ant_first)continue;
-                if(ant_rssiB<ble_algorithm_par.ble_algorithm[i].rssi[m]){
+                if(ant_rssiB<ble_algorithm.ble_algorithm[i].rssi[m]){
                     ant_second = m;
-                    ant_rssiB = ble_algorithm_par.ble_algorithm[i].rssi[m];
+                    ant_rssiB = ble_algorithm.ble_algorithm[i].rssi[m];
                 }
             }
 
-            for(m = 0;m< ble_algorithm_par.ble_algorithm[i].receive_count;m++){
+            for(m = 0;m< ble_algorithm.ble_algorithm[i].receive_count;m++){
                 //选择rssi第三大的天线
                 if(m==ant_first || m==ant_second)continue;
-                if(ant_rssiC<ble_algorithm_par.ble_algorithm[i].rssi[m]){
+                if(ant_rssiC<ble_algorithm.ble_algorithm[i].rssi[m]){
                     ant_third = m;
-                    ant_rssiC = ble_algorithm_par.ble_algorithm[i].rssi[m];
+                    ant_rssiC = ble_algorithm.ble_algorithm[i].rssi[m];
                 }
             }
 
@@ -5851,12 +6045,12 @@ void MainWindow::BLE_locationCalculator(ushort id){
             }
 
             //选择三个天线的数据进行定位
-            ant_idA = ble_algorithm_par.ble_algorithm[i].ant_id[ant_first];
-            ant_idB = ble_algorithm_par.ble_algorithm[i].ant_id[ant_second];
-            ant_idC = ble_algorithm_par.ble_algorithm[i].ant_id[ant_third];
-//            ant_rssiA = ble_algorithm_par.ble_algorithm[i].rssi[ant_first];
-//            ant_rssiB = ble_algorithm_par.ble_algorithm[i].rssi[ant_second];
-//            ant_rssiC = ble_algorithm_par.ble_algorithm[i].rssi[ant_third];
+            ant_idA = ble_algorithm.ble_algorithm[i].ant_id[ant_first];
+            ant_idB = ble_algorithm.ble_algorithm[i].ant_id[ant_second];
+            ant_idC = ble_algorithm.ble_algorithm[i].ant_id[ant_third];
+//            ant_rssiA = ble_algorithm.ble_algorithm[i].rssi[ant_first];
+//            ant_rssiB = ble_algorithm.ble_algorithm[i].rssi[ant_second];
+//            ant_rssiC = ble_algorithm.ble_algorithm[i].rssi[ant_third];
 
             for(j = 0 ; j <DEVICE_DISPLAY_MAX;j++){
                 //seek ant0 information
@@ -5894,7 +6088,7 @@ void MainWindow::BLE_locationCalculator(ushort id){
             y_point_previous = 1000;
             for(j = 0 ; j <DEVICE_DISPLAY_MAX;j++){
                 //seek ant2 information
-                if(display_par.device[j].id==ble_algorithm_par.ble_algorithm[i].device_id){
+                if(display_par.device[j].id==ble_algorithm.ble_algorithm[i].device_id){
                     x_point_previous = display_par.device[j].x;
                     y_point_previous = display_par.device[j].y;
                     break;
@@ -6078,19 +6272,19 @@ void MainWindow::BLE_locationCalculator(ushort id){
 
 
 
-                    ble_algorithm_par.location_bit[x+100][y+100]=0;
+                    ble_algorithm.location_bit[x+100][y+100]=0;
                     if(BLE_AreaAloneCheckBox->isChecked()==true){
-                        if((distance_AB[1]<ble_algorithm_par.ratio)){
-                            ble_algorithm_par.location_bit[x+100][y+100]=1;
+                        if((distance_AB[1]<ble_algorithm.par.ratio)){
+                            ble_algorithm.location_bit[x+100][y+100]=1;
                         }
-                        if((distance_AC[1]<ble_algorithm_par.ratio)){
-                            ble_algorithm_par.location_bit[x+100][y+100]=2;
+                        if((distance_AC[1]<ble_algorithm.par.ratio)){
+                            ble_algorithm.location_bit[x+100][y+100]=2;
                         }
-                        if((distance_BC[1]<ble_algorithm_par.ratio)){
-                            ble_algorithm_par.location_bit[x+100][y+100]=3;
+                        if((distance_BC[1]<ble_algorithm.par.ratio)){
+                            ble_algorithm.location_bit[x+100][y+100]=3;
                         }
                     }
-                    if((distance_AB[1]<ble_algorithm_par.ratio) && (distance_AC[1]<ble_algorithm_par.ratio) && (distance_BC[1]<ble_algorithm_par.ratio)){
+                    if((distance_AB[1]<ble_algorithm.par.ratio) && (distance_AC[1]<ble_algorithm.par.ratio) && (distance_BC[1]<ble_algorithm.par.ratio)){
                         if(((len_AB+len_AC+len_BC))>(distance_A+distance_B+distance_C)){
                             if(distance_last0 > (distance_AB[1]+distance_AC[1]+distance_BC[1])){
                                 distance_last0 = (distance_AB[1]+distance_AC[1]+distance_BC[1]);
@@ -6100,15 +6294,15 @@ void MainWindow::BLE_locationCalculator(ushort id){
                                 distance_A_last = distance_A;
                                 distance_B_last = distance_B;
                                 distance_C_last = distance_C;
-                                if(BLE_AreaAloneCheckBox->isChecked()==false)ble_algorithm_par.location_bit[x+100][y+100]=1;
+                                if(BLE_AreaAloneCheckBox->isChecked()==false)ble_algorithm.location_bit[x+100][y+100]=1;
                             }
                             else {
-                                if(BLE_AreaAloneCheckBox->isChecked()==false)ble_algorithm_par.location_bit[x+100][y+100]=2;
+                                if(BLE_AreaAloneCheckBox->isChecked()==false)ble_algorithm.location_bit[x+100][y+100]=2;
                             }
 
                         }
                         else {
-                            if(BLE_AreaAloneCheckBox->isChecked()==false)ble_algorithm_par.location_bit[x+100][y+100]=3;
+                            if(BLE_AreaAloneCheckBox->isChecked()==false)ble_algorithm.location_bit[x+100][y+100]=3;
                         }
                     }
                 }
@@ -6163,7 +6357,7 @@ void MainWindow::BLE_locationCalculator(ushort id){
 
                 for(j = 0;j<DEVICE_DISPLAY_MAX;j++){
                     //clear last location data
-                    if(display_par.device[j].id == ble_algorithm_par.ble_algorithm[i].device_id){
+                    if(display_par.device[j].id == ble_algorithm.ble_algorithm[i].device_id){
                         display_par.device[j].id = 0xFFFF;
                         display_par.device[j].x = 0;
                         display_par.device[j].y = 0;
@@ -6177,7 +6371,7 @@ void MainWindow::BLE_locationCalculator(ushort id){
                 for(j = 0;j<DEVICE_DISPLAY_MAX;j++){
                     //clear last location data
                     if(display_par.device[j].id == 0xFFFF){
-                        display_par.device[j].id = ble_algorithm_par.ble_algorithm[i].device_id;
+                        display_par.device[j].id = ble_algorithm.ble_algorithm[i].device_id;
                         display_par.device[j].x = x_point;
                         display_par.device[j].y = y_point;
                         display_par.device[j].radius = 0x00;
@@ -6193,7 +6387,7 @@ void MainWindow::BLE_locationCalculator(ushort id){
             if(BLE_displayLog->isChecked())
             {
 
-                str+="\r\n/ device_id:0x"+uint16ToHex(ble_algorithm_par.ble_algorithm[i].device_id).toUpper();
+                str+="\r\n/ device_id:0x"+uint16ToHex(ble_algorithm.ble_algorithm[i].device_id).toUpper();
                 str+="/ ant_idA:0x"+uint16ToHex(ant_idA).toUpper();
                 str+="/ ant_idB:0x"+uint16ToHex(ant_idB).toUpper();
                 str+="/ ant_idC:0x"+uint16ToHex(ant_idC).toUpper();
@@ -6266,7 +6460,7 @@ void MainWindow::on_BLE_virtualSetBt_clicked()
 
 void MainWindow::on_BLE_virtualRatio_textChanged()
 {
-    ble_algorithm_par.ratio = BLE_virtualRatio->toPlainText().toDouble();
+    ble_algorithm.par.ratio = BLE_virtualRatio->toPlainText().toDouble();
 }
 
 

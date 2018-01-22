@@ -549,7 +549,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(1298, 731);
+        MainWindow->resize(1298, 745);
         MainWindow->setAutoFillBackground(false);
         MainWindow->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
         MainWindow->setUnifiedTitleAndToolBarOnMac(false);
@@ -3154,7 +3154,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        function->setCurrentIndex(9);
+        function->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
