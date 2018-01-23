@@ -136,8 +136,7 @@ enum
     cmd_app             = 0x40,  //
     cmd_idRequest       = 0x50,           //
     cmd_network         = 0x60,               //
-    cmd_bleData         = 0x70,
-    cmd_json            = 0x80
+    cmd_bleData         = 0x70
 };
 
 
@@ -401,8 +400,10 @@ struct NET_PAR
     QTcpSocket *Socket[SOCKET_MAX];
     QTcpSocket *currentSocket;
     QTcpServer *Server;
+    QTcpServer *locationServer;
     QTcpSocket *bind_socket[65536];
     QTcpSocket *clientSocket;
+    QTcpSocket *locationSocket;
 };
 
 
@@ -473,7 +474,6 @@ struct ALGORITHM_CACULATER_PAR{
 struct BLE_ALGORITHM
 {
   BLE_DEVICE_PAR ble_algorithm[ALGORITHM_DEVICE_MAX];
-  uchar location_bit[300][300];
   ALGORITHM_CACULATER_PAR par;
   QTimer *timer;
 };
@@ -580,6 +580,10 @@ private:
     void IOT_cmdHeartBeat(IOT_FRAME *ptr);
     void IOT_cmdHeartBeat(ushort gateway_id,ushort device_id,ushort time,ushort bandwith,uchar rssi);
     void IOT_cmdApp(ushort gateway_id,ushort device_id,QByteArray data);
+    void NET_TCPIP_SocketSend(QByteArray src,QTcpSocket *socket);
+    void IOT_sendIdInformation(ushort id,QTcpSocket *socket);
+    void IOT_sendAlgorithm(QTcpSocket *socket);
+    void IOT_sendAntInformation(QTcpSocket *socket);
 
     NET_PAR net_par;
     MangeId id_access;
@@ -679,6 +683,7 @@ private slots:
 	void SetCurComboBState();
     unsigned short int Crc16Bit(const char *ptr, unsigned short int len);
     uchar checkSum(const char* puchData, ushort len);
+    uchar checkSum(QByteArray puchData, ushort len);
 	void transmitMsg();
 	void intervalChange(int value);
     void on_File_clicked();
@@ -712,6 +717,12 @@ private slots:
     void NET_acceptConnection(); //接受客户端连接
     void NET_displayError(QAbstractSocket::SocketError); //显示错误信息
     void NET_revData();
+
+
+    void NET_newListenLocation(); //建立TCP监听事件
+    void NET_acceptConnectionLocation(); //接受客户端连接
+    void NET_revDataLocation();
+
     void BLE_locationCalculator(ushort id);
 
 
@@ -799,8 +810,11 @@ private slots:
     void on_BLE_showAllDeviceInf_clicked();
     void on_BLE_hideAllDeviceInf_clicked();
     void on_BLE_rssiCalculatorSlider_valueChanged(int value);
-    void on_BLE_virtualSetBt_clicked();
     void on_BLE_virtualRatio_textChanged();
+    void on_bt_listen_location_clicked();
+    void on_bt_stopListen_location_clicked();
+    void on_BLE_setAlgorithmPar_clicked();
+    void on_BLE_sendAntList_clicked();
 };
 
  #endif

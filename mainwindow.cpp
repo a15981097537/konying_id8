@@ -970,15 +970,14 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
                 iot_frame.device_id != loc_par.filtId[3]&&
                 iot_frame.device_id != loc_par.filtId[4])
             {
-                return;
-            }
-            else if(loc_par.filtId[0]!=0xFFFF&&
-                    loc_par.filtId[1]!=0xFFFF&&
-                    loc_par.filtId[2]!=0xFFFF&&
-                    loc_par.filtId[3]!=0xFFFF&&
+                if(loc_par.filtId[0]!=0xFFFF||
+                    loc_par.filtId[1]!=0xFFFF||
+                    loc_par.filtId[2]!=0xFFFF||
+                    loc_par.filtId[3]!=0xFFFF||
                     loc_par.filtId[4]!=0xFFFF)
-            {
-                return;
+                {
+                    return;
+                }
             }
 
 
@@ -1890,27 +1889,19 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
     else if(iot_frame.cmd == cmd_bleData){
 
     }
-    else if(iot_frame.cmd == cmd_json){
-        buff.clear();
-        for(i = 0; i < iot_frame.length;i++)
-        {
-            buff.append(iot_frame.data[i]);
-        }
-        processJsonData(buff);
-    }
 }
 
+
 void MainWindow::processJsonData(QByteArray datas){
-    ushort j;
     QJsonParseError jsonError;
     QJsonValue value;
     QJsonObject object;
     QString str;
     QJsonArray array;
-    QJsonDocument doucment = QJsonDocument::fromJson(datas, &jsonError);  // 转化为 JSON 文档
-    if (!doucment.isNull() && (jsonError.error == QJsonParseError::NoError)) {  // 解析未发生错误
-        if (doucment.isObject()) {  // JSON 文档为对象
-            object = doucment.object();  // 转化为对象
+    QJsonDocument document = QJsonDocument::fromJson(datas, &jsonError);  // 转化为 JSON 文档
+    if (!document.isNull() && (jsonError.error == QJsonParseError::NoError)) {  // 解析未发生错误
+        if (document.isObject()) {  // JSON 文档为对象
+            object = document.object();  // 转化为对象
             if(object.contains("cmd")){//命令
                 value = object.value("cmd");
                 str = value.toString();
@@ -1948,7 +1939,7 @@ void MainWindow::processJsonData(QByteArray datas){
                                             }
                                             else return;
 
-                                            for(j=0;j<DEVICE_DISPLAY_MAX;j++){
+                                            for(int j=0;j<DEVICE_DISPLAY_MAX;j++){
                                                 if(display_par.ant[j].id == dev_id){
                                                     dev_par = &display_par.ant[j];
                                                     break;
@@ -1956,7 +1947,7 @@ void MainWindow::processJsonData(QByteArray datas){
                                             }
 
                                             if(dev_par == NULL){
-                                                for(j=0;j<DEVICE_DISPLAY_MAX;j++){
+                                                for(int j=0;j<DEVICE_DISPLAY_MAX;j++){
                                                     if(display_par.ant[j].id == 0xFFFF){
                                                         dev_par = &display_par.ant[j];
                                                         break;
@@ -2073,11 +2064,200 @@ void MainWindow::processJsonData(QByteArray datas){
                 }
             }
         }
+        else if(document.isArray()){
+            array = document.array();
+            int nSize = array.size();
+            for (int i = 0; i < nSize; ++i) {//遍历数组
+                value = array.at(i);
+                if(value.isObject()){
+                    object = value.toObject();
+                    if(object.contains("AntData")){
+                        value = object.value("AntData");
+                        if(value.isArray()){
+                            QJsonArray antArray = value.toArray();
+                            int antSize = antArray.size();
+                            for(int j=0;j<antSize;j++){
+                                value = antArray.at(j);
+                                if(value.isObject()){
+                                    DEVICE_DISPLAY_PAR *dev_par = NULL;
+                                    ushort dev_id;
+                                    object = value.toObject();
+                                    //get id
+                                    if (object.contains("HardID")) {
+                                        value = object.value("HardID");
+                                        if (value.isDouble()) {
+                                            dev_id = value.toVariant().toByteArray().toUShort();
+                                        }
+                                        else return;
+                                    }
+                                    else return;
+
+                                    for(int j=0;j<DEVICE_DISPLAY_MAX;j++){
+                                        if(display_par.ant[j].id == dev_id){
+                                            dev_par = &display_par.ant[j];
+                                            break;
+                                        }
+                                    }
+
+                                    if(dev_par == NULL){
+                                        for(int j=0;j<DEVICE_DISPLAY_MAX;j++){
+                                            if(display_par.ant[j].id == 0xFFFF){
+                                                dev_par = &display_par.ant[j];
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if(dev_par != NULL){
+                                        dev_par->id = dev_id;
+                                    }
+                                    else return;
+
+                                    if (object.contains("X")) {
+                                        value = object.value("X");
+                                        if (value.isDouble()) {
+                                            dev_par->x = value.toVariant().toByteArray().toShort();
+                                        }
+                                    }
+
+                                    if (object.contains("Y")) {
+                                        value = object.value("Y");
+                                        if (value.isDouble()) {
+                                            dev_par->y = value.toVariant().toByteArray().toShort();
+                                        }
+                                    }
+
+                                    if (object.contains("AntID")) {
+                                        value = object.value("AntID");
+                                        if (value.isDouble()) {
+                                            //dev_par->AntID = value.toVariant().toByteArray().toUShort();
+                                        }
+                                    }
+                                    if (object.contains("AntName")) {
+                                        value = object.value("AntName");
+                                        if (value.isString()) {
+                                            //dev_par->AntName = value.toString();
+                                        }
+                                    }
+                                    if (object.contains("Kind")) {
+                                        value = object.value("Kind");
+                                        if (value.isDouble()) {
+                                            //dev_par->Kind = value.toVariant().toByteArray().toUShort();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else if(value.isString()){
+                    if(value.toString() == "GetAnt"){
+                        IOT_sendAntInformation(net_par.locationSocket);
+                    }
+                }
+            }
+        }
     }
     else {
         NET_DisplayWithNoTime(jsonError.errorString());
+
+        LOCATION_FRAME location_frame;
+        if((uchar)datas[0]==0xA5 && (uchar)datas[1]==0x5A && datas.length()==0x09)//no rssi
+        {
+            //新腕带程序
+            location_frame.head[0] = (uchar)datas[0];
+            location_frame.head[1] = (uchar)datas[1];
+            location_frame.devie_id = (uchar)datas[2]*256+(uchar)datas[3];
+            location_frame.ant_id = (uchar)datas[4]*256+(uchar)datas[5];
+            location_frame.rssi = (uchar)datas[6];
+            location_frame.alarm = (uchar)datas[7];
+            location_frame.checksum = (uchar)datas[8];
+
+
+            QByteArray buff = datas;
+            buff.remove(0,2);
+            if(checkSum(buff,6)!= location_frame.checksum)
+            {
+                return ;
+            }
+
+            if(locationStopDisplay->isChecked() == true)return;
+            if(locationDisplayMac->isChecked() == true)
+            {
+                str += "/ device_MAC:"+id_access.getIdMac(location_frame.devie_id);
+
+            }
+
+            if( location_frame.devie_id != loc_par.filtId[0]&&
+                location_frame.devie_id != loc_par.filtId[1]&&
+                location_frame.devie_id != loc_par.filtId[2]&&
+                location_frame.devie_id != loc_par.filtId[3]&&
+                location_frame.devie_id != loc_par.filtId[4])
+            {
+                if(loc_par.filtId[0]!=0xFFFF||
+                    loc_par.filtId[1]!=0xFFFF||
+                    loc_par.filtId[2]!=0xFFFF||
+                    loc_par.filtId[3]!=0xFFFF||
+                    loc_par.filtId[4]!=0xFFFF)
+                {
+                    return;
+                }
+            }
+
+
+
+
+
+            str += QString("/ devie_id:%1").arg(location_frame.devie_id)+"=0x"+uint16ToHex(location_frame.devie_id).toUpper();
+            str += QString("/ ant_id:%1").arg(location_frame.ant_id)+"=0x"+uint16ToHex(location_frame.ant_id).toUpper();
+            str += QString("/ rssi:%1").arg(location_frame.rssi,0,10);
+            str += "/ alarm:0x"+uint8ToHex(location_frame.alarm).toUpper();
+            if(checkDrop(location_frame.alarm))str += " 跌落报警;";
+            if(checkAlarm(location_frame.alarm))str += " 紧急报警;";
+            if(checkLocation(location_frame.alarm))str += " 室外报警;";
+            if(checkLowBattery(location_frame.alarm))str += " 低电报警;";
+            if(checkTamper(location_frame.alarm))str += " 防拆报警;";
+            if(loc_par.filtStr.length()!=0)
+            {
+
+                if(str.contains(loc_par.filtStr) == false)
+                return;
+            }
+            LOC_DisplayWithTime(str);
+
+
+            for(int j = 0;j<DEVICE_DISPLAY_MAX;j++){
+                //clear last location data
+                if(display_par.device[j].id == location_frame.devie_id){
+                    display_par.device[j].id = 0xFFFF;
+                    display_par.device[j].x = 0;
+                    display_par.device[j].y = 0;
+                    display_par.device[j].radius = 0x00;
+                    display_par.device[j].rssi_offset = 0x00;
+                    display_par.device[j].color = Qt::white;
+                    display_par.device[j].displayInfFlag = false;
+                    memset(display_par.device[j].mac,0x00,8);
+                }
+            }
+            for(int j = 0;j<DEVICE_DISPLAY_MAX;j++){
+                //clear last location data
+                if(display_par.device[j].id == 0xFFFF){
+                    display_par.device[j].id = location_frame.devie_id;
+                    display_par.device[j].x = location_frame.ant_id/256;
+                    display_par.device[j].y = location_frame.ant_id%256;
+                    display_par.device[j].radius = 0x00;
+                    display_par.device[j].rssi_offset = 0x00;
+                    display_par.device[j].color = Qt::darkBlue;
+                    display_par.device[j].displayInfFlag = false;
+                    memset(display_par.device[j].mac,0x00,8);
+                    break;
+                }
+            }
+
+            BLE_displayUpdate();
+        }
     }
 }
+
 
 
 QString MainWindow::uint8ToHex(uchar data)
@@ -2235,6 +2415,17 @@ uchar MainWindow::checkSum(const char* puchData, ushort len)
     while (len--)
     {
         crc8 = crc8 + (*puchData++);
+    }
+    return crc8;
+}
+//和校验
+uchar MainWindow::checkSum(QByteArray puchData, ushort len)
+{
+    uchar crc8 = 0;
+    ushort i=0;
+    while (len--)
+    {
+        crc8 = crc8 + puchData[i++];
     }
     return crc8;
 }
@@ -2531,6 +2722,167 @@ void MainWindow::IOT_cmdApp(ushort gateway_id,ushort device_id,QByteArray data)
         NET_send(send_buff);
     }
 }
+
+
+
+void MainWindow::NET_TCPIP_SocketSend(QByteArray src,QTcpSocket *socket)
+{
+    QString str;
+    if(socket == NULL){
+        NET_DisplayWithTime("error:socket == NULL");
+        return;
+    }
+    if(socket->state()==QAbstractSocket::ConnectedState)
+    {
+        socket->write(src);
+        str = "Socket send message to IP:"+socket->peerAddress().toString();
+        str += QString("PORT:%1").arg(socket->peerPort());
+        str +=QString("  %1 byte").arg(src.length());
+        NET_DisplayWithTime(str);
+
+
+        str = src.toHex().toUpper();
+        for(ushort i =0; i*3<str.length();i++)
+        {
+            str.insert(i*3+2, " ");
+        }
+        NET_DisplayWithTime(src);
+        NET_DisplayWithTime(str.toUpper());
+
+    }
+}
+
+void MainWindow::IOT_sendIdInformation(ushort id,QTcpSocket *socket){
+ /***************************************************************************/
+
+    QJsonObject device;// 构建 Json 对象
+    QJsonArray par;// 构建 Json 数组 - Version
+    QJsonObject json;// 构建 Json 对象
+    QJsonDocument document;// 构建 Json 文档
+
+
+    if(id !=0xFFFF){
+        for(ushort i = 0;i<DEVICE_DISPLAY_MAX;i++){
+            if(display_par.ant[i].id == id){
+                device.insert("dev", "ant");
+                device.insert("x_point", display_par.ant[i].x);
+                device.insert("y_point", display_par.ant[i].y);
+                device.insert("id", display_par.ant[i].id);
+                device.insert("mac", strToHex( display_par.ant[i].mac,8).toUpper());
+                device.insert("offset",display_par.ant[i].rssi_offset);
+                par.append(device);
+                goto BLE_sendIdInformation_document;
+            }
+        }
+        for(ushort i = 0;i<DEVICE_DISPLAY_MAX;i++){
+            if(display_par.device[i].id == id){
+                device.insert("dev", "ant");
+                device.insert("x_point", display_par.device[i].x);
+                device.insert("y_point", display_par.device[i].y);
+                device.insert("id", display_par.device[i].id);
+                device.insert("mac", strToHex( display_par.device[i].mac,8).toUpper());
+                device.insert("offset",display_par.device[i].rssi_offset);
+                par.append(device);
+                goto BLE_sendIdInformation_document;
+            }
+        }
+    }
+
+BLE_sendIdInformation_document:
+
+
+    json.insert("cmd","device_par");
+    json.insert("operation","w_req");
+    json.insert("par",QJsonValue(par));
+
+
+    document.setObject(json);
+    QByteArray byteArray = document.toJson(QJsonDocument::Compact);
+    //NET_DisplayWithNoTime(byteArray);
+    NET_TCPIP_SocketSend(byteArray,socket);
+
+}
+
+
+void MainWindow::IOT_sendAntInformation(QTcpSocket *socket){
+ /***************************************************************************/
+    QJsonArray antArray;// 构建 Json 数组 - Version
+    QJsonArray dataArray;// 构建 Json 数组 - Version
+    QJsonObject antObject;// 构建 Json 对象
+    QJsonObject dataObject;// 构建 Json 数组 - Version
+    QJsonDocument document;// 构建 Json 文档
+
+
+
+
+
+
+    for(ushort i = 0;i<DEVICE_DISPLAY_MAX;i++){
+        if(display_par.ant[i].id != 0xFFFF){
+            dataObject.empty();
+            dataObject.insert("AntID", 99);
+            dataObject.insert("AntName", 001);
+            dataObject.insert("Kind", 3);
+            dataObject.insert("X", display_par.ant[i].x);
+            dataObject.insert("Y", display_par.ant[i].y);
+            dataObject.insert("HardID",QString("%1").arg(display_par.ant[i].id));
+            dataObject.insert("offset",display_par.ant[i].rssi_offset);
+            dataArray.append(dataObject);
+        }
+    }
+
+
+    antObject.insert("MapID",20);
+    antObject.insert("MapName","map1");
+    antObject.insert("ImageWidth",1609);
+    antObject.insert("ImageHeight",861);
+    antObject.insert("ActualWidth",16000);
+    antObject.insert("ActualHeight",8600);
+    antObject.insert("AntData",dataArray);
+
+
+    antArray.append(antObject);
+
+
+    document.setArray(antArray);
+    QByteArray byteArray = document.toJson(QJsonDocument::Indented);
+    NET_TCPIP_SocketSend(byteArray,socket);
+
+}
+
+void MainWindow::IOT_sendAlgorithm(QTcpSocket *socket){
+ /***************************************************************************/
+    QJsonObject json;
+    QJsonDocument document;
+    QByteArray byteArray;
+
+    if(BLE_attenuationcheckBox->isChecked())ble_algorithm.par.translate = true;
+    else ble_algorithm.par.translate = false;
+    if(BLE_attenuationWithoutCentercheckBox->isChecked())ble_algorithm.par.translate_center = true;
+    else ble_algorithm.par.translate_center = false;
+    if(BLE_FiltercheckBox->isChecked())ble_algorithm.par.filter = true;
+    else ble_algorithm.par.filter = false;
+    if(BLE_xyPointCheckBox->isChecked())ble_algorithm.par.limit_xy = true;
+    else ble_algorithm.par.limit_xy = false;
+    if(BLE_radiusCheckBox->isChecked())ble_algorithm.par.limit_r = true;
+    else ble_algorithm.par.limit_r = false;
+
+
+    json.insert("cmd","algorithm_par");
+    json.insert("operation","w_req");
+    json.insert("translate",ble_algorithm.par.translate);
+    json.insert("translate center",ble_algorithm.par.translate_center);
+    json.insert("filter",ble_algorithm.par.filter);
+    json.insert("limit xy",ble_algorithm.par.limit_xy);
+    json.insert("limit r",ble_algorithm.par.limit_r);
+    json.insert("compare",ble_algorithm.par.ratio);
+
+    document.setObject(json);
+    byteArray = document.toJson(QJsonDocument::Compact);
+    //NET_DisplayWithNoTime(byteArray);
+    NET_TCPIP_SocketSend(byteArray,socket);
+}
+
 
 //*****************************************
 //IOT end
@@ -3205,17 +3557,23 @@ void MainWindow::NET_Init()
 {
     ulong i;
     QString str = NET_get_localmachine_ip();
-    textEdit_IP->setPlainText(str);
-    textEdit_Port->setPlainText("7777");
+    textEdit_IP->setText(str);
+    textEdit_Port->setText("7778");
+    textEdit_IP_location->setText(str);
+    textEdit_Port_location->setText("59999");
+
+
     textEdit_ID->setPlainText("0");
-    textEdit_ID2->setPlainText("0");
+    textEdit_ID2->setText("0");
     bt_stopListen->setDisabled(true);
+    bt_stopListen_location->setDisabled(true);
 
     for(i=0;i<SOCKET_MAX;i++)
     {
         net_par.Socket[i]=NULL;
     }
     net_par.Server=NULL;
+    net_par.locationServer = NULL;
 
     for(i=0;i<65536;i++)
     {
@@ -3321,6 +3679,40 @@ void MainWindow::NET_revData()
    }
 }
 
+
+void MainWindow::NET_revDataLocation()
+
+{
+
+   ushort i;
+   QByteArray display;
+   QByteArray datas;
+
+
+   datas.clear();
+   datas = net_par.locationSocket->readAll();
+   if(datas.length() == 0)return;
+
+
+
+   QString str = "location receive data from";
+   str += "  IP:" + net_par.locationSocket->peerAddress().toString();
+   str += QString("  PORT:%1").arg(net_par.locationSocket->peerPort());
+   str += "\r\n"+datas;
+
+   //接收字符串数据。
+   display = datas.toHex().toUpper();
+   for(i=0;i<display.length();i+=3){
+       display.insert( i+2, " ");
+   }
+
+   NET_DisplayWithTime(str);
+   NET_DisplayWithNoTime(display);
+
+   processJsonData(datas);
+
+}
+
 void MainWindow::NET_send(QByteArray src)
 {
 
@@ -3398,10 +3790,10 @@ void MainWindow::on_bt_netSend_clicked()
 void MainWindow::NET_newListen()
 {
     ushort port;
-    QString str = textEdit_Port->toPlainText();
+    QString str = textEdit_Port->text();
     port = str.toUShort();
 
-    str = textEdit_IP->toPlainText();
+    str = textEdit_IP->text();
     QHostAddress ip;
     ip.setAddress(str);
 
@@ -3418,14 +3810,37 @@ void MainWindow::NET_newListen()
 
    }
 }
+void MainWindow::NET_newListenLocation()
+{
+    ushort port;
+    QString str = textEdit_Port_location->text();
+    port = str.toUShort();
+
+    str = textEdit_IP_location->text();
+    QHostAddress ip;
+    ip.setAddress(str);
+
+
+   //监听是否有客户端来访，且对任何来访者监听，端口为6666
+   if(!net_par.locationServer->listen(ip,port))
+   {
+
+      qDebug()<<net_par.locationServer->errorString();
+
+      close();
+
+      return;
+
+   }
+}
 
 void MainWindow::NET_clientToServer()
 {
     ushort port;
-    QString str = textEdit_Port->toPlainText();
+    QString str = textEdit_Port->text();
     port = str.toUShort();
     net_par.clientSocket->abort();
-    net_par.clientSocket->connectToHost(textEdit_IP->toPlainText(),port);
+    net_par.clientSocket->connectToHost(textEdit_IP->text(),port);
     connect(net_par.clientSocket,SIGNAL(readyRead()),this,SLOT(NET_revData()));
     //connect(net_par.clientSocket,SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(NET_displayError(QAbstractSocket::SocketError)));
 }
@@ -3461,17 +3876,38 @@ void MainWindow::NET_acceptConnection()
     }
 }
 
+void MainWindow::NET_acceptConnectionLocation()
+{
+    ushort i;
+    QString str;
+
+
+    if(net_par.locationSocket!=NULL)net_par.locationSocket->close();
+
+    //当有客户来访时将tcpSocket接受tcpServer建立的socket
+    net_par.locationSocket = net_par.locationServer->nextPendingConnection();
+    connect(net_par.locationSocket,SIGNAL(readyRead()),this,SLOT(NET_revDataLocation()));
+    //当tcpSocket在接受客户端连接时出现错误时，NET_displayError(QAbstractSocket::SocketError)进行错误提醒并关闭tcpSocket。
+    connect(net_par.locationSocket,SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(NET_displayError(QAbstractSocket::SocketError)));
+
+    str = "new client connection";
+    str +=" / peerName:"+net_par.locationSocket->peerName();
+    str +=" / peerAddress:"+net_par.locationSocket->peerAddress().toString();
+    str +=QString(" / peerPort:%1").arg(net_par.locationSocket->peerPort());
+    NET_DisplayWithTime(str);
+
+}
 
 
 void MainWindow::NET_displayError(QAbstractSocket::SocketError)
 {
     ushort i;
-    qDebug()<<net_par.Socket[0]->errorString();
     for(i=0;i<SOCKET_MAX;i++)
     {
-        if(net_par.Socket[i]->errorString()!=NULL)
-        net_par.Socket[i]->close();
-        net_par.Socket[i] = NULL;
+        if(net_par.Socket[i]!=NULL){
+            net_par.Socket[i]->close();
+            net_par.Socket[i] = NULL;
+        }
     }
 }
 
@@ -3518,6 +3954,32 @@ void MainWindow::on_bt_stopListen_clicked()
 
 
 
+}
+
+void MainWindow::on_bt_listen_location_clicked()
+{
+    bt_listen_location->setDisabled(true);
+    bt_stopListen_location->setDisabled(false);
+
+    if(net_par.locationSocket != NULL)net_par.locationSocket->close();
+    if(net_par.locationServer != NULL)net_par.locationServer->close();
+
+    net_par.locationServer = new QTcpServer(this);
+    NET_newListenLocation();
+    //newConnection()用于当有客户端访问时发出信号，NET_acceptConnection()信号处理函数
+    connect(net_par.locationServer,SIGNAL(newConnection()),this,SLOT(NET_acceptConnectionLocation()));
+
+}
+
+void MainWindow::on_bt_stopListen_location_clicked()
+{
+
+    if(net_par.locationSocket != NULL)net_par.locationSocket->close();
+    if(net_par.locationServer != NULL)net_par.locationServer->close();
+    net_par.locationSocket = NULL;
+    net_par.locationServer = NULL;
+
+    bt_listen_location->setDisabled(false);
 }
 
 void MainWindow::on_bt_searchId_clicked()
@@ -4489,7 +4951,7 @@ void MainWindow::on_bt_search_net_clicked()
     QString str;
     ushort id;
 
-    str = textEdit_ID2->toPlainText();
+    str = textEdit_ID2->text();
     id = str.toUShort();
 
     if(net_par.bind_socket[id] == NULL)
@@ -5535,10 +5997,7 @@ void MainWindow::BLE_DisplayInit(void)
         memset(display_par.device[i].mac,0x00,8);
     }
 
-    BLE_virtualAntIdEdit->setText("1");
-    BLE_virtualDeviceIdEdit->setText("10");
-    BLE_virtualSeqEdit->setText("1");
-    BLE_virtualRssiEdit->setText("-20");
+
     BLE_virtualRatio->setText("0.5");
 
     for(i = 0;i<ALGORITHM_DEVICE_MAX;i++){
@@ -5655,31 +6114,7 @@ void MainWindow::BLE_displayUpdate()
         }
     }
 
-    QPixmap pix_bit(3,3);
-    if(BLE_AreaCheckBox->isChecked()){
-        for(short i=-100;i<200;i++){
-            for(short j=-100;j<200;j++){
-                if(ble_algorithm.location_bit[i+100][j+100]==3){
-                    pix_bit.fill(Qt::red);
-                    x_point = x_convert(i);
-                    y_point = y_convert(j);
-                    scene->addPixmap(pix_bit)->setPos(x_point-1,y_point-1);
-                }
-                else if(ble_algorithm.location_bit[i+100][j+100]==2){
-                    pix_bit.fill(Qt::cyan);
-                    x_point = x_convert(i);
-                    y_point = y_convert(j);
-                    scene->addPixmap(pix_bit)->setPos(x_point-1,y_point-1);
-                }
-                else if(ble_algorithm.location_bit[i+100][j+100]==1){
-                    pix_bit.fill(Qt::yellow);
-                    x_point = x_convert(i);
-                    y_point = y_convert(j);
-                    scene->addPixmap(pix_bit)->setPos(x_point-1,y_point-1);
-                }
-            }
-        }
-    }
+
     // 视图
 
     // 视图关联场景
@@ -5729,16 +6164,26 @@ void MainWindow::on_BLE_addAnt_clicked()
     uchar i;
     int x_point;
     int y_point;
+    ushort device_id;
 
     str = BLE_xPointEdit->toPlainText();
     x_point = str.toInt();
     str = BLE_yPointEdit->toPlainText();
     y_point = str.toInt();
+    str = te_addrEdit->toPlainText();
+    if(str[0]=='0' && (str[1]=='x' || str[1]=='X'))
+    {
+        device_id = str.toUShort(Q_NULLPTR,16);
+    }
+    else
+    {
+        device_id = str.toUShort(Q_NULLPTR,10);
+    }
 
 
 
     for(i=0;i<DEVICE_DISPLAY_MAX;i++){
-       if(display_par.ant[i].id == rf_send.device_id){
+       if(display_par.ant[i].id == device_id){
            display_par.ant[i].x = x_point;
            display_par.ant[i].y = y_point;
            display_par.ant[i].color = Qt::darkGreen;
@@ -5748,7 +6193,7 @@ void MainWindow::on_BLE_addAnt_clicked()
 
     for(i=0;i<DEVICE_DISPLAY_MAX;i++){
        if(display_par.ant[i].id == 0xFFFF){
-           display_par.ant[i].id = rf_send.device_id;
+           display_par.ant[i].id = device_id;
            display_par.ant[i].x = x_point;
            display_par.ant[i].y = y_point;
            display_par.ant[i].color = Qt::darkGreen;
@@ -5768,9 +6213,19 @@ on_BLE_addAnt_clicked_0:
 void MainWindow::on_BLE_deleteAnt_clicked()
 {
     uchar i;
-
+    QString str;
+    ushort device_id;
+    str = te_addrEdit->toPlainText();
+    if(str[0]=='0' && (str[1]=='x' || str[1]=='X'))
+    {
+        device_id = str.toUShort(Q_NULLPTR,16);
+    }
+    else
+    {
+        device_id = str.toUShort(Q_NULLPTR,10);
+    }
     for(i=0;i<DEVICE_DISPLAY_MAX;i++){
-       if(display_par.ant[i].id == rf_send.device_id){
+       if(display_par.ant[i].id == device_id){
            display_par.ant[i].id = 0xFFFF;
            display_par.ant[i].x = 0x00;
            display_par.ant[i].y = 0x00;
@@ -6270,20 +6725,6 @@ void MainWindow::BLE_locationCalculator(ushort id){
 //                    distance_AC[1] = fabs(rssi_AC-distance_AC[0]);
 //                    distance_BC[1] = fabs(rssi_BC-distance_BC[0]);
 
-
-
-                    ble_algorithm.location_bit[x+100][y+100]=0;
-                    if(BLE_AreaAloneCheckBox->isChecked()==true){
-                        if((distance_AB[1]<ble_algorithm.par.ratio)){
-                            ble_algorithm.location_bit[x+100][y+100]=1;
-                        }
-                        if((distance_AC[1]<ble_algorithm.par.ratio)){
-                            ble_algorithm.location_bit[x+100][y+100]=2;
-                        }
-                        if((distance_BC[1]<ble_algorithm.par.ratio)){
-                            ble_algorithm.location_bit[x+100][y+100]=3;
-                        }
-                    }
                     if((distance_AB[1]<ble_algorithm.par.ratio) && (distance_AC[1]<ble_algorithm.par.ratio) && (distance_BC[1]<ble_algorithm.par.ratio)){
                         if(((len_AB+len_AC+len_BC))>(distance_A+distance_B+distance_C)){
                             if(distance_last0 > (distance_AB[1]+distance_AC[1]+distance_BC[1])){
@@ -6294,15 +6735,7 @@ void MainWindow::BLE_locationCalculator(ushort id){
                                 distance_A_last = distance_A;
                                 distance_B_last = distance_B;
                                 distance_C_last = distance_C;
-                                if(BLE_AreaAloneCheckBox->isChecked()==false)ble_algorithm.location_bit[x+100][y+100]=1;
                             }
-                            else {
-                                if(BLE_AreaAloneCheckBox->isChecked()==false)ble_algorithm.location_bit[x+100][y+100]=2;
-                            }
-
-                        }
-                        else {
-                            if(BLE_AreaAloneCheckBox->isChecked()==false)ble_algorithm.location_bit[x+100][y+100]=3;
                         }
                     }
                 }
@@ -6384,6 +6817,7 @@ void MainWindow::BLE_locationCalculator(ushort id){
                 }
             }
 
+
             if(BLE_displayLog->isChecked())
             {
 
@@ -6413,49 +6847,6 @@ void MainWindow::BLE_locationCalculator(ushort id){
 
 
 //***************************************************
-
-
-void MainWindow::on_BLE_virtualSetBt_clicked()
-{
-    //ushort i = shortAddr->currentRow();
-    QString str;
-
-    ushort virtual_ant_id,virtual_device_id;
-    char rssi;
-    uchar sequence;
-
-    str = BLE_virtualAntIdEdit->toPlainText();
-    if(str[0]=='0' && (str[1]=='x' || str[1]=='X'))
-    {
-        virtual_ant_id = str.toUShort(Q_NULLPTR,16);
-    }
-    else
-    {
-        virtual_ant_id = str.toUShort(Q_NULLPTR,10);
-    }
-
-    str = BLE_virtualDeviceIdEdit->toPlainText();
-    if(str[0]=='0' && (str[1]=='x' || str[1]=='X'))
-    {
-        virtual_device_id = str.toUShort(Q_NULLPTR,16);
-    }
-    else
-    {
-        virtual_device_id = str.toUShort(Q_NULLPTR,10);
-    }
-
-    str = BLE_virtualSeqEdit->toPlainText();
-    sequence = str.toUShort(Q_NULLPTR,10);
-
-    str = BLE_virtualRssiEdit->toPlainText();
-    rssi = str.toShort(Q_NULLPTR,10);
-
-
-
-    BLE_storeData(virtual_device_id,virtual_ant_id,sequence,rssi);
-
-
-}
 
 
 void MainWindow::on_BLE_virtualRatio_textChanged()
@@ -6562,3 +6953,15 @@ bool MainWindow::BLE_idInfoReadFromFile()
     return true;
 }
 
+
+
+
+void MainWindow::on_BLE_setAlgorithmPar_clicked()
+{
+    IOT_sendAlgorithm(net_par.locationSocket);
+}
+
+void MainWindow::on_BLE_sendAntList_clicked()
+{
+    IOT_sendAntInformation(net_par.locationSocket);
+}

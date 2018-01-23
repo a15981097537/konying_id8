@@ -21,6 +21,7 @@
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
 #include <QtWidgets/QListWidget>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
@@ -63,23 +64,33 @@ public:
     QWidget *Network;
     QVBoxLayout *verticalLayout_25;
     QGroupBox *groupBox_4;
-    QHBoxLayout *horizontalLayout_68;
+    QHBoxLayout *horizontalLayout_80;
+    QGroupBox *groupBox_26;
     QVBoxLayout *verticalLayout_20;
     QHBoxLayout *horizontalLayout_16;
     QLabel *label_17;
-    QTextEdit *textEdit_IP;
+    QLineEdit *textEdit_IP;
     QPushButton *bt_listen;
     QHBoxLayout *horizontalLayout_17;
     QLabel *label_18;
-    QTextEdit *textEdit_Port;
+    QLineEdit *textEdit_Port;
     QPushButton *bt_stopListen;
-    QHBoxLayout *horizontalLayout_11;
-    QLabel *label_22;
-    QTextEdit *textEdit_ID2;
-    QPushButton *bt_search_net;
+    QHBoxLayout *horizontalLayout_75;
+    QLabel *label_48;
+    QLineEdit *textEdit_IP_location;
+    QPushButton *bt_listen_location;
+    QHBoxLayout *horizontalLayout_76;
+    QLabel *label_49;
+    QLineEdit *textEdit_Port_location;
+    QPushButton *bt_stopListen_location;
     QVBoxLayout *verticalLayout_38;
+    QHBoxLayout *horizontalLayout_68;
     QRadioButton *networkAutoIdStatus;
     QRadioButton *networkManuIdStatus;
+    QHBoxLayout *horizontalLayout_11;
+    QLabel *label_22;
+    QLineEdit *textEdit_ID2;
+    QPushButton *bt_search_net;
     QHBoxLayout *horizontalLayout_60;
     QLabel *label_34;
     QTextEdit *textEdit_MIN_ID;
@@ -105,7 +116,6 @@ public:
     QTextEdit *textEdit_ID_3;
     QPushButton *export_idList_2;
     QSpacerItem *horizontalSpacer_4;
-    QSpacerItem *horizontalSpacer_6;
     QVBoxLayout *verticalLayout_63;
     QHBoxLayout *horizontalLayout_63;
     QLabel *label_39;
@@ -517,30 +527,17 @@ public:
     QPushButton *BLE_hideDeviceInf;
     QPushButton *BLE_showAllDeviceInf;
     QPushButton *BLE_hideAllDeviceInf;
-    QHBoxLayout *horizontalLayout_76;
-    QLabel *label_56;
-    QTextEdit *BLE_virtualAntIdEdit;
-    QHBoxLayout *horizontalLayout_80;
-    QLabel *label_57;
-    QTextEdit *BLE_virtualDeviceIdEdit;
-    QHBoxLayout *horizontalLayout_84;
-    QLabel *label_59;
-    QTextEdit *BLE_virtualSeqEdit;
-    QHBoxLayout *horizontalLayout_83;
-    QLabel *label_58;
-    QTextEdit *BLE_virtualRssiEdit;
-    QPushButton *BLE_virtualSetBt;
+    QPushButton *BLE_sendAntList;
+    QSpacerItem *verticalSpacer_10;
     QCheckBox *BLE_attenuationcheckBox;
     QCheckBox *BLE_attenuationWithoutCentercheckBox;
     QCheckBox *BLE_FiltercheckBox;
     QCheckBox *BLE_xyPointCheckBox;
     QCheckBox *BLE_radiusCheckBox;
-    QCheckBox *BLE_AreaCheckBox;
-    QCheckBox *BLE_AreaAloneCheckBox;
     QHBoxLayout *horizontalLayout_85;
     QLabel *label_60;
     QTextEdit *BLE_virtualRatio;
-    QSpacerItem *verticalSpacer_9;
+    QPushButton *BLE_setAlgorithmPar;
     QGraphicsView *graphicsView_BLE;
     QStatusBar *statusbar;
     QMenuBar *menubar;
@@ -643,25 +640,27 @@ public:
         groupBox_4 = new QGroupBox(Network);
         groupBox_4->setObjectName(QStringLiteral("groupBox_4"));
         groupBox_4->setMaximumSize(QSize(16777215, 150));
-        horizontalLayout_68 = new QHBoxLayout(groupBox_4);
-        horizontalLayout_68->setObjectName(QStringLiteral("horizontalLayout_68"));
-        verticalLayout_20 = new QVBoxLayout();
+        horizontalLayout_80 = new QHBoxLayout(groupBox_4);
+        horizontalLayout_80->setObjectName(QStringLiteral("horizontalLayout_80"));
+        groupBox_26 = new QGroupBox(groupBox_4);
+        groupBox_26->setObjectName(QStringLiteral("groupBox_26"));
+        verticalLayout_20 = new QVBoxLayout(groupBox_26);
         verticalLayout_20->setObjectName(QStringLiteral("verticalLayout_20"));
         horizontalLayout_16 = new QHBoxLayout();
         horizontalLayout_16->setObjectName(QStringLiteral("horizontalLayout_16"));
-        label_17 = new QLabel(groupBox_4);
+        label_17 = new QLabel(groupBox_26);
         label_17->setObjectName(QStringLiteral("label_17"));
         label_17->setMaximumSize(QSize(30, 25));
 
         horizontalLayout_16->addWidget(label_17);
 
-        textEdit_IP = new QTextEdit(groupBox_4);
+        textEdit_IP = new QLineEdit(groupBox_26);
         textEdit_IP->setObjectName(QStringLiteral("textEdit_IP"));
-        textEdit_IP->setMaximumSize(QSize(100, 25));
+        textEdit_IP->setMaximumSize(QSize(100, 16777215));
 
         horizontalLayout_16->addWidget(textEdit_IP);
 
-        bt_listen = new QPushButton(groupBox_4);
+        bt_listen = new QPushButton(groupBox_26);
         bt_listen->setObjectName(QStringLiteral("bt_listen"));
 
         horizontalLayout_16->addWidget(bt_listen);
@@ -671,25 +670,89 @@ public:
 
         horizontalLayout_17 = new QHBoxLayout();
         horizontalLayout_17->setObjectName(QStringLiteral("horizontalLayout_17"));
-        label_18 = new QLabel(groupBox_4);
+        label_18 = new QLabel(groupBox_26);
         label_18->setObjectName(QStringLiteral("label_18"));
         label_18->setMaximumSize(QSize(30, 25));
 
         horizontalLayout_17->addWidget(label_18);
 
-        textEdit_Port = new QTextEdit(groupBox_4);
+        textEdit_Port = new QLineEdit(groupBox_26);
         textEdit_Port->setObjectName(QStringLiteral("textEdit_Port"));
-        textEdit_Port->setMaximumSize(QSize(100, 25));
+        textEdit_Port->setMaximumSize(QSize(60, 16777215));
 
         horizontalLayout_17->addWidget(textEdit_Port);
 
-        bt_stopListen = new QPushButton(groupBox_4);
+        bt_stopListen = new QPushButton(groupBox_26);
         bt_stopListen->setObjectName(QStringLiteral("bt_stopListen"));
 
         horizontalLayout_17->addWidget(bt_stopListen);
 
 
         verticalLayout_20->addLayout(horizontalLayout_17);
+
+        horizontalLayout_75 = new QHBoxLayout();
+        horizontalLayout_75->setObjectName(QStringLiteral("horizontalLayout_75"));
+        label_48 = new QLabel(groupBox_26);
+        label_48->setObjectName(QStringLiteral("label_48"));
+        label_48->setMaximumSize(QSize(30, 25));
+
+        horizontalLayout_75->addWidget(label_48);
+
+        textEdit_IP_location = new QLineEdit(groupBox_26);
+        textEdit_IP_location->setObjectName(QStringLiteral("textEdit_IP_location"));
+        textEdit_IP_location->setMaximumSize(QSize(100, 16777215));
+
+        horizontalLayout_75->addWidget(textEdit_IP_location);
+
+        bt_listen_location = new QPushButton(groupBox_26);
+        bt_listen_location->setObjectName(QStringLiteral("bt_listen_location"));
+
+        horizontalLayout_75->addWidget(bt_listen_location);
+
+
+        verticalLayout_20->addLayout(horizontalLayout_75);
+
+        horizontalLayout_76 = new QHBoxLayout();
+        horizontalLayout_76->setObjectName(QStringLiteral("horizontalLayout_76"));
+        label_49 = new QLabel(groupBox_26);
+        label_49->setObjectName(QStringLiteral("label_49"));
+        label_49->setMaximumSize(QSize(30, 25));
+
+        horizontalLayout_76->addWidget(label_49);
+
+        textEdit_Port_location = new QLineEdit(groupBox_26);
+        textEdit_Port_location->setObjectName(QStringLiteral("textEdit_Port_location"));
+        textEdit_Port_location->setMaximumSize(QSize(60, 16777215));
+
+        horizontalLayout_76->addWidget(textEdit_Port_location);
+
+        bt_stopListen_location = new QPushButton(groupBox_26);
+        bt_stopListen_location->setObjectName(QStringLiteral("bt_stopListen_location"));
+
+        horizontalLayout_76->addWidget(bt_stopListen_location);
+
+
+        verticalLayout_20->addLayout(horizontalLayout_76);
+
+
+        horizontalLayout_80->addWidget(groupBox_26);
+
+        verticalLayout_38 = new QVBoxLayout();
+        verticalLayout_38->setObjectName(QStringLiteral("verticalLayout_38"));
+        horizontalLayout_68 = new QHBoxLayout();
+        horizontalLayout_68->setObjectName(QStringLiteral("horizontalLayout_68"));
+        networkAutoIdStatus = new QRadioButton(groupBox_4);
+        networkAutoIdStatus->setObjectName(QStringLiteral("networkAutoIdStatus"));
+
+        horizontalLayout_68->addWidget(networkAutoIdStatus);
+
+        networkManuIdStatus = new QRadioButton(groupBox_4);
+        networkManuIdStatus->setObjectName(QStringLiteral("networkManuIdStatus"));
+
+        horizontalLayout_68->addWidget(networkManuIdStatus);
+
+
+        verticalLayout_38->addLayout(horizontalLayout_68);
 
         horizontalLayout_11 = new QHBoxLayout();
         horizontalLayout_11->setObjectName(QStringLiteral("horizontalLayout_11"));
@@ -699,9 +762,9 @@ public:
 
         horizontalLayout_11->addWidget(label_22);
 
-        textEdit_ID2 = new QTextEdit(groupBox_4);
+        textEdit_ID2 = new QLineEdit(groupBox_4);
         textEdit_ID2->setObjectName(QStringLiteral("textEdit_ID2"));
-        textEdit_ID2->setMaximumSize(QSize(100, 25));
+        textEdit_ID2->setMaximumSize(QSize(60, 16777215));
 
         horizontalLayout_11->addWidget(textEdit_ID2);
 
@@ -711,22 +774,7 @@ public:
         horizontalLayout_11->addWidget(bt_search_net);
 
 
-        verticalLayout_20->addLayout(horizontalLayout_11);
-
-
-        horizontalLayout_68->addLayout(verticalLayout_20);
-
-        verticalLayout_38 = new QVBoxLayout();
-        verticalLayout_38->setObjectName(QStringLiteral("verticalLayout_38"));
-        networkAutoIdStatus = new QRadioButton(groupBox_4);
-        networkAutoIdStatus->setObjectName(QStringLiteral("networkAutoIdStatus"));
-
-        verticalLayout_38->addWidget(networkAutoIdStatus);
-
-        networkManuIdStatus = new QRadioButton(groupBox_4);
-        networkManuIdStatus->setObjectName(QStringLiteral("networkManuIdStatus"));
-
-        verticalLayout_38->addWidget(networkManuIdStatus);
+        verticalLayout_38->addLayout(horizontalLayout_11);
 
         horizontalLayout_60 = new QHBoxLayout();
         horizontalLayout_60->setObjectName(QStringLiteral("horizontalLayout_60"));
@@ -765,7 +813,7 @@ public:
         verticalLayout_38->addLayout(horizontalLayout_59);
 
 
-        horizontalLayout_68->addLayout(verticalLayout_38);
+        horizontalLayout_80->addLayout(verticalLayout_38);
 
         verticalLayout_8 = new QVBoxLayout();
         verticalLayout_8->setObjectName(QStringLiteral("verticalLayout_8"));
@@ -818,7 +866,7 @@ public:
         verticalLayout_8->addLayout(horizontalLayout_57);
 
 
-        horizontalLayout_68->addLayout(verticalLayout_8);
+        horizontalLayout_80->addLayout(verticalLayout_8);
 
         verticalLayout_61 = new QVBoxLayout();
         verticalLayout_61->setObjectName(QStringLiteral("verticalLayout_61"));
@@ -862,15 +910,11 @@ public:
         verticalLayout_61->addWidget(export_idList_2);
 
 
-        horizontalLayout_68->addLayout(verticalLayout_61);
+        horizontalLayout_80->addLayout(verticalLayout_61);
 
         horizontalSpacer_4 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-        horizontalLayout_68->addItem(horizontalSpacer_4);
-
-        horizontalSpacer_6 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        horizontalLayout_68->addItem(horizontalSpacer_6);
+        horizontalLayout_80->addItem(horizontalSpacer_4);
 
         verticalLayout_63 = new QVBoxLayout();
         verticalLayout_63->setObjectName(QStringLiteral("verticalLayout_63"));
@@ -943,7 +987,7 @@ public:
         verticalLayout_63->addLayout(horizontalLayout_65);
 
 
-        horizontalLayout_68->addLayout(verticalLayout_63);
+        horizontalLayout_80->addLayout(verticalLayout_63);
 
         verticalLayout_62 = new QVBoxLayout();
         verticalLayout_62->setObjectName(QStringLiteral("verticalLayout_62"));
@@ -967,8 +1011,9 @@ public:
         verticalLayout_62->addWidget(export_idList_3);
 
 
-        horizontalLayout_68->addLayout(verticalLayout_62);
+        horizontalLayout_80->addLayout(verticalLayout_62);
 
+        groupBox_26->raise();
 
         verticalLayout_25->addWidget(groupBox_4);
 
@@ -2982,86 +3027,14 @@ public:
 
         verticalLayout_74->addWidget(BLE_hideAllDeviceInf);
 
-        horizontalLayout_76 = new QHBoxLayout();
-        horizontalLayout_76->setObjectName(QStringLiteral("horizontalLayout_76"));
-        label_56 = new QLabel(groupBox_25);
-        label_56->setObjectName(QStringLiteral("label_56"));
-        label_56->setMinimumSize(QSize(36, 0));
-        label_56->setMaximumSize(QSize(36, 16777215));
-        label_56->setAlignment(Qt::AlignCenter);
+        BLE_sendAntList = new QPushButton(groupBox_25);
+        BLE_sendAntList->setObjectName(QStringLiteral("BLE_sendAntList"));
 
-        horizontalLayout_76->addWidget(label_56);
+        verticalLayout_74->addWidget(BLE_sendAntList);
 
-        BLE_virtualAntIdEdit = new QTextEdit(groupBox_25);
-        BLE_virtualAntIdEdit->setObjectName(QStringLiteral("BLE_virtualAntIdEdit"));
-        BLE_virtualAntIdEdit->setMaximumSize(QSize(16777215, 25));
+        verticalSpacer_10 = new QSpacerItem(20, 200, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-        horizontalLayout_76->addWidget(BLE_virtualAntIdEdit);
-
-
-        verticalLayout_74->addLayout(horizontalLayout_76);
-
-        horizontalLayout_80 = new QHBoxLayout();
-        horizontalLayout_80->setObjectName(QStringLiteral("horizontalLayout_80"));
-        label_57 = new QLabel(groupBox_25);
-        label_57->setObjectName(QStringLiteral("label_57"));
-        label_57->setMinimumSize(QSize(36, 0));
-        label_57->setMaximumSize(QSize(36, 16777215));
-        label_57->setAlignment(Qt::AlignCenter);
-
-        horizontalLayout_80->addWidget(label_57);
-
-        BLE_virtualDeviceIdEdit = new QTextEdit(groupBox_25);
-        BLE_virtualDeviceIdEdit->setObjectName(QStringLiteral("BLE_virtualDeviceIdEdit"));
-        BLE_virtualDeviceIdEdit->setMaximumSize(QSize(16777215, 25));
-
-        horizontalLayout_80->addWidget(BLE_virtualDeviceIdEdit);
-
-
-        verticalLayout_74->addLayout(horizontalLayout_80);
-
-        horizontalLayout_84 = new QHBoxLayout();
-        horizontalLayout_84->setObjectName(QStringLiteral("horizontalLayout_84"));
-        label_59 = new QLabel(groupBox_25);
-        label_59->setObjectName(QStringLiteral("label_59"));
-        label_59->setMinimumSize(QSize(36, 0));
-        label_59->setMaximumSize(QSize(36, 16777215));
-        label_59->setAlignment(Qt::AlignCenter);
-
-        horizontalLayout_84->addWidget(label_59);
-
-        BLE_virtualSeqEdit = new QTextEdit(groupBox_25);
-        BLE_virtualSeqEdit->setObjectName(QStringLiteral("BLE_virtualSeqEdit"));
-        BLE_virtualSeqEdit->setMaximumSize(QSize(16777215, 25));
-
-        horizontalLayout_84->addWidget(BLE_virtualSeqEdit);
-
-
-        verticalLayout_74->addLayout(horizontalLayout_84);
-
-        horizontalLayout_83 = new QHBoxLayout();
-        horizontalLayout_83->setObjectName(QStringLiteral("horizontalLayout_83"));
-        label_58 = new QLabel(groupBox_25);
-        label_58->setObjectName(QStringLiteral("label_58"));
-        label_58->setMinimumSize(QSize(36, 0));
-        label_58->setMaximumSize(QSize(36, 16777215));
-        label_58->setAlignment(Qt::AlignCenter);
-
-        horizontalLayout_83->addWidget(label_58);
-
-        BLE_virtualRssiEdit = new QTextEdit(groupBox_25);
-        BLE_virtualRssiEdit->setObjectName(QStringLiteral("BLE_virtualRssiEdit"));
-        BLE_virtualRssiEdit->setMaximumSize(QSize(16777215, 25));
-
-        horizontalLayout_83->addWidget(BLE_virtualRssiEdit);
-
-
-        verticalLayout_74->addLayout(horizontalLayout_83);
-
-        BLE_virtualSetBt = new QPushButton(groupBox_25);
-        BLE_virtualSetBt->setObjectName(QStringLiteral("BLE_virtualSetBt"));
-
-        verticalLayout_74->addWidget(BLE_virtualSetBt);
+        verticalLayout_74->addItem(verticalSpacer_10);
 
         BLE_attenuationcheckBox = new QCheckBox(groupBox_25);
         BLE_attenuationcheckBox->setObjectName(QStringLiteral("BLE_attenuationcheckBox"));
@@ -3088,16 +3061,6 @@ public:
 
         verticalLayout_74->addWidget(BLE_radiusCheckBox);
 
-        BLE_AreaCheckBox = new QCheckBox(groupBox_25);
-        BLE_AreaCheckBox->setObjectName(QStringLiteral("BLE_AreaCheckBox"));
-
-        verticalLayout_74->addWidget(BLE_AreaCheckBox);
-
-        BLE_AreaAloneCheckBox = new QCheckBox(groupBox_25);
-        BLE_AreaAloneCheckBox->setObjectName(QStringLiteral("BLE_AreaAloneCheckBox"));
-
-        verticalLayout_74->addWidget(BLE_AreaAloneCheckBox);
-
         horizontalLayout_85 = new QHBoxLayout();
         horizontalLayout_85->setObjectName(QStringLiteral("horizontalLayout_85"));
         label_60 = new QLabel(groupBox_25);
@@ -3117,9 +3080,10 @@ public:
 
         verticalLayout_74->addLayout(horizontalLayout_85);
 
-        verticalSpacer_9 = new QSpacerItem(20, 200, QSizePolicy::Minimum, QSizePolicy::Expanding);
+        BLE_setAlgorithmPar = new QPushButton(groupBox_25);
+        BLE_setAlgorithmPar->setObjectName(QStringLiteral("BLE_setAlgorithmPar"));
 
-        verticalLayout_74->addItem(verticalSpacer_9);
+        verticalLayout_74->addWidget(BLE_setAlgorithmPar);
 
 
         horizontalLayout_64->addWidget(groupBox_25);
@@ -3154,7 +3118,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        function->setCurrentIndex(0);
+        function->setCurrentIndex(9);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -3182,14 +3146,19 @@ public:
 #endif // QT_NO_STATUSTIP
         bt_clear->setText(QApplication::translate("MainWindow", "CLEAR", 0));
         groupBox_4->setTitle(QString());
+        groupBox_26->setTitle(QString());
         label_17->setText(QApplication::translate("MainWindow", "IP", 0));
         bt_listen->setText(QApplication::translate("MainWindow", " \347\233\221\345\220\254", 0));
         label_18->setText(QApplication::translate("MainWindow", "PORT", 0));
         bt_stopListen->setText(QApplication::translate("MainWindow", " \345\201\234\346\255\242\347\233\221\345\220\254", 0));
+        label_48->setText(QApplication::translate("MainWindow", "IP", 0));
+        bt_listen_location->setText(QApplication::translate("MainWindow", " \347\233\221\345\220\254", 0));
+        label_49->setText(QApplication::translate("MainWindow", "PORT", 0));
+        bt_stopListen_location->setText(QApplication::translate("MainWindow", " \345\201\234\346\255\242\347\233\221\345\220\254", 0));
+        networkAutoIdStatus->setText(QApplication::translate("MainWindow", "\350\207\252\345\212\250\345\210\206\351\205\215ID", 0));
+        networkManuIdStatus->setText(QApplication::translate("MainWindow", "\345\233\272\345\256\232\345\210\206\351\205\215ID", 0));
         label_22->setText(QApplication::translate("MainWindow", "ID", 0));
         bt_search_net->setText(QApplication::translate("MainWindow", "Search NET", 0));
-        networkAutoIdStatus->setText(QApplication::translate("MainWindow", "\350\207\252\345\212\250\345\210\206\351\205\215ID\350\241\250", 0));
-        networkManuIdStatus->setText(QApplication::translate("MainWindow", "\345\233\272\345\256\232\345\210\206\351\205\215ID\350\241\250", 0));
         label_34->setText(QApplication::translate("MainWindow", "ID_MIN", 0));
         textEdit_MIN_ID->setHtml(QApplication::translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
@@ -3542,19 +3511,14 @@ public:
         BLE_hideDeviceInf->setText(QApplication::translate("MainWindow", "\351\232\220\350\227\217\350\212\202\347\202\271\344\277\241\346\201\257", 0));
         BLE_showAllDeviceInf->setText(QApplication::translate("MainWindow", "\346\230\276\347\244\272\346\211\200\346\234\211\350\212\202\347\202\271\344\277\241\346\201\257", 0));
         BLE_hideAllDeviceInf->setText(QApplication::translate("MainWindow", "\351\232\220\350\227\217\346\211\200\346\234\211\350\212\202\347\202\271\344\277\241\346\201\257", 0));
-        label_56->setText(QApplication::translate("MainWindow", "\345\244\251\347\272\277ID", 0));
-        label_57->setText(QApplication::translate("MainWindow", "\346\240\207\347\255\276ID", 0));
-        label_59->setText(QApplication::translate("MainWindow", "\345\272\217\345\210\227\345\217\267", 0));
-        label_58->setText(QApplication::translate("MainWindow", "RSSI", 0));
-        BLE_virtualSetBt->setText(QApplication::translate("MainWindow", "\346\250\241\346\213\237\346\240\207\347\255\276\346\225\260\346\215\256", 0));
+        BLE_sendAntList->setText(QApplication::translate("MainWindow", "\344\270\213\345\217\221\345\244\251\347\272\277\345\210\227\350\241\250", 0));
         BLE_attenuationcheckBox->setText(QApplication::translate("MainWindow", "\350\241\260\345\207\217\347\256\227\346\263\225", 0));
         BLE_attenuationWithoutCentercheckBox->setText(QApplication::translate("MainWindow", "\344\270\255\345\277\203\344\270\215\350\241\260\345\207\217\347\256\227\346\263\225", 0));
         BLE_FiltercheckBox->setText(QApplication::translate("MainWindow", "\346\273\244\346\263\242\347\256\227\346\263\225", 0));
         BLE_xyPointCheckBox->setText(QApplication::translate("MainWindow", "\351\231\220\345\210\266xy\345\235\220\346\240\207", 0));
         BLE_radiusCheckBox->setText(QApplication::translate("MainWindow", "\351\231\220\345\210\266\345\234\206\345\215\212\345\276\204", 0));
-        BLE_AreaCheckBox->setText(QApplication::translate("MainWindow", "\346\230\276\347\244\272\345\214\272\345\237\237", 0));
-        BLE_AreaAloneCheckBox->setText(QApplication::translate("MainWindow", "\345\210\206\345\274\200\346\230\276\347\244\272", 0));
         label_60->setText(QApplication::translate("MainWindow", "\346\257\224\345\200\274", 0));
+        BLE_setAlgorithmPar->setText(QApplication::translate("MainWindow", "\347\256\227\346\263\225\350\256\276\347\275\256", 0));
         function->setTabText(function->indexOf(BLE_map), QApplication::translate("MainWindow", "BLE_map", 0));
     } // retranslateUi
 
