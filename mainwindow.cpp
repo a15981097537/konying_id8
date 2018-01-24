@@ -934,10 +934,37 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
                 return;
             }
             LOC_DisplayWithTime(str);
-            if(checkLocation(location_frame.alarm)){
-                BLE_storeData(iot_frame.device_id,iot_frame.gateway_id,location_frame.rssi,iot_frame.rssi);
+
+
+           for(int j = 0;j<DEVICE_DISPLAY_MAX;j++){
+                //clear last location data
+                if(display_par.device[j].id == location_frame.devie_id){
+                    display_par.device[j].id = 0xFFFF;
+                    display_par.device[j].x = 0;
+                    display_par.device[j].y = 0;
+                    display_par.device[j].radius = 0x00;
+                    display_par.device[j].rssi_offset = 0x00;
+                    display_par.device[j].color = Qt::white;
+                    display_par.device[j].displayInfFlag = false;
+                    memset(display_par.device[j].mac,0x00,8);
+                }
+            }
+            for(int j = 0;j<DEVICE_DISPLAY_MAX;j++){
+                //clear last location data
+                if(display_par.device[j].id == 0xFFFF){
+                    display_par.device[j].id = location_frame.devie_id;
+                    display_par.device[j].x = location_frame.ant_id/256;
+                    display_par.device[j].y = location_frame.ant_id%256;
+                    display_par.device[j].radius = 0x00;
+                    display_par.device[j].rssi_offset = 0x00;
+                    display_par.device[j].color = Qt::darkBlue;
+                    display_par.device[j].displayInfFlag = false;
+                    memset(display_par.device[j].mac,0x00,8);
+                    break;
+                }
             }
 
+            BLE_displayUpdate();
         }
         else if(iot_frame.data[0]==0xA5 && iot_frame.data[1]==0x5A && iot_frame.length==0x09)//no rssi
         {
@@ -2014,6 +2041,15 @@ void MainWindow::processJsonData(QByteArray datas){
                     if(object.contains("operation")) {
                         value = object.value("operation");
                         if(value.isString() && value.toString()=="w_req") {//写请求
+
+                        }
+                        else if(value.isString() && value.toString()=="w_res"){
+
+                        }
+                        else if(value.isString() && value.toString()=="r_req"){
+
+                        }
+                        else if(value.isString() && value.toString()=="r_res"){
                             if(object.contains("translate")){
                                 value = object.value("translate");
                                 if(value.isBool()){
@@ -2050,15 +2086,6 @@ void MainWindow::processJsonData(QByteArray datas){
                                     ble_algorithm.par.compare = value.toDouble();
                                 }
                             }
-                        }
-                        else if(value.isString() && value.toString()=="w_res"){
-
-                        }
-                        else if(value.isString() && value.toString()=="r_req"){
-
-                        }
-                        else if(value.isString() && value.toString()=="r_res"){
-
                         }
                     }
                 }
