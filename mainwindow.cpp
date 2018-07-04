@@ -11,7 +11,6 @@
 #include <equation.h>
 
 #include "mainwindow.h"
-#include <threadcomport.h>
 #include "ui_main_window_form.h"
 #include "mangeid.h"
 #include <QPainter>
@@ -25,20 +24,8 @@
 */
  MainWindow::MainWindow()
  {
-	QString prefix = "";
-#ifdef Q_WS_WIN 
-    const QString portname = "COM";
-	int minnum = 1;
-	int maxnum = 20;
-	prefix = "\\\\.\\";
-#else
-	const QString portname = "/dev/ttyS";
-	int minnum = 0;
-	int maxnum = 19;
-#endif
 
 	setupUi(this);
-	port =  NULL;
 	timerout = NULL;
     receiveTimer = NULL;
     sendTimer = NULL;
@@ -46,60 +33,9 @@
 	counter_in = 0;
 	counter_out = 0;
 
-    //QTextCodec *codec = QTextCodec::codecForLocale();
-    //QTextCodec::setCodecForTr(codec);
-    //QTextCodec::setCodecForCStrings(codec);
-	createMainMenu();
 	setWindowIcon(QIcon(":/images/plats.ico"));
-	
-	labelReceive = new QLabel("                  ");
-	labelReceive->setIndent(10);
-	labelTransmit = new QLabel("                  ");
-	labelTransmit->setIndent(10);
-    statusBar()->addWidget(labelReceive);
-    statusBar()->addWidget(labelTransmit);
 
-    for (minnum = 0; minnum <= maxnum; minnum++)
-    {
-        if (minnum>=10)
-            comboBox_port->addItem(prefix+portname+QString("%1").arg(minnum));//for windows xp and vista port prefix
-        else
-			comboBox_port->addItem(portname+QString("%1").arg(minnum));	
-    }
-	comboBox_baudrate->addItem("BAUD110",BAUD110);
-	comboBox_baudrate->addItem("BAUD300",BAUD300);
-	comboBox_baudrate->addItem("BAUD600",BAUD600);
-	comboBox_baudrate->addItem("BAUD1200",BAUD1200);
-	comboBox_baudrate->addItem("BAUD2400",BAUD2400);
-	comboBox_baudrate->addItem("BAUD4800",BAUD4800);
-	comboBox_baudrate->addItem("BAUD9600",BAUD9600);
-	comboBox_baudrate->addItem("BAUD19200",BAUD19200);
-	comboBox_baudrate->addItem("BAUD38400",BAUD38400);
-	comboBox_baudrate->addItem("BAUD57600",BAUD57600);
-	comboBox_baudrate->addItem("BAUD115200",BAUD115200);
 
-	comboBox_parity->addItem("PAR_NONE",PAR_NONE);
-	comboBox_parity->addItem("PAR_ODD",PAR_ODD);
-	comboBox_parity->addItem("PAR_EVEN",PAR_EVEN);
-	comboBox_parity->addItem("PAR_SPACE",PAR_SPACE);
-
-	comboBox_flcntrl->addItem("FLOW_OFF",FLOW_OFF);
-	comboBox_flcntrl->addItem("FLOW_HARDWARE",FLOW_HARDWARE);
-	comboBox_flcntrl->addItem("FLOW_XONXOFF",FLOW_XONXOFF);
-
-	PortSettings settings;
-	readSettings(&settings);
-
-	mainComThread = new QMainComThread(comboBox_port->currentText(),&settings);
-	mainComThread->start();
-	while (!port)
-	{
-		port = mainComThread->getPort();
-		qApp->processEvents();
-	}
-
-	bt_stopsend->setEnabled(false);
-	bt_closeport->setEnabled(false);
 	progressBar->setValue(0);
 	timerout = new QTimer(this);
     receiveTimer = new QTimer(this);
@@ -108,27 +44,18 @@
     NET_Init();
     LOC_init();
     COO_init();
+    TEMTH_init();
     ENE_init();
     INJ_init();
     SOS_init();
     BLE_init();
     BLE_DisplayInit();
-	SetCurComboBState();
+
 		//connecting
-	connect(bt_openport,SIGNAL(clicked()),this, SLOT(openPort()));
-	connect(bt_closeport,SIGNAL(clicked()),this, SLOT(closePort()));
-	connect(comboBox_baudrate,SIGNAL(currentIndexChanged(int)),this,SLOT(enabledPortBt()));
-	connect(comboBox_parity,SIGNAL(currentIndexChanged(int)),this,SLOT(enabledPortBt()));
-	connect(comboBox_flcntrl,SIGNAL(currentIndexChanged(int)),this,SLOT(enabledPortBt()));
-	connect(bt_apply,SIGNAL(clicked(bool)),this,SLOT(applyPortOptions()));
-	connect(bt_cancel,SIGNAL(clicked(bool)),this,SLOT(SetCurComboBState()));
-	connect(bt_send,SIGNAL(clicked(bool)), this, SLOT(btsendClick()));
-	connect(bt_stopsend,SIGNAL(clicked(bool)), this, SLOT(btstopsendClick()));
+
     connect(timerout, SIGNAL(timeout()), this, SLOT(transmitMsg()));
     connect(receiveTimer, SIGNAL(timeout()), this, SLOT(pressUartData()));
     connect(sendTimer,SIGNAL(timeout()),this,SLOT(ucmdAutoUpdate()));
-    connect(port,SIGNAL(newDataInPortSignal(QTime,const unsigned char *, const int)),this, SLOT(receiveMsg(QTime,const unsigned char *, const int)));
-    connect(spinBox_Period, SIGNAL(valueChanged(int)), this, SLOT(intervalChange(int)));
 }
 
 
@@ -173,7 +100,15 @@
      rf_send.rssi = 100;
      rf_send.device = dev_gatway;
 
-
+     sys_par.battery = 0;
+     sys_par.cal_now_x = 0;
+     sys_par.cal_now_y = 0;
+     sys_par.cal_now_z = 0;
+     sys_par.device_receive_rssi = -120;
+     sys_par.device_tx_power = -120;
+     sys_par.tamper_0 = 0;
+     sys_par.tamper_1 = 0;
+     sys_par.shake = 1;
 
      /**************file stroe file*********************/
 
@@ -192,6 +127,7 @@
      history_par.Uart_path = "Uart";
      history_par.Update_path = "Update";
      history_par.cool_path = "cool";
+     history_par.temTh_path = "tempreture_humidity";
      history_par.custom_path = "custom";
      history_par.energy_path = "energy";
      history_par.injection_path = "injection";
@@ -203,6 +139,7 @@
      dir.mkdir(history_par.Uart_path);
      dir.mkdir(history_par.Update_path);
      dir.mkdir(history_par.cool_path);
+     dir.mkdir(history_par.temTh_path);
      dir.mkdir(history_par.custom_path);
      dir.mkdir(history_par.energy_path);
      dir.mkdir(history_par.injection_path);
@@ -215,6 +152,7 @@
      history_par.Uart_path      = path+history_par.Uart_path;
      history_par.Update_path    = path+history_par.Update_path;
      history_par.cool_path      = path+history_par.cool_path;
+     history_par.temTh_path      = path+history_par.temTh_path;
      history_par.custom_path    = path+history_par.custom_path;
      history_par.energy_path    = path+history_par.energy_path;
      history_par.injection_path = path+history_par.injection_path;
@@ -226,6 +164,7 @@
      history_par.Uart_buff.clear();
      history_par.Update_buff.clear();
      history_par.cool_buff.clear();
+     history_par.temTh_buff.clear();
      history_par.custom_buff.clear();
      history_par.energy_buff.clear();
      history_par.injection_buff.clear();
@@ -294,8 +233,6 @@ MainWindow::~MainWindow()
 	delete timerout;
 	timerout = NULL;
 
-	delete mainComThread;
-	mainComThread = NULL;
 }
 /*
 ==============
@@ -304,308 +241,20 @@ MainWindow::~MainWindow()
 */
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-	writeSettings();
+
     event->accept();
 }
 
-void MainWindow::getdataout(QByteArray *data)
-{
-	data->clear();
-    //QString str = (textEd_out->toPlainText()).toAscii();
-    QString str = (textEd_out->toPlainText()).toLatin1();
-	if (rbt_ASCIIout->isChecked())//ASCII
-	{
-		str = textEd_out->toPlainText();
-        *data = str.toLatin1();
-	}
-	if (rbt_Decout->isChecked())//Dec
-	{
-		QRegExp rx("(\\d+)");
-		int pos = 0;
-		while ((pos = rx.indexIn(str, pos)) != -1)
-		{
-			data->append((rx.cap(1)).toInt());
-			pos += rx.matchedLength();
-		}
-	}
-	if (rbt_BINout->isChecked())//BIN
-	{
-		QRegExp rx("([01]+)");
-		int pos = 0;
-		while ((pos = rx.indexIn(str, pos)) != -1)
-		{
-			bool ok;
-			data->append((rx.cap(1)).toInt(&ok, 2));
-			pos += rx.matchedLength();
-		}
-	}
-	if (rbt_HEXout->isChecked())//HEX
-	{
-		QRegExp rx("([0-9a-fA-F]+)");
-		int pos = 0;
-		while ((pos = rx.indexIn(str, pos)) != -1)
-		{
-			bool ok;
-			data->append((rx.cap(1)).toInt(&ok, 16));
-			pos += rx.matchedLength();
-		}
-	}
-}
 
-void MainWindow::readSettings(PortSettings *portsettings)
-{
-#ifdef Q_WS_WIN 
-	QSettings settings("QT_comport.ini" ,QSettings::IniFormat);
-#else
-	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Gorin", "QT_comport");
-#endif
-	settings.beginGroup("window");
-    QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();
-    QSize size = settings.value("size", QSize(700, 400)).toSize();
-	settings.endGroup();
-
-    resize(size);
-    move(pos);
-
-	settings.beginGroup("port");
-	int portparam;
-	portparam = comboBox_port->findText( (settings.value("name")).toString(),
-		Qt::MatchExactly | Qt::MatchFixedString);
-	if (-1 == portparam)
-		portparam = 0;
-	comboBox_port->setCurrentIndex(portparam);
-	portsettings->BaudRate = (BaudRateType)settings.value("baudrate",BAUD9600).toInt();
-	portsettings->Parity = (ParityType)settings.value("parity",PAR_NONE).toInt();
-	portsettings->FlowControl = (FlowType)settings.value("flowcontrol",FLOW_OFF).toInt();
-	portsettings->DataBits = (DataBitsType)settings.value("databits",DATA_8).toInt();
-	portsettings->StopBits = (StopBitsType)settings.value("flowcontrol",STOP_1).toInt();
-	bDTR = settings.value("DTR",false).toBool();
-	bRTS = settings.value("RTS",false).toBool();
-    portsettings->Timeout_Millisec = 500;
-    portsettings->Timeout_Sec = 0;
-	settings.endGroup();
-
-	settings.beginGroup("parameters");
-	spinBox_Period->setValue(settings.value("periodvalue",0).toInt());
-	TypeDataInOut type = (TypeDataInOut)(settings.value("typedataout",0).toInt());
-	switch (type)
-	{
-	case DEC_:
-		rbt_Decout->setChecked(true);
-		break;
-	case ASCII_:
-		rbt_ASCIIout->setChecked(true);
-		break;
-	case BIN_:
-		rbt_BINout->setChecked(true);
-		break;
-	case HEX_:
-		rbt_HEXout->setChecked(true);
-		break;
-	}
-	type = (TypeDataInOut)(settings.value("typedatain",0).toInt());
-	switch (type)
-	{
-	case DEC_:
-		rbt_Decin->setChecked(true);
-		break;
-	case ASCII_:
-		rbt_ASCIIin->setChecked(true);
-		break;
-	case BIN_:
-		rbt_BINin->setChecked(true);
-		break;
-	case HEX_:
-		rbt_HEXin->setChecked(true);
-		break;
-	}
-	textEd_out->setPlainText(settings.value("dataout","").toString());
-	calcTimeoutAct->setChecked(settings.value("calctimeout",false).toBool());
-	settings.endGroup();
-}
-
-void MainWindow::writeSettings()
-{
-#ifdef Q_WS_WIN 
-	QSettings settings("QT_comport.ini" ,QSettings::IniFormat);
-#else
-	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Gorin", "QT_comport");
-#endif
-	settings.beginGroup("window");
-	settings.setValue("pos", pos());
-    settings.setValue("size", size());
-	settings.endGroup();
-
-	settings.beginGroup("port");
-	settings.setValue("name", port->portName());
-	settings.setValue("baudrate", (int)port->baudRate());
-	settings.setValue("parity", (int)port->parity());
-	settings.setValue("flowcontrol", (int)port->flowControl());
-	settings.setValue("databits", (int)port->dataBits());
-	settings.setValue("stopbits", (int)port->stopBits());
-	settings.setValue("DTR",bDTR);
-	settings.setValue("RTS",bRTS);
-	settings.endGroup();
-
-	settings.beginGroup("parameters");
-	settings.setValue("periodvalue",spinBox_Period->value());
-	TypeDataInOut type;
-	if (rbt_Decout->isChecked())
-		type = DEC_;
-	if (rbt_ASCIIout->isChecked())
-		type = ASCII_;
-	if (rbt_BINout->isChecked())
-		type = BIN_;
-	if (rbt_HEXout->isChecked())
-		type = HEX_;
-	settings.setValue("typedataout",type);
-	if (rbt_Decin->isChecked())
-		type = DEC_;
-	if (rbt_ASCIIin->isChecked())
-		type = ASCII_;
-	if (rbt_BINin->isChecked())
-		type = BIN_;
-	if (rbt_HEXin->isChecked())
-		type = HEX_;
-	settings.setValue("typedatain",type);
-	settings.setValue("dataout",textEd_out->toPlainText());
-	settings.setValue("calctimeout", calcTimeoutAct->isChecked());
-	settings.endGroup();
-}
 /*
 ==============
 <SLOTS>
 ==============
 */
-void MainWindow::about()
-{
-	QMessageBox::about(this, "About "+windowTitle(),
-			"<B>"+windowTitle()+"</B><BR>"
-			"author: Egor Golubkin (Gorin)<br>"
-            "<a href='mailto:Gorin_mind@rambler.ru'>Gorin_mind@rambler.ru</a>"
-			"<br><br>"
-			"<small>based on qextserialport</small>");
-}
-
-void MainWindow::applyPortOptions()
-{
-	int portparam = (comboBox_baudrate->itemData(comboBox_baudrate->currentIndex())).toInt();
-	port->setBaudRate((BaudRateType)portparam);
-	portparam = (comboBox_flcntrl->itemData(comboBox_flcntrl->currentIndex())).toInt();
-	port->setFlowControl((FlowType)portparam);
-	portparam = (comboBox_parity->itemData(comboBox_parity->currentIndex())).toInt();
-	port->setParity((ParityType)portparam);
-	bt_apply->setEnabled(false);
-	bt_cancel->setEnabled(false);
-}
-
-void MainWindow::btsendClick()
-{
-
-    transmitMsg();
-}
-
-void MainWindow::btstopsendClick()
-{
-	timerout->stop();
-	bt_send->setEnabled(true);
-	bt_stopsend->setEnabled(false);
-}
-
-void MainWindow::createMainMenu()
-{
-	//File actions
-	exitAct = new QAction(tr("E&xit"), this);
-	exitAct->setShortcut(tr("Alt+F4"));
-	exitAct->setStatusTip(tr("Exit the application"));
-	connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
-	//Help actions
-	aboutAct = new QAction(tr("&About"), this);
-	aboutAct->setShortcut(tr("CTRL+A"));
-	aboutAct->setStatusTip(tr("About application"));
-	connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
-	//calcTimeoutAct
-	calcTimeoutAct = new QAction (tr("&Calc Timeout"), this);
-	calcTimeoutAct->setCheckable(true);
-//	connect(calcTimeoutAct, SIGNAL(toggled(bool)), this, SLOT(setTimeoutTimer(bool)));
-	
-	fileMenu = menuBar()->addMenu(tr("&File"));
-	fileMenu->addAction(exitAct);
-
-	editMenu = menuBar()->addMenu(tr("&Edit"));
-	editMenu->addAction(calcTimeoutAct);
-
-	helpMenu = menuBar()->addMenu(tr("&Help"));
-	helpMenu->addAction(aboutAct);
-}
-
-void MainWindow::closePort()
-{
-	if (! port) return;
-	port->close();
-	textBr_mess->append("Port close");
-	bt_closeport->setEnabled(false);
-	bt_openport->setEnabled(true);
-}
-
-void MainWindow::enabledPortBt()
-{
-	bt_apply->setEnabled(true);
-	bt_cancel->setEnabled(true);
-}
-
-void MainWindow::intervalChange(int value)
-{
-	timerout->setInterval(value);
-}
-
-void MainWindow::openPort()
-{
-	if (! port) return;
-	if (port->isOpen())
-		port->close();
-	port->setPortName(comboBox_port->currentText());
-//	setTimeoutTimer(false);
-	port->open(QIODevice::ReadWrite);
-	if (port->isOpen())
-		textBr_mess->append("Port open");
-	else
-		textBr_mess->append("Port not open");
-	port->setDtr(bDTR);
-	port->setRts(bRTS);
-	bt_closeport->setEnabled(true);
-	bt_openport->setEnabled(false);
-	counter_in = 0;
-	counter_out = 0;
-}
-
-void MainWindow::receiveMsg(const QTime timesl, const unsigned char *data, const int size)
-{
-    int i;
-//    textBr_mess->append(QString("read %1").arg(size));
-//    QDateTime datTime = QDateTime::currentDateTime();//获取系统现在的时间
-//    textBr_inp->append(datTime.toString("yyyy-MM-dd hh:mm:ss")+
-//                       QString(" %1 mS").arg(timesl.msec())+
-//                       QString("receive: %1 byte").arg(size)
-//                       );
-//    textBr_inp->append(transformInpData(data, size));
-//    textBr_inp->insertPlainText(transformInpData(data, size));
-
-    if(comunication_protocal->currentText() == "Uart")
-    {
-        for(i = 0; i < size;i++)
-        {
-            transport.receive[transport.r_count] = data[i];
-            transport.r_count++;
-        }
-        receiveTimer->start(20);
-        textBr_inp->insertPlainText(transformInpData(data , size));
-    }
-}
 
 
 
-void MainWindow::pressUartData()
+void MainWindow::pressUartData(QTcpSocket *socket)
 {
     uchar *ptr;
     ushort size;
@@ -622,7 +271,6 @@ void MainWindow::pressUartData()
 
 
     counter_in+=size;
-    labelReceive->setText(QString("receive %1").arg(counter_in));
 
 
     //search head of the packet
@@ -642,7 +290,7 @@ void MainWindow::pressUartData()
                 check_sum=checkSum((char *)ptr,length-1);
                 if(ptr[length-1]==check_sum)
                 {
-                    pressCmdData(ptr,length);
+                    pressCmdData(ptr,length,socket);
                     size -= length;
                     ptr += length;
                 }
@@ -663,16 +311,18 @@ void MainWindow::pressUartData()
 }
 
 
-void MainWindow::pressCmdData(uchar *data , ushort size)
+void MainWindow::pressCmdData(uchar *data , ushort size,QTcpSocket *socket)
 {
     QByteArray buff;
     IOT_FRAME iot_frame;
     APP_FRAME app_frame;
     LOCATION_FRAME location_frame;
+    LOCATION_8_FRAME loc_8_frame;
     BLE_LOCATION_FRAME ble_location_frame;
-    COOL_FRAME cool_frame;
-
-
+    COOL_FRAME_A55A cool_frame;
+    COOL_FRAME_FACA cool_frame_faca;
+    TEST_FRAME test_frame;
+    A125K_FRAME a125k_frame;
     QString str,str0;
     ushort packet_num;
     ushort packet_length;
@@ -698,14 +348,7 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
         {
             DisplayWithTime(QString("tcp/ip Server receive %1 byte").arg(buff.length()));
         }
-        else if(comunication_protocal->currentText() == "Client")
-        {
-            DisplayWithTime(QString("tcp/ip Client receive %1 byte").arg(buff.length()));
-        }
-        else if(comunication_protocal->currentText() == "Uart")
-        {
-            DisplayWithTime(QString("uart receive %1 byte").arg(buff.length()));
-        }
+
 
 
         textBr_mess->append(str.toUpper()+"\r\n");
@@ -719,7 +362,7 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
     iot_frame.length = data[7];
     iot_frame.data = &data[8];
     iot_frame.checkSum = data[size-1];
-    iot_frame.rssi = data[size-2];
+    iot_frame.rssi = (char)data[size-2];
 
     str = "gateway_id:";
     str0 = "0x" + uint16ToHex(iot_frame.gateway_id).toUpper();
@@ -753,7 +396,7 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
 
 
 
-    str += QString("/ rssi:%1dBm").arg(iot_frame.rssi ,0,10);
+    str += QString("/ rssi:%1dBm").arg(iot_frame.rssi);
 
 
     if(iot_frame.cmd == cmd_heartBeat)
@@ -796,7 +439,190 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
     }
     else if(iot_frame.cmd == cmd_app)
     {
-        if(iot_frame.data[0]==0xA5 && iot_frame.data[1]==0x5A && iot_frame.length==0x1E)
+        if(iot_frame.data[0]==0xDB && iot_frame.data[1]==0xBD && checkBox_productTest->isChecked()==true){
+
+            test_frame.head[0] = iot_frame.data[0];
+            test_frame.head[1] = iot_frame.data[1];
+            test_frame.cmd = iot_frame.data[2];
+            test_frame.mac[0] = iot_frame.data[3];
+            test_frame.mac[1] = iot_frame.data[4];
+            test_frame.mac[2] = iot_frame.data[5];
+            test_frame.mac[3] = iot_frame.data[6];
+            test_frame.mac[4] = iot_frame.data[7];
+            test_frame.mac[5] = iot_frame.data[8];
+            test_frame.mac[6] = iot_frame.data[9];
+            test_frame.mac[7] = iot_frame.data[10];
+            test_frame.data = &iot_frame.data[11];
+
+            ushort lenght = iot_frame.length - 1;
+
+            if(checkSum((char *)(&iot_frame.data[2]),lenght-3)!= iot_frame.data[lenght-1])
+            {
+                LOC_DisplayWithTime("product test checkSum error");
+                return;
+            }
+
+            str += "/ MAC:"+strToHex(test_frame.mac,8).toUpper();
+            switch(test_frame.cmd){
+                case test_tamper   :
+                str += "/ cmd 0x01 按键测试状态:";
+                if(test_frame.data[0]==0x00){
+                    sys_par.tamper_0 = 1;
+                    str+="拆卸解除";
+                }
+                else if(test_frame.data[0]==0x01){
+                    sys_par.tamper_1 = 1;
+                    str+="拆卸告警";
+                }
+                else str+="状态未知";
+                break;
+                case test_shake    :
+                str += "/ cmd 0x02 震动测试状态:";
+                sys_par.shake = test_frame.data[0];
+                if(sys_par.shake==0x00)str+="振动检测成功";
+                else if(sys_par.shake==0x01)str+="未检测到振动";
+                else str+="状态未知";
+                break;
+                case test_txPower  :
+                str += "/ cmd 0x03 rssi:";
+                sys_par.device_tx_power = (char)test_frame.data[0] ;
+                sys_par.gateway_receive_rssi = iot_frame.rssi;
+                str += QString("/ 设备发射功率：%1dBm").arg(sys_par.device_tx_power ,0,10);
+                str += QString("/ 网关接收灵敏度：%1dBm").arg(sys_par.gateway_receive_rssi);
+                rcmdRssiAckTest(iot_frame.gateway_id,iot_frame.device_id,20);
+                break;
+                case test_reportPar:
+                str += "/ cmd 0x04 测试报告:\r\n";
+                sys_par.cal_previous_x = test_frame.data[0]*256+test_frame.data[1];
+                sys_par.cal_previous_y = test_frame.data[2]*256+test_frame.data[3];
+                sys_par.cal_previous_z = test_frame.data[4]*256+test_frame.data[5];
+                sys_par.cal_now_x      = test_frame.data[6]*256+test_frame.data[7];
+                sys_par.cal_now_y      = test_frame.data[8]*256+test_frame.data[9];
+                sys_par.cal_now_z      = test_frame.data[10]*256+test_frame.data[11];
+                str += "/ 校验前x轴:0x"+uint16ToHex(sys_par.cal_previous_x ).toUpper();
+                str += QString("=%1kHZ").arg((double)38400/sys_par.cal_previous_x);
+                str += "/ 校验前y轴:0x"+uint16ToHex(sys_par.cal_previous_y ).toUpper();
+                str += QString("=%1kHZ").arg((double)38400/sys_par.cal_previous_y);
+                str += "/ 校验前z轴:0x"+uint16ToHex(sys_par.cal_previous_z ).toUpper();
+                str += QString("=%1kHZ").arg((double)38400/sys_par.cal_previous_z);
+                str += "\r\n/ 校验后x轴:0x"+uint16ToHex(sys_par.cal_now_x).toUpper();
+                str += QString("=%1kHZ").arg((double)38400/sys_par.cal_now_x);
+                str += "/ 校验后y轴:0x"+uint16ToHex(sys_par.cal_now_y).toUpper();
+                str += QString("=%1kHZ").arg((double)38400/sys_par.cal_now_y);
+                str += "/ 校验后z轴:0x"+uint16ToHex(sys_par.cal_now_z).toUpper();
+                str += QString("=%1kHZ").arg((double)38400/sys_par.cal_now_z);
+
+                sys_par.device_receive_rssi = (char)test_frame.data[12];
+                str += QString("\r\n/ 接收灵敏度:%1dBm").arg(sys_par.device_receive_rssi);
+                sys_par.battery = test_frame.data[13];
+                str += QString("/ 电压:%1V").arg((double)sys_par.battery/10);
+
+                str += "\r\n************************test report**********************";
+                sys_par.test_status = true;
+                if(sys_par.battery<32 && sys_par.battery>34){
+                    sys_par.test_status = false;
+                    str += "\r\nvoltage error";
+                }
+                if(sys_par.device_receive_rssi<5){
+                    sys_par.test_status = false;
+                    str += "\r\ndevice receive rssi error";
+                }
+
+                if(sys_par.gateway_receive_rssi<5){
+                    sys_par.test_status = false;
+                    str += "\r\ngateway_receive rssi error";
+                }
+
+                if(sys_par.device_tx_power<20){
+                    sys_par.test_status = false;
+                    str += "\r\ntx power error";
+                }
+
+                if(( sys_par.cal_now_x>0x0140 || sys_par.cal_now_x<0x0127)||
+                    (sys_par.cal_now_y>0x0140 || sys_par.cal_now_y<0x0127)||
+                    (sys_par.cal_now_z>0x0140 || sys_par.cal_now_z<0x0127)
+                        ){//120K~130k正常
+                    sys_par.test_status = false;
+                    str += "\r\n125k cal error";
+                }
+
+                if(sys_par.tamper_0==0 || sys_par.tamper_1==0){
+                    sys_par.test_status = false;
+                    str += "\r\ntamper error";
+                }
+
+                if(sys_par.shake == 1){
+                    sys_par.test_status = false;
+                    str += "\r\nshake error";
+                }
+                if(sys_par.test_status == false)str += "\r\ntest error !!!!!!!!!!!!!!!!!!!test error";
+                else str += "\r\ntest OK !!!!!!!!!!!!!!!!!!!test OK";
+                sys_par.battery = 0;
+                sys_par.cal_now_x = 0;
+                sys_par.cal_now_y = 0;
+                sys_par.cal_now_z = 0;
+                sys_par.device_receive_rssi = -120;
+                sys_par.device_tx_power = -120;
+                sys_par.tamper_0 = 0;
+                sys_par.tamper_1 = 0;
+                sys_par.shake = 1;
+
+
+
+                str += "\r\n************************test report**********************";
+                str += "\r\n请在10S钟内按下低功耗电流测试键";
+                break;
+                default:break;
+            }
+            LOC_DisplayWithTime(str);
+        }
+        else if(iot_frame.data[0]==0xDB && iot_frame.data[1]==0xBD && checkBox_125KTest->isChecked()==true){
+
+            a125k_frame.head[0] = iot_frame.data[0];
+            a125k_frame.head[1] = iot_frame.data[1];
+            a125k_frame.device_id = iot_frame.data[2]*256+iot_frame.data[3];
+            a125k_frame.nc0 = iot_frame.data[4];
+            a125k_frame.reset_inf = iot_frame.data[5]*256+iot_frame.data[6];
+            a125k_frame.nc1 = iot_frame.data[7];
+            a125k_frame.ant0_previous = iot_frame.data[8]*256+iot_frame.data[9];
+            a125k_frame.ant1_previous = iot_frame.data[10]*256+iot_frame.data[11];
+            a125k_frame.ant2_previous = iot_frame.data[12]*256+iot_frame.data[13];
+            a125k_frame.nc2 = iot_frame.data[14];
+            a125k_frame.ant0_current = iot_frame.data[15]*256+iot_frame.data[16];
+            a125k_frame.ant1_current = iot_frame.data[17]*256+iot_frame.data[18];
+            a125k_frame.ant2_current = iot_frame.data[19]*256+iot_frame.data[20];
+            a125k_frame.nc3 = iot_frame.data[21];
+            a125k_frame.voltage = iot_frame.data[22]*256+iot_frame.data[23];
+            a125k_frame.nc4 = iot_frame.data[24];
+            a125k_frame.checksum = iot_frame.data[25];
+
+            if(checkSum((char *)(&iot_frame.data[2]),23)!= a125k_frame.checksum)
+            {
+                LOC_DisplayWithTime("125k checkSum error");
+                return;
+            }
+
+            str += "/ device_id 0x"+ uint16ToHex(a125k_frame.device_id);
+            str += "/ reset inf 0x"+ uint16ToHex(a125k_frame.reset_inf);
+            str += "\r\n/ ant0_previous 0x"+ uint16ToHex(a125k_frame.ant0_previous);
+            str += QString(" = %1 KHZ").arg(38400/(double)a125k_frame.ant0_previous,7);
+            str += "/ ant1_previous 0x"+ uint16ToHex(a125k_frame.ant1_previous);
+            str += QString(" = %1 KHZ").arg(38400/(double)a125k_frame.ant1_previous,7);
+            str += "/ ant2_previous 0x"+ uint16ToHex(a125k_frame.ant2_previous);
+            str += QString(" = %1 KHZ").arg(38400/(double)a125k_frame.ant2_previous,7);
+
+            str += "\r\n/ ant0_current  0x"+ uint16ToHex(a125k_frame.ant0_current);
+            str += QString(" = %1 KHZ").arg(38400/(double)a125k_frame.ant0_current,7);
+            str += "/ ant1_current  0x"+ uint16ToHex(a125k_frame.ant1_current);
+            str += QString(" = %1 KHZ").arg(38400/(double)a125k_frame.ant1_current,7);
+            str += "/ ant2_current  0x"+ uint16ToHex(a125k_frame.ant2_current);
+            str += QString(" = %1 KHZ").arg(38400/(double)a125k_frame.ant2_current,7);
+            str += QString("\r\n/ voltage:%1V").arg((double)a125k_frame.voltage/1000);
+
+
+            LOC_DisplayWithTime(str);
+        }
+        else if(iot_frame.data[0]==0xA5 && iot_frame.data[1]==0x5A && iot_frame.length==0x1E)
         {
             //include rssi
             //BLE&Outdoor location
@@ -807,7 +633,7 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
             memcpy(ble_location_frame.devie_id,&iot_frame.data[4],8);
             memcpy(ble_location_frame.ant_ble_id,&iot_frame.data[12],8);
             ble_location_frame.ant_125k_id = iot_frame.data[20]*256+iot_frame.data[21];
-            ble_location_frame.rssi = iot_frame.data[22];
+            ble_location_frame.rssi = (char)iot_frame.data[22];
             ble_location_frame.sensor_x = iot_frame.data[23];
             ble_location_frame.sensor_y = iot_frame.data[24];
             ble_location_frame.sensor_z = iot_frame.data[25];
@@ -854,7 +680,7 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
             str += "/ device_id:"+strToHex(ble_location_frame.devie_id,8).toUpper();
             str += "/ ant_id:"+strToHex(ble_location_frame.ant_ble_id,8).toUpper();
             str += "/ 125k_id:0x"+uint16ToHex(ble_location_frame.ant_125k_id);
-            str += QString("/ BLE_rssi:%1").arg(ble_location_frame.rssi,0,10);
+            str += QString("/ BLE_rssi:%1").arg(ble_location_frame.rssi);
             str += "/ x:"+uint8ToHex(ble_location_frame.sensor_x);
             str += " y:"+uint8ToHex(ble_location_frame.sensor_y);
             str += " z:"+uint8ToHex(ble_location_frame.sensor_z);
@@ -873,14 +699,14 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
             }
             LOC_DisplayWithTime(str);
         }
-        if(iot_frame.data[0]==0xA5 && iot_frame.data[1]==0x5A && iot_frame.length==0x0A)
+        else if(iot_frame.data[0]==0xA5 && iot_frame.data[1]==0x5A && iot_frame.length==0x0A)
         {
             //include rssi
             location_frame.head[0] = iot_frame.data[0];
             location_frame.head[1] = iot_frame.data[1];
             location_frame.devie_id = iot_frame.data[2]*256+iot_frame.data[3];
             location_frame.ant_id = iot_frame.data[4]*256+iot_frame.data[5];
-            location_frame.rssi = iot_frame.data[6];
+            location_frame.rssi = (char)iot_frame.data[6];
             location_frame.alarm = iot_frame.data[7];
             location_frame.checksum = iot_frame.data[8];
 
@@ -920,7 +746,7 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
 
             str += QString("/ devie_id:%1").arg(location_frame.devie_id)+"=0x"+uint16ToHex(location_frame.devie_id).toUpper();
             str += QString("/ ant_id:%1").arg(location_frame.ant_id)+"=0x"+uint16ToHex(location_frame.ant_id).toUpper();
-            str += QString("/ rssi:%1").arg(location_frame.rssi,0,10);
+            str += QString("/ rssi:%1").arg(location_frame.rssi);
             str += "/ alarm:0x"+uint8ToHex(location_frame.alarm).toUpper();
             if(checkDrop(location_frame.alarm))str += " 跌落报警;";
             if(checkAlarm(location_frame.alarm))str += " 紧急报警;";
@@ -973,7 +799,7 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
             location_frame.head[1] = iot_frame.data[1];
             location_frame.devie_id = iot_frame.data[2]*256+iot_frame.data[3];
             location_frame.ant_id = iot_frame.data[4]*256+iot_frame.data[5];
-            location_frame.rssi = iot_frame.data[6];
+            location_frame.rssi = (char)iot_frame.data[6];
             location_frame.alarm = iot_frame.data[7];
             location_frame.checksum = iot_frame.data[8];
 
@@ -1013,7 +839,7 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
 
             str += QString("/ devie_id:%1").arg(location_frame.devie_id)+"=0x"+uint16ToHex(location_frame.devie_id).toUpper();
             str += QString("/ ant_id:%1").arg(location_frame.ant_id)+"=0x"+uint16ToHex(location_frame.ant_id).toUpper();
-            str += QString("/ rssi:%1").arg(location_frame.rssi,0,10);
+            str += QString("/ rssi:%1").arg(location_frame.rssi);
             str += "/ alarm:0x"+uint8ToHex(location_frame.alarm).toUpper();
             if(checkDrop(location_frame.alarm))str += " 跌落报警;";
             if(checkAlarm(location_frame.alarm))str += " 紧急报警;";
@@ -1028,27 +854,870 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
             }
             LOC_DisplayWithTime(str);
         }
+        else if(iot_frame.data[0]==0xA6 && iot_frame.data[1]==0x6A)
+        {
+            //include rssi
+            //BLE&Outdoor location
+            loc_8_frame.head[0] = iot_frame.data[0];
+            loc_8_frame.head[1] = iot_frame.data[1];
+            memcpy(loc_8_frame.mac,&iot_frame.data[2],8);
+            loc_8_frame.device_type = iot_frame.data[10];
+            loc_8_frame.len = iot_frame.data[11];
+            loc_8_frame.cmd = iot_frame.data[12];
+            loc_8_frame.data = &iot_frame.data[13];
+            loc_8_frame.checksum = iot_frame.data[12+loc_8_frame.len];
+
+
+
+            if(checkSum((char *)(&iot_frame.data[0]),12+loc_8_frame.len)!= loc_8_frame.checksum)
+            {
+                return ;
+            }
+
+            if(locationStopDisplay->isChecked() == true)return;
+
+
+            //if(iot_frame.device_id != loc_par.filtId[0] && loc_par.filtId[0] != 0xFFFF)
+            if( iot_frame.device_id != loc_par.filtId[0]&&
+                iot_frame.device_id != loc_par.filtId[1]&&
+                iot_frame.device_id != loc_par.filtId[2]&&
+                iot_frame.device_id != loc_par.filtId[3]&&
+                iot_frame.device_id != loc_par.filtId[4])
+            {
+                if(loc_par.filtId[0]!=0xFFFF||
+                    loc_par.filtId[1]!=0xFFFF||
+                    loc_par.filtId[2]!=0xFFFF||
+                    loc_par.filtId[3]!=0xFFFF||
+                    loc_par.filtId[4]!=0xFFFF)
+                {
+                    return;
+                }
+            }
+
+
+            str += "/ device_MAC:"+strToHex(loc_8_frame.mac,8).toUpper();
+
+            str += "/ device type:";
+            switch(loc_8_frame.device_type)
+            {
+            case dev_gatway:
+                str += "gatway";
+                break;
+            case dev_adultSpireLamella:
+                str += "adultSpireLamella";
+                break;
+            case dev_childSpireLamella:
+                str += "childSpireLamella";
+                break;
+            case dev_patientSpireLamella:
+                str += "patientSpireLamella";
+                break;
+            case dev_sosPanicLocation:
+                str += "sosPanicLocation";
+                break;
+            case dev_plug:
+                str += "plug";
+                break;
+            case dev_tempreture:
+                str += "tempreture";
+                break;
+            case dev_humidity:
+                str += "humidity";
+                break;
+            case dev_multileSensor:
+                str += "multileSensor";
+                break;
+            case dev_tag:
+                str += "money_tag";
+                break;
+            case dev_125kTag:
+                str += "dev_125kTag";
+                break;
+            case dev_rfidReader:
+                str += "rfid_reader";
+                break;
+            case dev_sosPanic:
+                str += "sosPanic";
+                break;
+            case dev_863DriectModule:
+                str += "863DriectModule";
+                break;
+            case dev_863ORModule:
+                str += "863ORModule";
+                break;
+            case dev_863PDA:
+                str += "863PDA";
+                break;
+            case dev_863DesktopRW:
+                str += "863DesktopRW";
+                break;
+            case dev_bleTag:
+                str += "dev_bleTag";
+                break;
+            case dev_bleAnt:
+                str += "bleAnt";
+                break;
+            case dev_repeater:
+                str += "repeater";
+                break;
+            case dev_normal:
+                str += "normal";
+                break;
+            case dev_lowPower:
+                str += "lowPower";
+                break;
+            default:
+                str += "unkown device";
+                break;
+
+            }
+
+            str += "/ cmd:";
+            switch(loc_8_frame.cmd){
+            case locCmd_125KData:
+                str += "125KData";
+                ushort Data125K_ant_id  ;
+                short Data125K_ant_rssi ;
+                uchar Data125K_alarm    ;
+                uchar Data125K_voltage  ;
+
+                Data125K_ant_id = loc_8_frame.data[0]*256+loc_8_frame.data[1];
+                Data125K_ant_rssi = loc_8_frame.data[2];
+                Data125K_alarm = loc_8_frame.data[3];
+                Data125K_voltage = loc_8_frame.data[4];
+
+                str += QString("/ ant_id:%1").arg(Data125K_ant_id)+"=0x"+uint16ToHex(Data125K_ant_id).toUpper();
+                str += QString("/ 125K_rssi:%1").arg(Data125K_ant_rssi);
+                str += "/ alarm:0x"+uint8ToHex(Data125K_alarm).toUpper();
+                if(checkDrop(Data125K_alarm))str += " 跌落报警;";
+                if(checkAlarm(Data125K_alarm))str += " 紧急报警;";
+                if(checkLocation(Data125K_alarm))str += " 室外报警;";
+                if(checkLowBattery(Data125K_alarm))str += " 低电报警;";
+                if(checkTamper(Data125K_alarm))str += " 防拆报警;";
+                str += QString("/ voltage:%1.%2").arg(Data125K_voltage/10,0,10).arg(Data125K_voltage%10,0,10);
+
+                if(loc_par.filtStr.length()!=0)
+                {
+
+                    if(str.contains(loc_par.filtStr) == false)
+                    return;
+                }
+                break;
+            case locCmd_outDoorData:
+                str += "outDoorData";
+                short outDoorData_x         ;
+                short outDoorData_y         ;
+                uchar outDoorData_alarm     ;
+                uchar outDoorData_voltage   ;
+
+                outDoorData_x         = loc_8_frame.data[0]*256+loc_8_frame.data[1];
+                outDoorData_y         = loc_8_frame.data[2]*256+loc_8_frame.data[3];
+                outDoorData_alarm     = loc_8_frame.data[4];
+                outDoorData_voltage   = loc_8_frame.data[5];
+
+
+                str += QString("/ x:%1  y:%2").arg(outDoorData_x).arg(outDoorData_y);
+                str += "/ alarm:0x"+uint8ToHex(outDoorData_alarm).toUpper();
+                if(checkDrop(outDoorData_alarm))str += " 跌落报警;";
+                if(checkAlarm(outDoorData_alarm))str += " 紧急报警;";
+                if(checkLocation(outDoorData_alarm))str += " 室外报警;";
+                if(checkLowBattery(outDoorData_alarm))str += " 低电报警;";
+                if(checkTamper(outDoorData_alarm))str += " 防拆报警;";
+                str += QString("/ voltage:%1.%2").arg(outDoorData_voltage/10,0,10).arg(outDoorData_voltage%10,0,10);
+
+                if(loc_par.filtStr.length()!=0)
+                {
+
+                    if(str.contains(loc_par.filtStr) == false)
+                    return;
+                }
+
+                for(int j = 0;j<DEVICE_DISPLAY_MAX;j++){
+                    //clear last location data
+                    //if(display_par.device[j].id == location_frame.devie_id){
+                    if(memcmp(display_par.device[j].mac,loc_8_frame.mac,8) == 0){
+                        display_par.device[j].id = 0xFFFF;
+                        display_par.device[j].x = 0;
+                        display_par.device[j].y = 0;
+                        display_par.device[j].radius = 0x00;
+                        display_par.device[j].rssi_offset = 0x00;
+                        display_par.device[j].color = Qt::white;
+                        display_par.device[j].displayInfFlag = false;
+                        memset(display_par.device[j].mac,0x00,8);
+                    }
+                }
+                for(int j = 0;j<DEVICE_DISPLAY_MAX;j++){
+                    //clear last location data
+                    if(display_par.device[j].id == 0xFFFF){
+                        display_par.device[j].id = iot_frame.device_id;
+                        display_par.device[j].x = outDoorData_x;
+                        display_par.device[j].y = outDoorData_y;
+                        display_par.device[j].radius = 0x00;
+                        display_par.device[j].rssi_offset = 0x00;
+                        display_par.device[j].color = Qt::darkBlue;
+                        display_par.device[j].displayInfFlag = false;
+                        memcpy(display_par.device[j].mac,loc_8_frame.mac,8);
+                        break;
+                    }
+                }
+
+                BLE_displayUpdate();
+
+                break;
+            default :
+                str += "unknow cmd";
+                break;
+            }
+
+            LOC_DisplayWithTime(str);
+        }
         else if(iot_frame.data[0]==0xFA && iot_frame.data[1]==0xCA)
         {
 
 
-            cool_frame.head[0] = iot_frame.data[0];
-            cool_frame.head[1] = iot_frame.data[1];
-            cool_frame.sensorId = iot_frame.data[2]*256+iot_frame.data[3];
-            cool_frame.deviceType = iot_frame.data[4];
-            cool_frame.len = iot_frame.data[5];
-            cool_frame.cmd = iot_frame.data[6];
-            cool_frame.data = &iot_frame.data[7];
-            cool_frame.checksum = iot_frame.data[6+cool_frame.len];
+            cool_frame_faca.head[0] = iot_frame.data[0];
+            cool_frame_faca.head[1] = iot_frame.data[1];
+            cool_frame_faca.sensorId = iot_frame.data[2]*256+iot_frame.data[3];
+            cool_frame_faca.deviceType = iot_frame.data[4];
+            cool_frame_faca.len = iot_frame.data[5];
+            cool_frame_faca.cmd = iot_frame.data[6];
+            cool_frame_faca.data = &iot_frame.data[7];
+            cool_frame_faca.checksum = iot_frame.data[6+cool_frame_faca.len];
 
-            if(checkSum((char *)(iot_frame.data),cool_frame.len+6)!= cool_frame.checksum)
+            if(checkSum((char *)(iot_frame.data),cool_frame_faca.len+6)!= cool_frame_faca.checksum)
             {
                 return ;
             }
 
 
 
-            if(cool_frame.deviceType == coolDevTempreture)
+            if(cool_frame_faca.deviceType == coolDevCoolChain)
+            {
+                //if(cool_frame_faca.cmd != 0xFE)COO_ackSuccess(iot_frame.gateway_id,iot_frame.device_id,cool_frame_faca.cmd);
+                if(coolStopDisplay->isChecked() == true)return;
+                if(coolDisplayMac->isChecked() == true)
+                {
+                    str += "/ device_MAC:"+id_access.getIdMac(iot_frame.device_id);
+
+                }
+
+                if(iot_frame.device_id != coo_par.filtId && coo_par.filtId != 0xFFFF)
+                {
+                    return;
+                }
+
+
+
+                str += QString("/ sensor_id:%1").arg(cool_frame_faca.sensorId);
+                str += "=0x"+uint16ToHex(cool_frame_faca.sensorId).toUpper();
+                str +="/ 冷链";
+                double double_num;
+                switch(cool_frame_faca.cmd)
+                {
+                    case coolCmdUnkown:
+                    str +="/ coolCmdUnkown";
+                    break;
+
+
+                    case coolCmdGetDisNum:
+                    str +="/ coolCmdGetDisNum：";
+                    str +=QString("%1").arg(cool_frame_faca.data[0]*256+cool_frame_faca.data[1]);
+                    str +="/ status code:0x" + uint8ToHex(cool_frame_faca.data[2]).toUpper();
+                    break;
+
+
+
+
+                    case coolCmdSetDisNum:
+                    str +="/ coolCmdSetDisNum：";
+                    str +=QString("%1").arg(cool_frame_faca.data[0]*256+cool_frame_faca.data[1]);
+                    str +="/ status code:0x" + uint8ToHex(cool_frame_faca.data[2]).toUpper();
+                    break;
+
+
+
+
+                    case coolCmdAlarm:
+                    str +="/ coolCmdAlarm:";
+                    if(cool_frame_faca.data[0] == 0)str += "00 超过上限温度";
+                    else if(cool_frame_faca.data[0] == 1)str += "01 低于下限温度";
+
+                    if(cool_frame_faca.data[1] == 0)str += "/ +";
+                    else if(cool_frame_faca.data[1] == 1)str += "/ -";
+                    double_num = cool_frame_faca.data[2]*256+
+                                cool_frame_faca.data[3]+
+                                (double )cool_frame_faca.data[4]/100;
+                    str += QString("%1'C").arg(double_num);
+                    double_num = cool_frame_faca.data[5]+
+                                (double )cool_frame_faca.data[6]/100;
+                    str += QString("/ %1%H").arg(double_num);
+
+                    //str += QString("%1.").arg(cool_frame_faca.data[2]*256+cool_frame_faca.data[3]);
+                    //str += QString("%1'C").arg(cool_frame_faca.data[4],2,10);
+                    //str += QString("/ %1.%2%H").arg(cool_frame_faca.data[5]).arg(cool_frame_faca.data[6]);
+                    str +="/ status code:0x" + uint8ToHex(cool_frame_faca.data[7]).toUpper();
+                    break;
+
+
+
+
+                    case coolCmdDisarm:
+                    str +="/ coolCmdDisarm";
+                    str +="/ status code:0x" + uint8ToHex(cool_frame_faca.data[2]).toUpper();
+                    break;
+
+
+
+
+                    case coolCmdSetRepTime:
+                    str +="/ coolCmdSetRepTime:";
+                    uint detect_time;
+                    detect_time = (cool_frame_faca.data[0]<<24)+
+                                  (cool_frame_faca.data[1]<<16)+
+                                  (cool_frame_faca.data[2]<<8)+
+                                  (cool_frame_faca.data[3]<<0);
+                    str +=QString("%1mS = 0x").arg(detect_time)+uint32ToHex(detect_time).toUpper()+"mS";
+                    str +="/ status code:0x" + uint8ToHex(cool_frame_faca.data[4]).toUpper();
+                    break;
+
+
+                    case coolCmdTemVer:
+                    str +="/ coolCmdTemVer";
+                    if(cool_frame_faca.data[0] == 0)str +="/ +";
+                    else if(cool_frame_faca.data[0] == 1)str +="/ -";
+                    double_num = (double)cool_frame_faca.data[1]/10;
+                    str += QString("%1'C").arg(double_num);
+                    str +="/ status code:0x" + uint8ToHex(cool_frame_faca.data[2]).toUpper();
+                    break;
+
+
+
+                    case coolCmdHumVer:
+                    str +="/ coolCmdHumVer";
+                    if(cool_frame_faca.data[0] == 0)str +="/ +";
+                    else if(cool_frame_faca.data[0] == 1)str +="/ -";
+                    double_num = (double)cool_frame_faca.data[1]/10;
+                    str += QString("%1%H").arg(double_num);
+                    str +="/ status code:0x" + uint8ToHex(cool_frame_faca.data[2]).toUpper();
+                    break;
+
+
+
+                    case coolCmdGetSenVal:
+                    str +="/ coolCmdGetSenVal";
+                    if(cool_frame_faca.data[0] == 0)str += "/ +";
+                    else if(cool_frame_faca.data[0] == 1)str += "/ -";
+                    double_num = cool_frame_faca.data[1]*256+
+                                cool_frame_faca.data[2]+
+                                (double )cool_frame_faca.data[3]/100;
+                    str += QString("%1'C").arg(double_num);
+                    double_num = cool_frame_faca.data[4]+
+                                (double )cool_frame_faca.data[5]/100;
+                    str += QString("/ %1%H").arg(double_num);
+
+                    //str += QString("%1.").arg(cool_frame_faca.data[1]*256+cool_frame_faca.data[2]);
+                    //str += QString("%1'C").arg(cool_frame_faca.data[3],2,10);
+                    //str += QString("/ %1.%2%H").arg(cool_frame_faca.data[4]).arg(cool_frame_faca.data[5],2,10);
+                    str +="/ status code:0x" + uint8ToHex(cool_frame_faca.data[6]).toUpper();
+                    break;
+
+
+
+
+                    case coolCmdSetAlaVal:
+                    str +="/ coolCmdSetAlaVal";
+                    if(cool_frame_faca.data[0] == 0)str += "/ 上限温度：+";
+                    else if(cool_frame_faca.data[0] == 1)str += "/ 上限温度：-";
+                    double_num = cool_frame_faca.data[1]*256+
+                                cool_frame_faca.data[2]+
+                                (double )cool_frame_faca.data[3]/100;
+                    str += QString("%1'C").arg(double_num);
+
+                    //str += QString("%1.").arg(cool_frame_faca.data[1]*256+cool_frame_faca.data[2]);
+                    //str += QString("%1'C").arg(cool_frame_faca.data[3],2,10);
+
+                    if(cool_frame_faca.data[4] == 0)str += "/ 下限温度：+";
+                    else if(cool_frame_faca.data[4] == 1)str += "/ 下限温度：-";
+                    double_num = cool_frame_faca.data[5]*256+
+                                cool_frame_faca.data[6]+
+                                (double )cool_frame_faca.data[7]/100;
+                    str += QString("%1'C").arg(double_num);
+
+                    //str += QString("%1.").arg(cool_frame_faca.data[5]*256+cool_frame_faca.data[6]);
+                    //str += QString("%1'C").arg(cool_frame_faca.data[7],2,10);
+                    str +="/ status code:0x" + uint8ToHex(cool_frame_faca.data[6]).toUpper();
+                    break;
+
+
+
+                    case coolCmdSenError:
+                    str +="/ coolCmdSenError";
+                    str +="/ status code:0x" + uint8ToHex(cool_frame_faca.data[2]).toUpper();
+                    break;
+                    case coolCmdStatus:
+                    str +="/ coolCmdStatus";
+                    str +="/ status code:0x" + uint8ToHex(cool_frame_faca.data[1]).toUpper();
+                    break;
+                    default:
+                    str +="/ ERROR";
+                    break;
+                }
+                if(coo_par.filtStr.length()!=0)
+                {
+
+                    if(str.contains(coo_par.filtStr) == false)
+                    return;
+                }
+                COO_DisplayWithTime(str);
+
+            }
+            else if(cool_frame_faca.deviceType == coolDevSiren)
+            {
+
+            }
+            else if(cool_frame_faca.deviceType == coolDevSosPanic)
+            {
+
+            }
+            else if(cool_frame_faca.deviceType == coolDevUnkown)
+            {
+
+            }
+            else if(cool_frame_faca.deviceType == coolDevEnergy)
+            {
+                if(energyStopDisplay->isChecked() == true)return;
+                if(energyDisplayMac->isChecked() == true)
+                {
+                    str += "/ device_MAC:"+id_access.getIdMac(iot_frame.device_id);
+
+                }
+
+                if(iot_frame.device_id != ene_par.filtId && ene_par.filtId != 0xFFFF)
+                {
+                    return;
+                }
+
+
+
+                str += QString("/ sensor_id:%1").arg(cool_frame_faca.sensorId);
+                str += "=0x"+uint16ToHex(cool_frame_faca.sensorId).toUpper();
+                str +="/ 插座";
+
+                uint detect_u32;
+                switch(cool_frame_faca.cmd)
+                {
+                    case energyCmdSetRepTime:
+                    str +="/ energyCmdSetRepTime:";
+                    detect_u32 = (cool_frame_faca.data[0]<<24)+
+                                  (cool_frame_faca.data[1]<<16)+
+                                  (cool_frame_faca.data[2]<<8)+
+                                  (cool_frame_faca.data[3]<<0);
+                    str +=QString("%1mS = 0x").arg(detect_u32)+uint32ToHex(detect_u32).toUpper()+"mS";
+                    str +="/ status code:0x" + uint8ToHex(cool_frame_faca.data[4]).toUpper();
+                    break;
+
+
+                    case energyCmdGetMeasurement:
+                    str +="/ energyCmdGetMeasurement";
+
+
+                    if(cool_frame_faca.len<0x12)
+                    {
+                        //220V
+                        str +="/ 220V";
+
+
+                        detect_u32 =  (cool_frame_faca.data[0]<<24)+
+                                      (cool_frame_faca.data[1]<<16)+
+                                      (cool_frame_faca.data[2]<<8)+
+                                      (cool_frame_faca.data[3]<<0);
+                        str +=QString("/ 电压：%1V").arg((double)detect_u32/10000);
+
+                        detect_u32 =  (cool_frame_faca.data[4]<<24)+
+                                      (cool_frame_faca.data[5]<<16)+
+                                      (cool_frame_faca.data[6]<<8)+
+                                      (cool_frame_faca.data[7]<<0);
+                        str +=QString("/ 电流：%1A").arg((double)detect_u32/10000);
+
+                        detect_u32 =  (cool_frame_faca.data[8]<<24)+
+                                      (cool_frame_faca.data[9]<<16)+
+                                      (cool_frame_faca.data[10]<<8)+
+                                      (cool_frame_faca.data[11]<<0);
+                        str +=QString("/ 功率：%1W").arg((double)detect_u32/10000);
+
+                        detect_u32 =  (cool_frame_faca.data[12]<<24)+
+                                      (cool_frame_faca.data[13]<<16)+
+                                      (cool_frame_faca.data[14]<<8)+
+                                      (cool_frame_faca.data[15]<<0);
+                        str +=QString("/ 电量：%1KW/H").arg((double)detect_u32/10000);
+                    }
+                    else
+                    {
+                        //380V
+                        str +="/ 380V";
+
+                        //A
+                        detect_u32 =  (cool_frame_faca.data[0]<<8)+
+                                      (cool_frame_faca.data[1]<<0);
+                        str +=QString("/ A电压：%1V").arg((double)detect_u32/100);
+
+                        detect_u32 =  (cool_frame_faca.data[2]<<8)+
+                                      (cool_frame_faca.data[3]<<0);
+                        str +=QString("/ A电流：%1A").arg((double)detect_u32/100);
+
+                        detect_u32 =  (cool_frame_faca.data[4]<<8)+
+                                      (cool_frame_faca.data[5]<<0);
+                        str +=QString("/ A功率：%1W").arg((double)detect_u32);
+
+                        detect_u32 =  (cool_frame_faca.data[6]<<24)+
+                                      (cool_frame_faca.data[7]<<16)+
+                                      (cool_frame_faca.data[8]<<8)+
+                                      (cool_frame_faca.data[9]<<0);
+                        str +=QString("/ A电量：%1KWH").arg((double)detect_u32/800);
+
+                        //B
+                        detect_u32 =  (cool_frame_faca.data[10]<<8)+
+                                      (cool_frame_faca.data[11]<<0);
+                        str +=QString("/ B电压：%1V").arg((double)detect_u32/100);
+
+                        detect_u32 =  (cool_frame_faca.data[12]<<8)+
+                                      (cool_frame_faca.data[13]<<0);
+                        str +=QString("/ B电流：%1A").arg((double)detect_u32/100);
+
+                        detect_u32 =  (cool_frame_faca.data[14]<<8)+
+                                      (cool_frame_faca.data[15]<<0);
+                        str +=QString("/ B功率：%1W").arg((double)detect_u32);
+
+                        detect_u32 =  (cool_frame_faca.data[16]<<24)+
+                                      (cool_frame_faca.data[17]<<16)+
+                                      (cool_frame_faca.data[18]<<8)+
+                                      (cool_frame_faca.data[19]<<0);
+                        str +=QString("/ B电量：%1KWH").arg((double)detect_u32/800);
+
+                        //C
+                        detect_u32 =  (cool_frame_faca.data[20]<<8)+
+                                      (cool_frame_faca.data[21]<<0);
+                        str +=QString("/ C电压：%1V").arg((double)detect_u32/100);
+
+                        detect_u32 =  (cool_frame_faca.data[22]<<8)+
+                                      (cool_frame_faca.data[23]<<0);
+                        str +=QString("/ C电流：%1A").arg((double)detect_u32/100);
+
+                        detect_u32 =  (cool_frame_faca.data[24]<<8)+
+                                      (cool_frame_faca.data[25]<<0);
+                        str +=QString("/ C功率：%1W").arg((double)detect_u32);
+
+                        detect_u32 =  (cool_frame_faca.data[26]<<24)+
+                                      (cool_frame_faca.data[27]<<16)+
+                                      (cool_frame_faca.data[28]<<8)+
+                                      (cool_frame_faca.data[29]<<0);
+                        str +=QString("/ C电量：%1KWH").arg((double)detect_u32/800);
+
+
+                        detect_u32 =  (cool_frame_faca.data[30]<<24)+
+                                      (cool_frame_faca.data[31]<<16)+
+                                      (cool_frame_faca.data[32]<<8)+
+                                      (cool_frame_faca.data[33]<<0);
+                        str +=QString("/ 总电量：%1KWH").arg((double)detect_u32/800);
+
+                    }
+
+
+
+                    break;
+
+
+
+                    case energyCmdSenError:
+                    str +="/ energyCmdSenError";
+                    str +="/ status code:0x" + uint8ToHex(cool_frame_faca.data[2]).toUpper();
+                    break;
+                    case energyCmdStatus:
+                    str +="/ energyCmdStatus";
+                    str +="/ status code:0x" + uint8ToHex(cool_frame_faca.data[1]).toUpper();
+                    break;
+                    default:
+                    str +="/ ERROR";
+                    break;
+                }
+                if(ene_par.filtStr.length()!=0)
+                {
+
+                    if(str.contains(ene_par.filtStr) == false)
+                    return;
+                }
+                ENE_DisplayWithTime(str);
+            }
+            else if(cool_frame_faca.deviceType == coolDevInjection)
+            {
+                if(cool_frame_faca.cmd != 0xFE)INJ_ackSuccess(iot_frame.gateway_id,iot_frame.device_id,cool_frame_faca.cmd);
+                if(injectionStopDisplay->isChecked() == true)return;
+                if(injectionDisplayMac->isChecked() == true)
+                {
+                    str += "/ device_MAC:"+id_access.getIdMac(iot_frame.device_id);
+
+                }
+                if(iot_frame.device_id != inj_par.filtId && inj_par.filtId != 0xFFFF)
+                {
+                    return;
+                }
+
+
+                str += QString("/ sensor_id:%1").arg(cool_frame_faca.sensorId);
+                str += "=0x"+uint16ToHex(cool_frame_faca.sensorId).toUpper();
+                str +="/ 移动输液";
+
+                switch(cool_frame_faca.cmd)
+                {
+                    case injectionCmdUnkown:
+                    str +="/ injectionCmdUnkown";
+                    str +="/ 未知命令";
+                    break;
+
+                    case injectionCmdPowerOn:
+                    str +="/ injectionCmdPowerOn";
+                    str +="/ 设备开机";
+                    break;
+
+                    case injectionCmdRepStatus:
+                    str +="/ injectionCmdRepStatus";
+
+                    str +=QString("/ %1滴/min ").arg(cool_frame_faca.data[0]);
+
+                    if(cool_frame_faca.data[1] == 0)str +="/ 喇叭关闭";
+                    else if(cool_frame_faca.data[1] == 1)str +="/ 喇叭打开";
+                    else str +="/ 喇叭状态未知";
+
+                    str +=QString("/ 显示编号为：%1").arg(cool_frame_faca.data[2]*256+cool_frame_faca.data[3]);
+
+                    if(cool_frame_faca.data[4] == 0) str +=QString("/ 无告警：%1").arg(cool_frame_faca.data[4]);
+                    else if(cool_frame_faca.data[4] == 1) str +=QString("/ 低限告警：%1").arg(cool_frame_faca.data[4]);
+                    else if(cool_frame_faca.data[4] == 2) str +=QString("/ 高限告警：%1").arg(cool_frame_faca.data[4]);
+                    else if(cool_frame_faca.data[4] == 3) str +=QString("/ 设备节流：%1").arg(cool_frame_faca.data[4]);
+                    else if(cool_frame_faca.data[4] == 4) str +=QString("/ 输液暂停：%1").arg(cool_frame_faca.data[4]);
+                    else if(cool_frame_faca.data[4] == 5) str +=QString("/ 输液完成：%1").arg(cool_frame_faca.data[4]);
+                    else str +=QString("/ 未知状态：%1").arg(cool_frame_faca.data[4]);
+
+
+                    str +=QString("/ 总滴数量：%1").arg(cool_frame_faca.data[5]*256+cool_frame_faca.data[6]);
+
+                    str +=QString("/ 上限：%1 下限：%2").arg(cool_frame_faca.data[7]).arg(cool_frame_faca.data[8]);
+\
+                    str +=QString("/ 电量：%1%").arg(cool_frame_faca.data[9]);
+                    break;
+
+
+
+                    case injectionCmdDevReset:
+                    str +="/ injectionCmdDevReset";
+                    str +="/ 设备复位";
+                    break;
+                    case injectionCmdDevCutoff:
+                    str +="/ injectionCmdDevCutoff";
+                    str +="/ 设备卡断";
+                    break;
+                    case injectionCmdPowerOff:
+                    str +="/ injectionCmdPowerOff";
+                    str +="/ 设备关机";
+                    break;
+                    case injectionCmdDevError:
+                    str +="/ injectionCmdDevError";
+                    str +="/ 设备异常";
+                    break;
+                    case injectionCmdDevStart:
+                    str +="/ injectionCmdDevStart";
+                    str +="/ 开始输液";
+                    break;
+                    case injectionCmdDevStop:
+                    str +="/ injectionCmdDevStop";
+                    str +="/ 暂停输液";
+                    break;
+                    case injectionCmdDevFinish:
+                    str +="/ injectionCmdDevFinish";
+                    str +="/ 完成输液";
+                    break;
+                    case injectionCmdSetTotalDi:
+                    str +="/ injectionCmdSetTotalDi";
+                    str +="/ 设置总滴量";
+                    break;
+                    case injectionCmdSetStopTimeout:
+                    str +="/ injectionCmdSetStopTimeout";
+                    str +="/ 设定停止超时时间";
+                    break;
+                    case injectionCmdGetDeviceParameter:
+                    str +="/ injectionCmdGetDeviceParameter";
+                    str +="/ 获取设备信息";
+
+                    break;
+                    case injectionCmdStatus:
+                    str +="/ coolCmdStatus";
+
+                    if(cool_frame_faca.data[0] == injectionCmdGetDeviceParameter)
+                    {
+                        str +="/ injectionCmdGetDeviceParameter";
+
+                        if(cool_frame_faca.data[1]==0x00)str +="/ 关机状态";
+                        else if(cool_frame_faca.data[1]==0x01)str +="/ 开机状态";
+                        else if(cool_frame_faca.data[1]==0x02)str +="/ 正在输液";
+                        else if(cool_frame_faca.data[1]==0x03)str +="/ 输液暂停";
+                        else if(cool_frame_faca.data[1]==0x04)str +="/ 输液完成";
+
+
+                        str +=QString("/ normal:%1滴/S max:%2滴/S min:%3滴/S").arg(cool_frame_faca.data[2]).arg(cool_frame_faca.data[3]).arg(cool_frame_faca.data[4]);
+
+
+                        if(cool_frame_faca.data[5]==0x00)str +="/ 喇叭关闭";
+                        else if(cool_frame_faca.data[5]==0x01)str +="/ 喇叭打开";
+
+                        str +=QString("/ 显示编号%1").arg(cool_frame_faca.data[6]*256+cool_frame_faca.data[7]);
+
+
+                        uint injection_report_time;
+                        injection_report_time = (cool_frame_faca.data[8]<<24)+
+                                                (cool_frame_faca.data[9]<<16)+
+                                                (cool_frame_faca.data[10]<<8)+
+                                                (cool_frame_faca.data[11]<<0);
+                        str +=QString("/ 上报时间%1").arg(injection_report_time);
+
+
+                        if(cool_frame_faca.data[12] == 0) str +=QString("/ 无告警：%1").arg(cool_frame_faca.data[12]);
+                        else if(cool_frame_faca.data[12] == 1) str +=QString("/ 低限告警：%1").arg(cool_frame_faca.data[12]);
+                        else if(cool_frame_faca.data[12] == 2) str +=QString("/ 高限告警：%1").arg(cool_frame_faca.data[12]);
+                        else str +=QString("/ 未知状态：%1").arg(cool_frame_faca.data[12]);
+
+                        str +=QString("/ 当前滴速%1").arg(cool_frame_faca.data[13]);
+                        str +=QString("/ 电机状态%1").arg(cool_frame_faca.data[14]);
+                        str +=QString("/ 输液状态%1").arg(cool_frame_faca.data[15]);
+                        str +=QString("/ 累积滴量%1").arg(cool_frame_faca.data[16]*256+cool_frame_faca.data[17]);
+                        str +=QString("/ 总滴量%1").arg(cool_frame_faca.data[18]*256+cool_frame_faca.data[19]);
+                        str +=QString("/ 检测时长%1").arg(cool_frame_faca.data[20]*256+cool_frame_faca.data[21]);
+
+
+                    }
+                    else
+                    {
+                        str +="/ status code:0x" + uint8ToHex(cool_frame_faca.data[0]).toUpper();
+                    }
+
+
+
+                    break;
+                    default:
+                    str +="/ ERROR";
+                    break;
+                }
+                if(inj_par.filtStr.length()!=0)
+                {
+
+                    if(str.contains(inj_par.filtStr) == false)
+                    return;
+                }
+
+                INJ_DisplayWithTime(str);
+
+            }
+            else if(cool_frame_faca.deviceType == coolDevSosNoLocationPanic)
+            {
+                if(sosStopDisplay->isChecked() == true)return;
+                if(sosDisplayMac->isChecked() == true)
+                {
+                    str += "/ device_MAC:"+id_access.getIdMac(iot_frame.device_id);
+
+                }
+
+                if(iot_frame.device_id != sos_par.filtId && sos_par.filtId != 0xFFFF)
+                {
+                    return;
+                }
+
+
+
+                str += QString("/ sensor_id:%1").arg(cool_frame_faca.sensorId);
+                str += "=0x"+uint16ToHex(cool_frame_faca.sensorId).toUpper();
+                str +="/ SOS按键(不带定位)";
+
+                uint32_t sos_report_time = 0;
+                switch(cool_frame_faca.cmd)
+                {
+                    case sosCmdSetRepTime:
+                    str +="/ sosCmdSetRepTime:";
+                    sos_report_time = (cool_frame_faca.data[0]<<24)+
+                                  (cool_frame_faca.data[1]<<16)+
+                                  (cool_frame_faca.data[2]<<8)+
+                                  (cool_frame_faca.data[3]<<0);
+                    str +=QString("%1mS = 0x").arg(sos_report_time)+uint32ToHex(sos_report_time).toUpper()+"mS";
+
+                    break;
+
+
+                    case sosCmdReportStatus:
+                    str +="/ sosCmdReportStatus";
+
+                    str +=QString("/ voltage:%1.").arg(cool_frame_faca.data[0]/10)+QString("%1V").arg(cool_frame_faca.data[0]%10);
+
+                    if(cool_frame_faca.data[1]&BV(0))str +="/ 按键报警";
+                    if(cool_frame_faca.data[1]&BV(1))str +="/ 不要拆报警";
+
+                    sos_report_time = (cool_frame_faca.data[2]<<24)+
+                                  (cool_frame_faca.data[3]<<16)+
+                                  (cool_frame_faca.data[4]<<8)+
+                                  (cool_frame_faca.data[5]<<0);
+                    str +=QString("/ ReportTime:%1mS").arg(sos_report_time);
+
+
+                    break;
+
+                    case sosCmdSenError:
+                    str +="/ sosCmdSenError";
+                    str +="/ status code:0x" + uint8ToHex(cool_frame_faca.data[2]).toUpper();
+                    break;
+                    case sosCmdStatus:
+                    str +="/ sosCmdStatus";
+                    str +="/ status code:0x" + uint8ToHex(cool_frame_faca.data[1]).toUpper();
+                    break;
+                    default:
+                    str +="/ ERROR";
+                    break;
+                }
+                if(sos_par.filtStr.length()!=0)
+                {
+
+                    if(str.contains(sos_par.filtStr) == false)
+                    return;
+                }
+                SOS_DisplayWithTime(str);
+            }
+
+        }
+        else if(iot_frame.data[0]==0xAA && iot_frame.data[1]==0x55)
+        {
+
+
+            cool_frame.head[0] = iot_frame.data[0];
+            cool_frame.head[1] = iot_frame.data[1];
+            cool_frame.sensorMac[0] = iot_frame.data[2];
+            cool_frame.sensorMac[1] = iot_frame.data[3];
+            cool_frame.sensorMac[2] = iot_frame.data[4];
+            cool_frame.sensorMac[3] = iot_frame.data[5];
+            cool_frame.sensorMac[4] = iot_frame.data[6];
+            cool_frame.sensorMac[5] = iot_frame.data[7];
+            cool_frame.sensorMac[6] = iot_frame.data[8];
+            cool_frame.sensorMac[7] = iot_frame.data[9];
+
+            cool_frame.deviceType = iot_frame.data[10];
+            cool_frame.len = iot_frame.data[11];
+            cool_frame.cmd = iot_frame.data[12];
+            cool_frame.data = &iot_frame.data[13];
+            cool_frame.checksum = iot_frame.data[12+cool_frame.len];
+
+            if(checkSum((char *)(iot_frame.data),cool_frame.len+12)!= cool_frame.checksum)
+            {
+                return ;
+            }
+
+
+
+            if(cool_frame.deviceType == coolDevCoolChain)
             {
                 //if(cool_frame.cmd != 0xFE)COO_ackSuccess(iot_frame.gateway_id,iot_frame.device_id,cool_frame.cmd);
                 if(coolStopDisplay->isChecked() == true)return;
@@ -1065,9 +1734,8 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
 
 
 
-                str += QString("/ sensor_id:%1").arg(cool_frame.sensorId);
-                str += "=0x"+uint16ToHex(cool_frame.sensorId).toUpper();
-                str +="/ 温度传感器";
+                str += "/ sensorMac:"+ strToHex(cool_frame.sensorMac,8);
+                str +="/ 冷链";
                 double double_num;
                 switch(cool_frame.cmd)
                 {
@@ -1228,6 +1896,88 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
                 COO_DisplayWithTime(str);
 
             }
+            else if(cool_frame.deviceType == coolDevTemTh)
+            {
+                //if(cool_frame.cmd != 0xFE)COO_ackSuccess(iot_frame.gateway_id,iot_frame.device_id,cool_frame.cmd);
+                if(TemTHStopDisplay->isChecked() == true)return;
+                if(TemTHDisplayMac->isChecked() == true)
+                {
+                    str += "/ device_MAC:"+id_access.getIdMac(iot_frame.device_id);
+
+                }
+
+                if(iot_frame.device_id != temth_par.filtId && temth_par.filtId != 0xFFFF)
+                {
+                    return;
+                }
+
+
+
+                str += "/ sensorMac:"+ strToHex(cool_frame.sensorMac,8).toUpper();
+                str +="/ 温湿度传感器";
+                double double_num;
+                switch(cool_frame.cmd)
+                {
+                    case TemThCmdSetRepTime:
+                    str +="/ TemThCmdSetRepTime:";
+                    uint detect_time;
+                    detect_time =
+                                  (cool_frame.data[0]<<8)+
+                                  (cool_frame.data[1]<<0);
+                    str +=QString("%1mS = 0x").arg(detect_time)+uint32ToHex(detect_time).toUpper()+"mS";
+                    str +="/ status code:0x" + uint8ToHex(cool_frame.data[3]).toUpper();
+                    break;
+
+
+                    case TemThCmdGetSenVal:
+                    str +="/ TemThCmdGetSenVal";
+
+                    //tempreture
+                    if(cool_frame.data[0] == 0)str += "/ -";
+                    else if(cool_frame.data[0] == 1)str += "/ +";
+                    double_num = cool_frame.data[1]*256+cool_frame.data[2]+(double )cool_frame.data[3]/100;
+                    str += QString("%1'C").arg(double_num);
+
+                    //humidity
+                    double_num = cool_frame.data[4]+(double )cool_frame.data[5]/100;
+                    str += QString("/ %1%RH").arg(double_num);
+
+                    //voltage
+                    double_num = (double )cool_frame.data[6]/10;
+                    str += QString("/ %1V").arg(double_num);
+
+                    str +="/ status code:0x" + uint8ToHex(cool_frame.data[7]).toUpper();
+
+                    break;
+
+                    case TemThCmdSystemTime:
+                    str +="/ TemThCmdSystemTime：request system time";
+                    TEMTH_setSystemTime(iot_frame.gateway_id,iot_frame.device_id,cool_frame.sensorMac);
+                    break;
+
+
+
+                    case TemThCmdSenError:
+                    str +="/ coolCmdSenError";
+                    str +="/ status code:0x" + uint8ToHex(cool_frame.data[2]).toUpper();
+                    break;
+                    case TemThCmdStatus:
+                    str +="/ coolCmdStatus";
+                    str +="/ status code:0x" + uint8ToHex(cool_frame.data[1]).toUpper();
+                    break;
+                    default:
+                    str +="/ ERROR";
+                    break;
+                }
+                if(temth_par.filtStr.length()!=0)
+                {
+
+                    if(str.contains(temth_par.filtStr) == false)
+                    return;
+                }
+                TEMTH_DisplayWithTime(str);
+
+            }
             else if(cool_frame.deviceType == coolDevSiren)
             {
 
@@ -1256,8 +2006,7 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
 
 
 
-                str += QString("/ sensor_id:%1").arg(cool_frame.sensorId);
-                str += "=0x"+uint16ToHex(cool_frame.sensorId).toUpper();
+                str += "/ sensorMac:"+ strToHex(cool_frame.sensorMac,8);
                 str +="/ 插座";
 
                 uint detect_u32;
@@ -1420,8 +2169,7 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
                 }
 
 
-                str += QString("/ sensor_id:%1").arg(cool_frame.sensorId);
-                str += "=0x"+uint16ToHex(cool_frame.sensorId).toUpper();
+                str += "/ sensorMac:"+ strToHex(cool_frame.sensorMac,8);
                 str +="/ 移动输液";
 
                 switch(cool_frame.cmd)
@@ -1459,7 +2207,7 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
                     str +=QString("/ 总滴数量：%1").arg(cool_frame.data[5]*256+cool_frame.data[6]);
 
                     str +=QString("/ 上限：%1 下限：%2").arg(cool_frame.data[7]).arg(cool_frame.data[8]);
-\
+
                     str +=QString("/ 电量：%1%").arg(cool_frame.data[9]);
                     break;
 
@@ -1589,8 +2337,7 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
 
 
 
-                str += QString("/ sensor_id:%1").arg(cool_frame.sensorId);
-                str += "=0x"+uint16ToHex(cool_frame.sensorId).toUpper();
+                str += "/ sensorMac:"+ strToHex(cool_frame.sensorMac,8);
                 str +="/ SOS按键(不带定位)";
 
                 uint32_t sos_report_time = 0;
@@ -1669,7 +2416,7 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
             str += "childSpireLamella";
             break;
         case dev_patientSpireLamella:
-            str += "gatway";
+            str += "patientSpireLamella";
             break;
         case dev_sosPanicLocation:
             str += "sosPanicLocation";
@@ -1697,6 +2444,18 @@ void MainWindow::pressCmdData(uchar *data , ushort size)
             break;
         case dev_sosPanic:
             str += "sosPanic";
+            break;
+        case dev_863DriectModule:
+            str += "863DriectModule";
+            break;
+        case dev_863ORModule:
+            str += "863ORModule";
+            break;
+        case dev_863PDA:
+            str += "863PDA";
+            break;
+        case dev_863DesktopRW:
+            str += "863DesktopRW";
             break;
         case dev_bleTag:
             str += "dev_bleTag";
@@ -2195,7 +2954,7 @@ void MainWindow::processJsonData(QByteArray datas){
             location_frame.head[1] = (uchar)datas[1];
             location_frame.devie_id = (uchar)datas[2]*256+(uchar)datas[3];
             location_frame.ant_id = (uchar)datas[4]*256+(uchar)datas[5];
-            location_frame.rssi = (uchar)datas[6];
+            location_frame.rssi = (char)datas[6];
             location_frame.alarm = (uchar)datas[7];
             location_frame.checksum = (uchar)datas[8];
 
@@ -2236,7 +2995,7 @@ void MainWindow::processJsonData(QByteArray datas){
 
             str += QString("/ devie_id:%1").arg(location_frame.devie_id)+"=0x"+uint16ToHex(location_frame.devie_id).toUpper();
             str += QString("/ ant_id:%1").arg(location_frame.ant_id)+"=0x"+uint16ToHex(location_frame.ant_id).toUpper();
-            str += QString("/ rssi:%1").arg(location_frame.rssi,0,10);
+            str += QString("/ rssi:%1").arg(location_frame.rssi);
             str += "/ alarm:0x"+uint8ToHex(location_frame.alarm).toUpper();
             if(checkDrop(location_frame.alarm))str += " 跌落报警;";
             if(checkAlarm(location_frame.alarm))str += " 紧急报警;";
@@ -2323,7 +3082,7 @@ QString MainWindow::strToHex(uchar *data , ushort len)
 }
 
 ushort MainWindow::hexToUint8(QString str,uint start){
-    str.remove(0,start-1);
+    str.remove(0,start);
     str.remove(2,str.length());
     return str.toUShort(Q_NULLPTR,16);
 }
@@ -2348,65 +3107,8 @@ void MainWindow::DisplayWithNoTime(const QString &text)
 }
 
 
-void MainWindow::SetCurComboBState()
-{
-	if (!port) return;
-	comboBox_port->setCurrentIndex(comboBox_port->findText(port->portName()));
-	int portparam = comboBox_baudrate->findData( port->baudRate());
-	comboBox_baudrate->setCurrentIndex(portparam);
-	portparam = comboBox_parity->findData( port->parity());
-	comboBox_parity->setCurrentIndex(portparam);
-	portparam = comboBox_flcntrl->findData(port->flowControl());
-	comboBox_flcntrl->setCurrentIndex(portparam);
-		
-	bt_apply->setEnabled(false);
-	bt_cancel->setEnabled(false);
-}
 
 
-QString MainWindow::transformInpData(const unsigned char *data, const int size)
-{
-	const QString tab = "  ";
-	QString res;
-	if (rbt_Decin->isChecked())
-	{
-        for (int i = 0;i < size;i++)
-            res = res+QString("%1").arg((int)data[i])+tab;
-
-	}
-	if (rbt_ASCIIin->isChecked())
-	{
-		static char datatr[4*4096];
-		int j = 0;
-		int i = 0;
-        for (;i < size;i++)
-            if (data[i] != 0)
-                datatr[i+j] = data[i];
-			else
-			{
-				datatr[i+0] = '\"';
-				datatr[i+1] = '\\';
-				datatr[i+2] = '0';
-				datatr[i+3] = '\"';
-				j+=4;
-			}
-		datatr[i+j] = '\0';
-		res=QMainWindow::tr(datatr);
-	}
-	if (rbt_BINin->isChecked())
-	{
-        for (int i = 0;i < size;i++)
-            res = res+QString("%1").arg((int)data[i],0,2)+tab;
-	}
-	if (rbt_HEXin->isChecked())
-	{
-        for (int i = 0;i < size;i++)
-            //res = res+QString("%1").arg((int)data[i],0,16)+tab;
-            res = res+uint8ToHex(data[i])+" ";
-            res = res.toUpper();
-	}
-	return res;
-}
 
 unsigned short int MainWindow::Crc16Bit(const char *ptr, unsigned short int len)
 {
@@ -2460,55 +3162,6 @@ uchar MainWindow::checkSum(QByteArray puchData, ushort len)
 //---------------------------------------------------------------------------
 
 
-//*****************************************
-//usart transimit layer
-//*****************************************
-void MainWindow::transmitMsg()
-{
-    int count;
-    QByteArray data;
-    //unsigned short int crc_calculate;
-    //int percent = 0;
-
-    getdataout(&data);
-    count = port->write(data, data.length());
-    //textBr_mess->append(QString("uart transmited %1").arg(count));
-
-    if (count == -1) count = 0;
-    counter_out += count;
-    labelTransmit->setText(QString("transmit %1").arg(counter_out));
-}
-
-void MainWindow::UART_send(QByteArray src)
-{
-
-    port->write(src, src.length());
-
-    QString str;
-    str = src.toHex();
-    for(ushort i =0; i*3<str.length();i++)
-    {
-        str.insert(i*3+2, " ");
-    }
-    textEd_out->append(str.toUpper());
-
-
-    if(rb_displayRawHex->isChecked()==true)
-    {
-        DisplayWithTime(QString("usart send %1 byte").arg(src.length()));
-        textBr_mess->append(str.toUpper()+"\r\n");
-        history_par.Update_buff += str;
-    }
-}
-
-
-
-
-
-//*****************************************
-//usart transimit layer end
-//*****************************************
-
 
 
 //*****************************************
@@ -2549,17 +3202,9 @@ void  MainWindow::IOT_cmdAsscessId(ushort gateway_id,ushort device_id,ID_SEND *i
     buff.append(checkSum(buff,buff.length()));
 
 
-    if(comunication_protocal->currentText() == "Uart")
-    {
-        UART_send(buff);
-    }
-    else if(comunication_protocal->currentText() == "Server")
+    if(comunication_protocal->currentText() == "Server")
     {
         //NET_getBindSocket(id->device_id);
-        NET_send(buff);
-    }
-    else if(comunication_protocal->currentText() == "Client")
-    {
         NET_send(buff);
     }
 }
@@ -2587,17 +3232,9 @@ void  MainWindow::IOT_cmdHeartBeat(IOT_FRAME *ptr)
     buff[15]=ptr->checkSum;
 
 
-    if(comunication_protocal->currentText() == "Uart")
-    {
-        UART_send(buff);
-    }
-    else if(comunication_protocal->currentText() == "Server")
+    if(comunication_protocal->currentText() == "Server")
     {
         NET_getBindSocket(ptr->device_id);
-        NET_send(buff);
-    }
-    else if(comunication_protocal->currentText() == "Client")
-    {
         NET_send(buff);
     }
 }
@@ -2607,7 +3244,7 @@ void  MainWindow::IOT_cmdHeartBeat(ushort gateway_id,
                                    ushort device_id,
                                    ushort time,
                                    ushort bandwith,
-                                   uchar rssi
+                                   short rssi
                                    )
 {
     QByteArray buff;
@@ -2631,19 +3268,12 @@ void  MainWindow::IOT_cmdHeartBeat(ushort gateway_id,
     buff.append(checkSum(buff,buff.length()));
 
 
-    if(comunication_protocal->currentText() == "Uart")
-    {
-        UART_send(buff);
-    }
-    else if(comunication_protocal->currentText() == "Server")
+    if(comunication_protocal->currentText() == "Server")
     {
         NET_getBindSocket(device_id);
         NET_send(buff);
     }
-    else if(comunication_protocal->currentText() == "Client")
-    {
-        NET_send(buff);
-    }
+
 }
 
 
@@ -2685,19 +3315,12 @@ void MainWindow::IOT_cmdNetwork(ushort gateway_id,ushort device_id,QByteArray da
 
 
 
-    if(comunication_protocal->currentText() == "Uart")
-    {
-        UART_send(send_buff);
-    }
-    else if(comunication_protocal->currentText() == "Server")
+    if(comunication_protocal->currentText() == "Server")
     {
         NET_getBindSocket(device_id);
         NET_send(send_buff);
     }
-    else if(comunication_protocal->currentText() == "Client")
-    {
-        NET_send(send_buff);
-    }
+
 }
 
 
@@ -2735,19 +3358,12 @@ void MainWindow::IOT_cmdApp(ushort gateway_id,ushort device_id,QByteArray data)
 
 
 
-    if(comunication_protocal->currentText() == "Uart")
-    {
-        UART_send(send_buff);
-    }
-    else if(comunication_protocal->currentText() == "Server")
+    if(comunication_protocal->currentText() == "Server")
     {
         NET_getBindSocket(device_id);
         NET_send(send_buff);
     }
-    else if(comunication_protocal->currentText() == "Client")
-    {
-        NET_send(send_buff);
-    }
+
 }
 
 
@@ -2843,10 +3459,11 @@ void MainWindow::IOT_sendAntInformation(QTcpSocket *socket){
 
 
 
-
     for(ushort i = 0;i<DEVICE_DISPLAY_MAX;i++){
         if(display_par.ant[i].id != 0xFFFF){
             dataObject.empty();
+            display_par.ant[i].id  = id_access.getIdMac(display_par.ant[i].mac);
+            dataObject.insert("mac",strToHex(display_par.ant[i].mac,8));
             dataObject.insert("AntID", 99);
             dataObject.insert("AntName", 001);
             dataObject.insert("Kind", 3);
@@ -2941,6 +3558,31 @@ void MainWindow::rcmdSetHeartbeatTime(ushort gateway_id,ushort device_id)
     buff[2] = (time>>0)&0xFF;
     IOT_cmdNetwork(gateway_id,device_id,buff);
     LOC_DisplayWithTime(QString("set heartbeat time：%1 S").arg(time));
+}
+
+
+void MainWindow::rcmdRssiAckTest(ushort gateway_id,ushort device_id,short dBm)
+{
+    QByteArray buff;
+    buff.clear();
+//    buff[0] = 0xDB;
+//    buff[1] = 0xBD;
+    buff[0] = test_txPower;
+    buff[1] = 0xFF;
+    buff[2] = 0xFF;
+    buff[3] = 0xFF;
+    buff[4] = 0xFF;
+    buff[5] = 0xFF;
+    buff[6] = 0xFF;
+    buff[7] = 0xFF;
+    buff[8] = 0xFF;
+    buff[9] = (char)dBm;
+    buff[10] = 0;
+    buff[10] = checkSum(buff,10);
+    buff.insert(0,0xDB);
+    buff.insert(1,0xBD);
+    IOT_cmdApp(gateway_id,device_id,buff);
+    LOC_DisplayWithTime(QString("send gateway tx power = %1dBm to device").arg(dBm));
 }
 
 
@@ -3145,15 +3787,7 @@ void MainWindow::rcmdSendsendPacket(ushort gateway_id,ushort device_id,ushort pa
 //*****************************************
 
 
-void MainWindow::on_File_clicked()
-{
 
-}
-
-void MainWindow::on_pushButton_clicked()
-{
-
-}
 
 void MainWindow::on_bt_getDeviceInf_clicked()
 {
@@ -3392,6 +4026,8 @@ void MainWindow::on_bt_openFile_clicked()
                 else if(cb_deviceType->currentText() == "SOS按键(不带定位)")fir.ota_w.device_type = 0x0C;
                 else if(cb_deviceType->currentText()  == "蓝牙透传863模块")fir.ota_w.device_type = 0x0D;
                 else if(cb_deviceType->currentText()  == "手术室863模块")fir.ota_w.device_type = 0x0E;
+                else if(cb_deviceType->currentText()  == "PDA863模块")fir.ota_w.device_type = 0x0F;
+                else if(cb_deviceType->currentText()  == "桌面读卡器863模块")fir.ota_w.device_type = 0x10;
                 else if(cb_deviceType->currentText() == "蓝牙资产标签")fir.ota_w.device_type = 0xA0;
                 else if(cb_deviceType->currentText() == "蓝牙定位天线")fir.ota_w.device_type = 0xB0;
                 else if(cb_deviceType->currentText() == "中继器")fir.ota_w.device_type = 0xFC;
@@ -3448,10 +4084,7 @@ void MainWindow::on_bt_openFile_clicked()
         fd->close();
     }
 }
-void MainWindow::on_comboBox_updateWay_currentIndexChanged(const QString &arg1)
-{
-    DisplayWithTime(arg1);
-}
+
 
 void MainWindow::on_shortAddr_itemSelectionChanged()
 {
@@ -3470,14 +4103,7 @@ void MainWindow::on_shortAddr_itemSelectionChanged()
             else str+=" / no gateway bind";
         }
     }
-    else if(comunication_protocal->currentText() == "Client")
-    {
 
-    }
-    else if(comunication_protocal->currentText() == "Uart")
-    {
-
-    }
 
     DisplayWithTime(QString("Dest addr:")+str);
 
@@ -3507,8 +4133,10 @@ void MainWindow::on_cb_deviceType_currentTextChanged(const QString &arg1)
     else if(cb_deviceType->currentText() == "四通道读头")fir.ota_w.device_type = 0x0A;
     else if(cb_deviceType->currentText() == "125k资产标签")fir.ota_w.device_type = 0x0B;
     else if(cb_deviceType->currentText() == "SOS按键(不带定位)")fir.ota_w.device_type = 0x0C;
-    else if(cb_deviceType->currentText()  == "蓝牙透传863模块")fir.ota_w.device_type = 0x0D;
-    else if(cb_deviceType->currentText()  == "手术室863模块")fir.ota_w.device_type = 0x0E;
+    else if(cb_deviceType->currentText() == "蓝牙透传863模块")fir.ota_w.device_type = 0x0D;
+    else if(cb_deviceType->currentText() == "手术室863模块")fir.ota_w.device_type = 0x0E;
+    else if(cb_deviceType->currentText() == "PDA863模块")fir.ota_w.device_type = 0x0F;
+    else if(cb_deviceType->currentText() == "桌面读卡器863模块")fir.ota_w.device_type = 0x10;
     else if(cb_deviceType->currentText() == "蓝牙资产标签")fir.ota_w.device_type = 0xA0;
     else if(cb_deviceType->currentText() == "蓝牙定位天线")fir.ota_w.device_type = 0xB0;
     else if(cb_deviceType->currentText() == "中继器")fir.ota_w.device_type = 0xFC;
@@ -3585,9 +4213,9 @@ void MainWindow::NET_Init()
     ulong i;
     QString str = NET_get_localmachine_ip();
     textEdit_IP->setText(str);
-    textEdit_Port->setText("7778");
+    textEdit_Port->setText("6002");
     textEdit_IP_location->setText(str);
-    textEdit_Port_location->setText("59999");
+    textEdit_Port_location->setText("5999");
 
 
     textEdit_ID->setPlainText("0");
@@ -3606,9 +4234,10 @@ void MainWindow::NET_Init()
     {
         net_par.bind_socket[i] = NULL;
     }
-    comunication_protocal->setCurrentText("Servezr");
+    comunication_protocal->setCurrentText("Server");
 
-    net_par.clientSocket = new QTcpSocket(this);
+    net_par.Server = new QTcpServer(this);
+    connect(net_par.Server,SIGNAL(newConnection()),this,SLOT(NET_acceptConnection()));
 
 //    uchar aa = 0xFF;
 //    ushort bb = 0xFFFF;
@@ -3674,36 +4303,11 @@ void MainWindow::NET_revData()
                transport.r_count++;
            }
            //receiveTimer->start(20);
-           pressUartData();
+           pressUartData(net_par.Socket[j]);
 
        }
    }
-   else if(comunication_protocal->currentText() == "Client")
-   {
-       datas.clear();
-       datas = net_par.clientSocket->readAll();
-       if(datas.length() == 0)return;
 
-       //接收字符串数据。
-       display = datas.toHex().toUpper();
-       for(i=0;i<display.length();i+=3)
-       {
-            display.insert( i+2, " ");
-       }
-       infReceive->setPlainText(display);
-
-
-
-
-       for(i = 0; i < datas.length();i++)
-       {
-           transport.receive[transport.r_count] = datas[i];
-           transport.r_count++;
-       }
-       //receiveTimer->start(20);
-       pressUartData();
-
-   }
 }
 
 
@@ -3771,14 +4375,6 @@ void MainWindow::NET_send(QByteArray src)
         }
 
     }
-    else if(comunication_protocal->currentText() == "Client")
-    {
-        if(net_par.clientSocket->isValid())
-        {
-            net_par.clientSocket->write(src);
-            NET_DisplayWithTime("send message to IP:"+net_par.clientSocket->peerAddress().toString());
-        }
-    }
     else
     {
         return;
@@ -3814,27 +4410,45 @@ void MainWindow::on_bt_netSend_clicked()
 }
 
 
-void MainWindow::NET_newListen()
+bool MainWindow::NET_newListen()
 {
     ushort port;
     QString str = textEdit_Port->text();
     port = str.toUShort();
 
     str = textEdit_IP->text();
-    QHostAddress ip;
-    ip.setAddress(str);
+
+   QHostAddress ip;
+   ip.setAddress(str);
 
 
-   //监听是否有客户端来访，且对任何来访者监听，端口为6666
-   if(!net_par.Server->listen(ip,port))
+   for(ushort i = 0;i<SOCKET_MAX;i++)
    {
+       if(net_par.Socket[i]!=NULL){
+           if(net_par.Socket[i]->ConnectedState == QAbstractSocket::ConnectedState){
+               net_par.Socket[i]->close();
+           }
+           net_par.Socket[i] = NULL;
+       }
+   }
+   for(int i=0;i<=65535;i++){
+       net_par.bind_socket[i] = NULL;
+   }
+   if(net_par.Server->isListening())net_par.Server->close();
 
-      qDebug()<<net_par.Server->errorString();
 
-      close();
 
-      return;
-
+   //监听是否有客户端来访，且对任何来访者监听，端口为
+   if(net_par.Server->listen(ip,port)){
+       str = "Server listening";
+       str += "  IP:" + net_par.Server->serverAddress().toString();
+       str += QString("  PORT:%1").arg(net_par.Server->serverPort());
+       NET_DisplayWithTime(str);
+       return true;
+   }
+   else{
+       NET_DisplayWithTime(net_par.Server->errorString());
+       return false;
    }
 }
 void MainWindow::NET_newListenLocation()
@@ -3861,16 +4475,7 @@ void MainWindow::NET_newListenLocation()
    }
 }
 
-void MainWindow::NET_clientToServer()
-{
-    ushort port;
-    QString str = textEdit_Port->text();
-    port = str.toUShort();
-    net_par.clientSocket->abort();
-    net_par.clientSocket->connectToHost(textEdit_IP->text(),port);
-    connect(net_par.clientSocket,SIGNAL(readyRead()),this,SLOT(NET_revData()));
-    //connect(net_par.clientSocket,SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(NET_displayError(QAbstractSocket::SocketError)));
-}
+
 
 
 
@@ -3949,19 +4554,10 @@ void MainWindow::on_bt_listen_clicked()
 
     if(comunication_protocal->currentText() == "Server")
     {
-        net_par.Server = new QTcpServer(this);
-
-        NET_newListen();
-        //newConnection()用于当有客户端访问时发出信号，NET_acceptConnection()信号处理函数
-        connect(net_par.Server,SIGNAL(newConnection()),this,SLOT(NET_acceptConnection()));
-    }
-    else if(comunication_protocal->currentText() == "Client")
-    {
-        NET_clientToServer();
-    }
-    else
-    {
-
+        if(NET_newListen()==true){
+            bt_listen->setDisabled(true);
+            bt_stopListen->setDisabled(false);
+        }
     }
 }
 
@@ -3974,8 +4570,10 @@ void MainWindow::on_bt_stopListen_clicked()
             net_par.Socket[i]->close();
         }
     }
+    for(int i=0;i<=65535;i++){
+        net_par.bind_socket[i] = NULL;
+    }
     if(net_par.Server != NULL)net_par.Server->close();
-    net_par.clientSocket->abort();
 
     bt_listen->setDisabled(false);
 
@@ -4015,7 +4613,15 @@ void MainWindow::on_bt_searchId_clicked()
     ushort id;
 
     str = textEdit_ID->toPlainText();
-    id = str.toUShort();
+    if(str[0]=='0' && (str[1]=='x' || str[1]=='X'))
+    {
+        id = str.toUShort(Q_NULLPTR,16);
+    }
+    else
+    {
+        id = str.toUShort(Q_NULLPTR,10);
+    }
+
     str = id_access.getIdInf(id);
 
     NET_DisplayWithTime(str);
@@ -4265,32 +4871,7 @@ void MainWindow::on_localtionFiltStr_textChanged()
 }
 
 
-void MainWindow::on_locationStopDisplay_clicked(bool checked)
-{
 
-}
-
-void MainWindow::on_localtionFiltId_windowIconTextChanged(const QString &iconText)
-{
-
-}
-
-void MainWindow::on_localtionFiltStr_windowIconTextChanged(const QString &iconText)
-{
-
-}
-
-
-
-void MainWindow::on_localtionIdSelection_windowIconTextChanged(const QString &iconText)
-{
-
-}
-
-void MainWindow::on_localtionIdSelection_4_windowIconTextChanged(const QString &iconText)
-{
-
-}
 
 
 
@@ -4309,7 +4890,23 @@ void MainWindow::on_bt_setHeartBeatTime_3_clicked()
 }
 
 
+void MainWindow::on_checkBox_productTest_stateChanged(int arg1)
+{
+    if(checkBox_productTest->isChecked()==true){
+        checkBox_125KTest->setChecked(false);
 
+    }
+}
+
+
+
+
+void MainWindow::on_checkBox_125KTest_stateChanged(int arg1)
+{
+    if(checkBox_125KTest->isChecked()==true){
+        checkBox_productTest->setChecked(false);
+    }
+}
 
 
 
@@ -4321,9 +4918,29 @@ void MainWindow::LOC_Set125KRssi(ushort gateway_id,ushort device_id)
     uchar ant125kRssi;
 
     str = location125KIDtextEdit->toPlainText();
-    ant125kId = str.toUShort();
+    if(str[0]=='0' && (str[1]=='x' || str[1]=='X'))
+    {
+        ant125kId = str.toUShort(Q_NULLPTR,16);
+    }
+    else
+    {
+        ant125kId = str.toUShort(Q_NULLPTR,10);
+    }
     str = location125KRssitextEdit->toPlainText();
-    ant125kRssi = str.toUShort();
+    if(str[0]=='0' && (str[1]=='x' || str[1]=='X'))
+    {
+        ant125kRssi = str.toUShort(Q_NULLPTR,16);
+    }
+    else
+    {
+        ant125kRssi = str.toUShort(Q_NULLPTR,10);
+    }
+
+
+
+
+
+
 
     if(ant125kRssi>0x3F){
         LOC_DisplayWithTime("error: ant 125K RSSI 0x00~0x3F");
@@ -4477,7 +5094,7 @@ void MainWindow::COO_getSnNumber(ushort gateway_id,ushort device_id)
     buff[1] = 0xCA;
     buff[2] = 0xFF;
     buff[3] = 0xFF;
-    buff[4] = coolDevTempreture;
+    buff[4] = coolDevCoolChain;
     buff[5] = 0x03;//len
     buff[6] = coolCmdGetDisNum;
     buff[7] = 00;
@@ -4500,7 +5117,7 @@ void MainWindow::COO_setSnNumber(ushort gateway_id,ushort device_id)
     buff[1] = 0xCA;
     buff[2] = 0xFF;
     buff[3] = 0xFF;
-    buff[4] = coolDevTempreture;
+    buff[4] = coolDevCoolChain;
     buff[5] = 0x03;//len
     buff[6] = coolCmdSetDisNum;
     buff[7] = display_id/256;
@@ -4518,7 +5135,7 @@ void MainWindow::COO_getSensorValue(ushort gateway_id,ushort device_id)
     buff[1] = 0xCA;
     buff[2] = 0xFF;
     buff[3] = 0xFF;
-    buff[4] = coolDevTempreture;
+    buff[4] = coolDevCoolChain;
     buff[5] = 0x03;//len
     buff[6] = coolCmdGetSenVal;
     buff[7] = 00;
@@ -4536,7 +5153,7 @@ void MainWindow::COO_clearTemAlarm(ushort gateway_id,ushort device_id)
     buff[1] = 0xCA;
     buff[2] = 0xFF;
     buff[3] = 0xFF;
-    buff[4] = coolDevTempreture;
+    buff[4] = coolDevCoolChain;
     buff[5] = 0x03;//len
     buff[6] = coolCmdDisarm;
     buff[7] = 00;
@@ -4566,7 +5183,7 @@ void MainWindow::COO_tempretureVerfication(ushort gateway_id,ushort device_id)
     buff[1] = 0xCA;
     buff[2] = 0xFF;
     buff[3] = 0xFF;
-    buff[4] = coolDevTempreture;
+    buff[4] = coolDevCoolChain;
     buff[5] = 0x03;//len
     buff[6] = coolCmdTemVer;
     if(num<0)
@@ -4604,7 +5221,7 @@ void MainWindow::COO_HumVerfication(ushort gateway_id,ushort device_id)
     buff[1] = 0xCA;
     buff[2] = 0xFF;
     buff[3] = 0xFF;
-    buff[4] = coolDevTempreture;
+    buff[4] = coolDevCoolChain;
     buff[5] = 0x03;//len
     buff[6] = coolCmdHumVer;
     if(num<0)
@@ -4644,7 +5261,7 @@ void MainWindow::COO_tempretureAlarmHL(ushort gateway_id,ushort device_id)
     buff[1] = 0xCA;
     buff[2] = 0xFF;
     buff[3] = 0xFF;
-    buff[4] = coolDevTempreture;
+    buff[4] = coolDevCoolChain;
     buff[5] = 0x03;//len
     buff[6] = coolCmdSetAlaVal;
     if(tem_h<0)
@@ -4696,7 +5313,7 @@ void MainWindow::COO_setReportTime(ushort gateway_id,ushort device_id)
     buff[1] = 0xCA;
     buff[2] = 0xFF;
     buff[3] = 0xFF;
-    buff[4] = coolDevTempreture;
+    buff[4] = coolDevCoolChain;
     buff[5] = 0x05;//len
     buff[6] = coolCmdSetRepTime;
     buff[7] = 0xFF&(time>>24);
@@ -4708,6 +5325,36 @@ void MainWindow::COO_setReportTime(ushort gateway_id,ushort device_id)
     IOT_cmdApp(gateway_id,device_id,buff);
 }
 
+void MainWindow::COO_setReportTime(ushort gateway_id,ushort device_id,uchar *mac)
+{
+    QByteArray buff;
+    uint time;
+    time = coolSetRepTime_Edit->toPlainText().toUInt(Q_NULLPTR,10);
+
+    buff.clear();
+    buff[0] = 0xFA;
+    buff[1] = 0xCA;
+    buff[2] = mac[0];
+    buff[3] = mac[1];
+    buff[4] = mac[2];
+    buff[5] = mac[3];
+    buff[6] = mac[4];
+    buff[7] = mac[5];
+    buff[8] = mac[6];
+    buff[9] = mac[7];
+    buff[10] = coolDevTemTh;
+    buff[11] = 0x05;//len
+    buff[12] = coolCmdSetRepTime;
+    buff[13] = 0xFF&(time>>24);
+    buff[14] = 0xFF&(time>>16);
+    buff[15] = 0xFF&(time>>8);
+    buff[16] = 0xFF&(time>>0);
+    buff[17] = checkSum(buff,buff.length());
+
+    IOT_cmdApp(gateway_id,device_id,buff);
+}
+
+
 
 void MainWindow::COO_ackSuccess(ushort gateway_id,ushort device_id,uchar ack_cmd)
 {
@@ -4717,7 +5364,7 @@ void MainWindow::COO_ackSuccess(ushort gateway_id,ushort device_id,uchar ack_cmd
     buff[1] = 0xCA;
     buff[2] = 0xFF;
     buff[3] = 0xFF;
-    buff[4] = coolDevTempreture;
+    buff[4] = coolDevCoolChain;
     buff[5] = 0x03;//len
     buff[6] = coolCmdStatus;
     buff[7] = ack_cmd;
@@ -4737,7 +5384,7 @@ void MainWindow::COO_ackError(ushort gateway_id,ushort device_id,uchar ack_cmd)
     buff[1] = 0xCA;
     buff[2] = 0xFF;
     buff[3] = 0xFF;
-    buff[4] = coolDevTempreture;
+    buff[4] = coolDevCoolChain;
     buff[5] = 0x03;//len
     buff[6] = coolCmdStatus;
     buff[7] = ack_cmd;
@@ -4755,6 +5402,181 @@ void MainWindow::COO_ackError(ushort gateway_id,ushort device_id,uchar ack_cmd)
 
 
 /***********************cool end****************/
+
+
+
+/****************TemTH start****************/
+
+
+void MainWindow::TEMTH_init()
+{
+    temth_par.filtStr.clear();
+    TemTHFiltId->setPlainText("0xFFFF");
+
+}
+
+
+void MainWindow::TEMTH_DisplayWithTime(const QString &text)
+{
+
+    QString str;
+    QDateTime datTime = QDateTime::currentDateTime();
+    str = datTime.toString("yyyy-MM-dd hh:mm:ss/ ")+text;
+    TemTH_display->append(str);
+    str += "\r\n";
+    history_par.temTh_buff += QByteArray::fromStdString(str.toStdString());
+}
+
+void MainWindow::TEMTH_DisplayWithNoTime(const QString &text)
+{
+    TemTH_display->append( text);
+    QString str;
+    str = text + "\r\n";
+    history_par.temTh_buff += QByteArray::fromStdString(str.toStdString());
+}
+void MainWindow::on_TemTHFiltId_textChanged()
+{
+    QString str = TemTHFiltId->toPlainText();
+    if(str.length() == 0)
+    {
+        temth_par.filtId = 0xFFFF;
+    }
+    else if(str[0]=='0' && (str[1]=='x' || str[1]=='X'))
+    {
+        temth_par.filtId = str.toUShort(Q_NULLPTR,16);
+    }
+    else
+    {
+        temth_par.filtId = str.toUShort(Q_NULLPTR,10);
+    }
+    TEMTH_DisplayWithTime("filt id:0x"+uint16ToHex(temth_par.filtId).toUpper());
+}
+
+void MainWindow::on_TemTHFiltStr_textChanged()
+{
+    temth_par.filtStr = QByteArray::fromStdString(TemTHFiltStr->toPlainText().toStdString());
+    TEMTH_DisplayWithTime(QString("filt string:")+temth_par.filtStr);
+}
+
+
+
+
+void MainWindow::on_TemTHSetRepTime_Bt_clicked()
+{
+    ID_SEND send = id_access.getIdSendInf(rf_send.device_id);
+    TEMTH_setReportTime(send.gateway_id , rf_send.device_id,send.mac);
+    TEMTH_DisplayWithTime("设置采样时间");
+}
+
+
+void MainWindow::TEMTH_setReportTime(ushort gateway_id,ushort device_id,uchar *mac)
+{
+    QByteArray buff;
+    ushort time;
+    time = TemTHSetRepTime_Edit_2->text().toUShort(Q_NULLPTR,10);
+
+    buff.clear();
+    buff[0] = 0xAA;
+    buff[1] = 0x55;
+    buff[2] = mac[0];
+    buff[3] = mac[1];
+    buff[4] = mac[2];
+    buff[5] = mac[3];
+    buff[6] = mac[4];
+    buff[7] = mac[5];
+    buff[8] = mac[6];
+    buff[9] = mac[7];
+    buff[10] = coolDevTemTh;
+    buff[11] = 0x04;//len
+    buff[12] = TemThCmdSetRepTime;
+    buff[13] = 0xFF&(time>>8);
+    buff[14] = 0xFF&(time>>0);
+    buff[15] = 0;
+    buff[16] = checkSum(buff,buff.length());
+
+    IOT_cmdApp(gateway_id,device_id,buff);
+}
+
+
+
+void MainWindow::TEMTH_setSystemTime(ushort gateway_id,ushort device_id,uchar *mac)
+{
+    QByteArray buff;
+    uint time;
+    QDateTime datTime = QDateTime::currentDateTime();
+    TEMTH_DisplayWithTime(QString("set system time UTC: %1").arg(datTime.toUTC().toTime_t()));
+    time = datTime.toUTC().toTime_t();
+    buff.clear();
+    buff[0] = 0xAA;
+    buff[1] = 0x55;
+    buff[2] = mac[0];
+    buff[3] = mac[1];
+    buff[4] = mac[2];
+    buff[5] = mac[3];
+    buff[6] = mac[4];
+    buff[7] = mac[5];
+    buff[8] = mac[6];
+    buff[9] = mac[7];
+    buff[10] = coolDevTemTh;
+    buff[11] = 0x06;//len
+    buff[12] = TemThCmdSystemTime;
+    buff[13] = 0xFF&(time>>24);
+    buff[14] = 0xFF&(time>>16);
+    buff[15] = 0xFF&(time>>8);
+    buff[16] = 0xFF&(time>>0);
+    buff[17] = 0;
+    buff[18] = checkSum(buff,buff.length());
+
+    IOT_cmdApp(gateway_id,device_id,buff);
+}
+
+
+void MainWindow::TEMTH_ackSuccess(ushort gateway_id,ushort device_id,uchar ack_cmd)
+{
+    QByteArray buff;
+    buff.clear();
+    buff[0] = 0xAA;
+    buff[1] = 0x55;
+    buff[2] = 0xFF;
+    buff[3] = 0xFF;
+    buff[4] = coolDevCoolChain;
+    buff[5] = 0x03;//len
+    buff[6] = coolCmdStatus;
+    buff[7] = ack_cmd;
+    buff[8] = 00;
+    buff[9] = checkSum(buff,buff.length());
+
+    IOT_cmdApp(gateway_id,device_id,buff);
+
+    TEMTH_DisplayWithTime("server ack success");
+}
+
+void MainWindow::TEMTH_ackError(ushort gateway_id,ushort device_id,uchar ack_cmd)
+{
+    QByteArray buff;
+    buff.clear();
+    buff[0] = 0xAA;
+    buff[1] = 0x55;
+    buff[2] = 0xFF;
+    buff[3] = 0xFF;
+    buff[4] = coolDevCoolChain;
+    buff[5] = 0x03;//len
+    buff[6] = coolCmdStatus;
+    buff[7] = ack_cmd;
+    buff[8] = 01;
+    buff[9] = checkSum(buff,buff.length());
+
+    IOT_cmdApp(gateway_id,device_id,buff);
+
+    TEMTH_DisplayWithTime("server ack error");
+}
+
+
+
+
+
+
+/***********************TemTH end****************/
 
 
 /****************eneryg start****************/
@@ -4889,7 +5711,7 @@ void MainWindow::ENE_ackSuccess(ushort gateway_id,ushort device_id,uchar ack_cmd
 
     IOT_cmdApp(gateway_id,device_id,buff);
 
-    COO_DisplayWithTime("server ack success");
+    TEMTH_DisplayWithTime("server ack success");
 }
 
 void MainWindow::ENE_ackError(ushort gateway_id,ushort device_id,uchar ack_cmd)
@@ -4909,7 +5731,7 @@ void MainWindow::ENE_ackError(ushort gateway_id,ushort device_id,uchar ack_cmd)
 
     IOT_cmdApp(gateway_id,device_id,buff);
 
-    COO_DisplayWithTime("server ack error");
+    TEMTH_DisplayWithTime("server ack error");
 }
 
 
@@ -4921,17 +5743,17 @@ void MainWindow::ENE_ackError(ushort gateway_id,ushort device_id,uchar ack_cmd)
 
 void MainWindow::on_bt_clear_clicked()
 {
-    textBr_inp->clear();
-    textBr_mess->clear();
-    infDisplay->clear();
-    infEdit->clear();
-    infReceive->clear();
-    location_display->clear();
-    cool_display->clear();
-    energy_display->clear();
-    injection_display->clear();
-    sos_display->clear();
-    BLE_display->clear();
+    on_StoreDir_clicked();
+//    textBr_mess->clear();
+//    infDisplay->clear();
+//    infEdit->clear();
+//    infReceive->clear();
+//    location_display->clear();
+//    cool_display->clear();
+//    energy_display->clear();
+//    injection_display->clear();
+//    sos_display->clear();
+//    BLE_display->clear();
     for(uchar j = 0;j<DEVICE_DISPLAY_MAX;j++){
         //clear last location data
 
@@ -5054,6 +5876,13 @@ void MainWindow::on_StoreDir_clicked()
     history_par.cool_file->close();
     history_par.cool_buff.clear();
 
+
+    history_par.temTh_file = new QFile(history_par.temTh_path+str);
+    history_par.temTh_file->open(QIODevice::ReadWrite);
+    history_par.temTh_file->write(history_par.temTh_buff);
+    history_par.temTh_file->close();
+    history_par.temTh_buff.clear();
+
     history_par.energy_file = new QFile(history_par.energy_path+str);
     history_par.energy_file->open(QIODevice::ReadWrite);
     history_par.energy_file->write(history_par.energy_buff);
@@ -5080,7 +5909,6 @@ void MainWindow::on_StoreDir_clicked()
 
 
 
-    textBr_inp->clear();
     textBr_mess->clear();
     infDisplay->clear();
     infEdit->clear();
@@ -5088,7 +5916,11 @@ void MainWindow::on_StoreDir_clicked()
     location_display->clear();
     cool_display->clear();
     energy_display->clear();
+    injection_display->clear();
+    sos_display->clear();
     BLE_display->clear();
+    TemTH_display->clear();
+
 }
 
 void MainWindow::storeHistoryLog()
@@ -5144,11 +5976,11 @@ void MainWindow::storeHistoryLog()
         history_par.energy_file->close();
         history_par.energy_buff.clear();
 
-//        history_par.injection_file = new QFile(history_par.injection_path+str);
-//        history_par.injection_file->open(QIODevice::ReadWrite);
-//        history_par.injection_file->write(history_par.injection_buff);
-//        history_par.injection_file->close();
-//        history_par.injection_buff.clear();
+        history_par.injection_file = new QFile(history_par.injection_path+str);
+        history_par.injection_file->open(QIODevice::ReadWrite);
+        history_par.injection_file->write(history_par.injection_buff);
+        history_par.injection_file->close();
+        history_par.injection_buff.clear();
 
 //        history_par.custom_file = new QFile(history_par.custom_path+str);
 //        history_par.custom_file->open(QIODevice::ReadWrite);
@@ -5164,7 +5996,7 @@ void MainWindow::storeHistoryLog()
         history_par.ble_buff.clear();
 
 
-        textBr_inp->clear();
+
         textBr_mess->clear();
         infDisplay->clear();
         infEdit->clear();
@@ -5675,8 +6507,8 @@ void MainWindow::INJ_SetDi(ushort gateway_id,ushort device_id)
 void MainWindow::INJ_SetName(ushort gateway_id,ushort device_id)
 {
     QByteArray buff;
-    ushort dididi;
-    dididi = injectionSetName_Edit->toPlainText().toUInt(Q_NULLPTR,10);
+    QString str = injectionSetName_Edit->toPlainText();
+    INJ_DisplayWithNoTime(str);
 
     buff.clear();
     buff[0] = 0xFA;
@@ -5686,10 +6518,10 @@ void MainWindow::INJ_SetName(ushort gateway_id,ushort device_id)
     buff[4] = coolDevInjection;
     buff[5] = 0x03;//len
     buff[6] = injectionCmdSetName;
+    buff.append(str);
 
-    buff[7] = 0xFF&(dididi>>8);
-    buff[8] = 0xFF&(dididi>>0);
-    buff[9] = checkSum(buff,buff.length());
+//    buff[9] = checkSum(buff,buff.length());
+    buff.append(checkSum(buff,buff.length()));
 
     IOT_cmdApp(gateway_id,device_id,buff);
 }
@@ -6021,7 +6853,7 @@ void MainWindow::BLE_DisplayInit(void)
         display_par.device[i].rssi_offset = 0x00;
         display_par.device[i].color = Qt::white;
         display_par.device[i].displayInfFlag = false;
-        memset(display_par.device[i].mac,0x00,8);
+        memset(display_par.device[i].mac,0xFF,8);
     }
 
 
@@ -6089,7 +6921,15 @@ void MainWindow::BLE_displayUpdate()
 
 
     for(uchar i=0;i<DEVICE_DISPLAY_MAX;i++){
-        if(display_par.ant[i].id!=0xFFFF){
+        if((display_par.ant[i].mac[0] != 0xFF)||
+           (display_par.ant[i].mac[1] != 0xFF)||
+           (display_par.ant[i].mac[2] != 0xFF)||
+           (display_par.ant[i].mac[3] != 0xFF)||
+           (display_par.ant[i].mac[4] != 0xFF)||
+           (display_par.ant[i].mac[5] != 0xFF)||
+           (display_par.ant[i].mac[6] != 0xFF)||
+           (display_par.ant[i].mac[7] != 0xFF)){
+//        if(display_par.ant[i].id!=0xFFFF){
             x_point = x_convert(display_par.ant[i].x);
             y_point = y_convert(display_par.ant[i].y);
             pix.fill(display_par.ant[i].color);
@@ -6116,7 +6956,15 @@ void MainWindow::BLE_displayUpdate()
 
     pix.fill(Qt::darkBlue);
     for(uchar i=0;i<DEVICE_DISPLAY_MAX;i++){
-        if(display_par.device[i].id!=0xFFFF){
+        if((display_par.device[i].mac[0] != 0xFF)||
+           (display_par.device[i].mac[1] != 0xFF)||
+           (display_par.device[i].mac[2] != 0xFF)||
+           (display_par.device[i].mac[3] != 0xFF)||
+           (display_par.device[i].mac[4] != 0xFF)||
+           (display_par.device[i].mac[5] != 0xFF)||
+           (display_par.device[i].mac[6] != 0xFF)||
+           (display_par.device[i].mac[7] != 0xFF)){
+//        if(display_par.device[i].id!=0xFFFF){
             x_point = x_convert(display_par.device[i].x);
             y_point = y_convert(display_par.device[i].y);
             pix.fill(display_par.device[i].color);
@@ -6191,26 +7039,32 @@ void MainWindow::on_BLE_addAnt_clicked()
     uchar i;
     int x_point;
     int y_point;
-    ushort device_id;
+    uchar mac[8];
 
     str = BLE_xPointEdit->toPlainText();
     x_point = str.toInt();
     str = BLE_yPointEdit->toPlainText();
     y_point = str.toInt();
-    str = te_addrEdit->toPlainText();
-    if(str[0]=='0' && (str[1]=='x' || str[1]=='X'))
-    {
-        device_id = str.toUShort(Q_NULLPTR,16);
-    }
-    else
-    {
-        device_id = str.toUShort(Q_NULLPTR,10);
-    }
 
 
+    str = lineEditAddAntMac->text();
+    if(str.length()==16){
+        mac[0] = hexToUint8(str,0);
+        mac[1] = hexToUint8(str,2);
+        mac[2] = hexToUint8(str,4);
+        mac[3] = hexToUint8(str,6);
+        mac[4] = hexToUint8(str,8);
+        mac[5] = hexToUint8(str,10);
+        mac[6] = hexToUint8(str,12);
+        mac[7] = hexToUint8(str,14);
+    }
+    else {
+        return;
+    }
 
     for(i=0;i<DEVICE_DISPLAY_MAX;i++){
-       if(display_par.ant[i].id == device_id){
+       if(memcmp(display_par.ant[i].mac,mac,8)==0){
+           display_par.ant[i].id  = id_access.getIdMac(display_par.ant[i].mac);
            display_par.ant[i].x = x_point;
            display_par.ant[i].y = y_point;
            display_par.ant[i].color = Qt::darkGreen;
@@ -6219,8 +7073,17 @@ void MainWindow::on_BLE_addAnt_clicked()
     }
 
     for(i=0;i<DEVICE_DISPLAY_MAX;i++){
-       if(display_par.ant[i].id == 0xFFFF){
-           display_par.ant[i].id = device_id;
+       if((display_par.ant[i].mac[0] == 0xFF)&&
+          (display_par.ant[i].mac[1] == 0xFF)&&
+          (display_par.ant[i].mac[2] == 0xFF)&&
+          (display_par.ant[i].mac[3] == 0xFF)&&
+          (display_par.ant[i].mac[4] == 0xFF)&&
+          (display_par.ant[i].mac[5] == 0xFF)&&
+          (display_par.ant[i].mac[6] == 0xFF)&&
+          (display_par.ant[i].mac[7] == 0xFF)
+               ){
+           memcpy(display_par.ant[i].mac,mac,8);
+           display_par.ant[i].id  = id_access.getIdMac(display_par.ant[i].mac);
            display_par.ant[i].x = x_point;
            display_par.ant[i].y = y_point;
            display_par.ant[i].color = Qt::darkGreen;
@@ -6241,18 +7104,27 @@ void MainWindow::on_BLE_deleteAnt_clicked()
 {
     uchar i;
     QString str;
-    ushort device_id;
-    str = te_addrEdit->toPlainText();
-    if(str[0]=='0' && (str[1]=='x' || str[1]=='X'))
-    {
-        device_id = str.toUShort(Q_NULLPTR,16);
+    uchar mac[8];
+    str = lineEditAddAntMac->text();
+    if(str.length()==16){
+        mac[0] = hexToUint8(str,0);
+        mac[1] = hexToUint8(str,2);
+        mac[2] = hexToUint8(str,4);
+        mac[3] = hexToUint8(str,6);
+        mac[4] = hexToUint8(str,8);
+        mac[5] = hexToUint8(str,10);
+        mac[6] = hexToUint8(str,12);
+        mac[7] = hexToUint8(str,14);
     }
-    else
-    {
-        device_id = str.toUShort(Q_NULLPTR,10);
+    else {
+        return;
     }
+
+
+
     for(i=0;i<DEVICE_DISPLAY_MAX;i++){
-       if(display_par.ant[i].id == device_id){
+       if(memcmp(display_par.ant[i].mac,mac,8)==0){
+//       if(display_par.ant[i].id == device_id){
            display_par.ant[i].id = 0xFFFF;
            display_par.ant[i].x = 0x00;
            display_par.ant[i].y = 0x00;
@@ -6260,7 +7132,7 @@ void MainWindow::on_BLE_deleteAnt_clicked()
            display_par.ant[i].rssi_offset = 0x00;
            display_par.ant[i].color = Qt::white;
            display_par.ant[i].displayInfFlag = false;
-           memset(display_par.ant[i].mac,0x00,8);
+           memset(display_par.ant[i].mac,0xFF,8);
            BLE_displayUpdate();
        }
     }
@@ -6279,14 +7151,17 @@ void MainWindow::on_horizontalSlider_valueChanged(int value)
     for(uchar i=0;i<DEVICE_DISPLAY_MAX;i++){
        if(display_par.ant[i].id == rf_send.device_id){
            display_par.ant[i].radius = value;  
+           IOT_sendIdInformation(rf_send.device_id,net_par.locationSocket);
        }
     }
     for(uchar i=0;i<DEVICE_DISPLAY_MAX;i++){
        if(display_par.device[i].id == rf_send.device_id){
            display_par.device[i].radius= value;
+           IOT_sendIdInformation(rf_send.device_id,net_par.locationSocket);
        }
     }
     BLE_displayUpdate();
+
 }
 
 void MainWindow::on_BLE_showDeviceInf_clicked()
@@ -6323,12 +7198,28 @@ void MainWindow::on_BLE_hideDeviceInf_clicked()
 void MainWindow::on_BLE_showAllDeviceInf_clicked()
 {
     for(uchar i=0;i<DEVICE_DISPLAY_MAX;i++){
-       if(display_par.ant[i].id != 0xFFFF){
+        if((display_par.ant[i].mac[0] != 0xFF)||
+           (display_par.ant[i].mac[1] != 0xFF)||
+           (display_par.ant[i].mac[2] != 0xFF)||
+           (display_par.ant[i].mac[3] != 0xFF)||
+           (display_par.ant[i].mac[4] != 0xFF)||
+           (display_par.ant[i].mac[5] != 0xFF)||
+           (display_par.ant[i].mac[6] != 0xFF)||
+           (display_par.ant[i].mac[7] != 0xFF)){
+//       if(display_par.ant[i].id != 0xFFFF){
            display_par.ant[i].displayInfFlag = true;
        }
     }
     for(uchar i=0;i<DEVICE_DISPLAY_MAX;i++){
-       if(display_par.device[i].id != 0xFFFF){
+        if((display_par.device[i].mac[0] != 0xFF)||
+           (display_par.device[i].mac[1] != 0xFF)||
+           (display_par.device[i].mac[2] != 0xFF)||
+           (display_par.device[i].mac[3] != 0xFF)||
+           (display_par.device[i].mac[4] != 0xFF)||
+           (display_par.device[i].mac[5] != 0xFF)||
+           (display_par.device[i].mac[6] != 0xFF)||
+           (display_par.device[i].mac[7] != 0xFF)){
+//       if(display_par.device[i].id != 0xFFFF){
            display_par.device[i].displayInfFlag = true;
        }
     }
@@ -6339,12 +7230,28 @@ void MainWindow::on_BLE_showAllDeviceInf_clicked()
 void MainWindow::on_BLE_hideAllDeviceInf_clicked()
 {
     for(uchar i=0;i<DEVICE_DISPLAY_MAX;i++){
-       if(display_par.ant[i].id != 0xFFFF){
+        if((display_par.ant[i].mac[0] != 0xFF)||
+           (display_par.ant[i].mac[1] != 0xFF)||
+           (display_par.ant[i].mac[2] != 0xFF)||
+           (display_par.ant[i].mac[3] != 0xFF)||
+           (display_par.ant[i].mac[4] != 0xFF)||
+           (display_par.ant[i].mac[5] != 0xFF)||
+           (display_par.ant[i].mac[6] != 0xFF)||
+           (display_par.ant[i].mac[7] != 0xFF)){
+//       if(display_par.ant[i].id != 0xFFFF){
            display_par.ant[i].displayInfFlag = false;
        }
     }
     for(uchar i=0;i<DEVICE_DISPLAY_MAX;i++){
-       if(display_par.device[i].id != 0xFFFF){
+        if((display_par.device[i].mac[0] != 0xFF)||
+           (display_par.device[i].mac[1] != 0xFF)||
+           (display_par.device[i].mac[2] != 0xFF)||
+           (display_par.device[i].mac[3] != 0xFF)||
+           (display_par.device[i].mac[4] != 0xFF)||
+           (display_par.device[i].mac[5] != 0xFF)||
+           (display_par.device[i].mac[6] != 0xFF)||
+           (display_par.device[i].mac[7] != 0xFF)){
+//       if(display_par.device[i].id != 0xFFFF){
            display_par.device[i].displayInfFlag = false;
        }
     }
@@ -6368,7 +7275,7 @@ void MainWindow::on_BLE_rssiCalculatorSlider_valueChanged(int value)
     BLE_displayUpdate();
 }
 
-void MainWindow::BLE_storeData(ushort device_id,ushort ant_id,uchar sequence,char rssi){
+void MainWindow::BLE_storeData(ushort device_id,ushort ant_id,uchar sequence,short rssi){
     for(uchar j = 0 ; j <DEVICE_DISPLAY_MAX;j++){
         //seek ant0 information
         if(display_par.ant[j].id==ant_id){
@@ -6945,7 +7852,7 @@ bool MainWindow::BLE_idInfoReadFromFile()
            display_par.ant[i].rssi_offset = 0x00;
            display_par.ant[i].color = Qt::white;
            display_par.ant[i].displayInfFlag = false;
-           memset(display_par.ant[i].mac,0x00,8);
+           memset(display_par.ant[i].mac,0xFF,8);
 
            display_par.device[i].id = 0xFFFF;
            display_par.device[i].x = 0x00;
@@ -6954,7 +7861,7 @@ bool MainWindow::BLE_idInfoReadFromFile()
            display_par.device[i].rssi_offset = 0x00;
            display_par.device[i].color = Qt::white;
            display_par.device[i].displayInfFlag = false;
-           memset(display_par.device[i].mac,0x00,8);
+           memset(display_par.device[i].mac,0xFF,8);
 
        }
 
@@ -6992,3 +7899,21 @@ void MainWindow::on_BLE_sendAntList_clicked()
 {
     IOT_sendAntInformation(net_par.locationSocket);
 }
+
+void MainWindow::on_textEdit_MIN_ID_textChanged()
+{
+//    ushort min_id = textEdit_MIN_ID->toPlainText().toUShort();
+//    if(min_id<50000)textEdit_MIN_ID->setPlainText("50000");
+}
+
+void MainWindow::on_textEdit_MAX_ID_textChanged()
+{
+//    ushort max_id = textEdit_MAX_ID->toPlainText().toUShort();
+//    if(max_id<50000)textEdit_MAX_ID->setPlainText("51000");
+}
+
+
+
+
+
+

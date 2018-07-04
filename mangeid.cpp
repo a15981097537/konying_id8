@@ -397,6 +397,16 @@ QString MangeId::getIdMac(ushort id)
     return strToHex(id_store[id].mac , 8).toUpper();
 }
 
+ushort MangeId::getIdMac(uchar *mac)
+{
+    uint i;
+    for(i=0;i<65536;i++){
+        if(id_store[i].device_id != 0xFFFF){
+            if(memcmp(id_store[i].mac,mac,8)==0)return i;
+        }
+    }
+}
+
 
 ID_SEND MangeId::getIdSendInf(ushort id)
 {

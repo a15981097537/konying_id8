@@ -11,10 +11,10 @@ MAKEFILE      = Makefile.Debug
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -D_TTY_WIN_ -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB -DQT_NEEDS_QMAIN
+DEFINES       = -D_TTY_WIN_ -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB -DQT_NEEDS_QMAIN
 CFLAGS        = -pipe -fno-keep-inline-dllexport -g -Wall -Wextra $(DEFINES)
 CXXFLAGS      = -pipe -fno-keep-inline-dllexport -g -std=gnu++11 -frtti -Wall -Wextra -fexceptions -mthreads $(DEFINES)
-INCPATH       = -I. -Iqextserialport -Ithreadcomport -Ieigen-eigen-5a0156e40feb/Eigen -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtANGLE -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtNetwork -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore -Idebug -I. -ID:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/win32-g++ 
+INCPATH       = -I. -Iqextserialport -Ithreadcomport -I../project/eigen-eigen-5a0156e40feb/Eigen -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtANGLE -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtNetwork -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore -Idebug -I. -ID:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/win32-g++ 
 LINKER      =        g++
 LFLAGS        =        -Wl,-subsystem,windows -mthreads
 LIBS        =        -lmingw32 -LD:/Qt/Qt5.7.0/5.7/mingw53_32/lib D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/libqtmaind.a -LC:/utils/postgresql/pgsql/lib -LC:/utils/my_sql/my_sql/lib -lshell32 D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/libQt5Cored.a D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/libQt5Widgetsd.a D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/libQt5Guid.a D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/libQt5Networkd.a D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/libQt5Cored.a debug/Qt_comport_res.o 
@@ -45,48 +45,30 @@ OBJECTS_DIR   = debug/
 
 SOURCES       = main.cpp \
 		mainwindow.cpp \
-		threadcomport/threadcomport.cpp \
-		qextserialport/qextserialbase.cpp \
-		qextserialport/qextserialport.cpp \
 		user_md5.cpp \
 		mangeid.cpp \
 		mygraphicsitem.cpp \
-		equation.cpp \
-		qextserialport/win_qextserialport.cpp debug/qrc_qmake_qmake_immediate.cpp \
-		debug/moc_mainwindow.cpp \
-		debug/moc_threadcomport.cpp
+		equation.cpp debug/qrc_qmake_qmake_immediate.cpp \
+		debug/moc_mainwindow.cpp
 OBJECTS       = debug/main.o \
 		debug/mainwindow.o \
-		debug/threadcomport.o \
-		debug/qextserialbase.o \
-		debug/qextserialport.o \
 		debug/user_md5.o \
 		debug/mangeid.o \
 		debug/mygraphicsitem.o \
 		debug/equation.o \
-		debug/win_qextserialport.o \
 		debug/qrc_qmake_qmake_immediate.o \
-		debug/moc_mainwindow.o \
-		debug/moc_threadcomport.o
+		debug/moc_mainwindow.o
 
 DIST          =  mainwindow.h \
-		threadcomport/threadcomport.h \
-		qextserialport/qextserialbase.h \
-		qextserialport/qextserialport.h \
 		user_md5.h \
 		mangeid.h \
 		mygraphicsitem.h \
-		equation.h \
-		qextserialport/win_qextserialport.h main.cpp \
+		equation.h main.cpp \
 		mainwindow.cpp \
-		threadcomport/threadcomport.cpp \
-		qextserialport/qextserialbase.cpp \
-		qextserialport/qextserialport.cpp \
 		user_md5.cpp \
 		mangeid.cpp \
 		mygraphicsitem.cpp \
-		equation.cpp \
-		qextserialport/win_qextserialport.cpp
+		equation.cpp
 QMAKE_TARGET  = Qt_comport
 DESTDIR        = debug/ #avoid trailing-slash linebreak
 TARGET         = Qt_comport.exe
@@ -98,21 +80,21 @@ first: all
 all: Makefile.Debug  $(DESTDIR_TARGET)
 
 $(DESTDIR_TARGET): ui_main_window_form.h $(OBJECTS) debug/Qt_comport_res.o
-	$(LINKER) $(LFLAGS) -o $(DESTDIR_TARGET) object_script.Qt_comport.Debug  $(LIBS)
+	$(LINKER) $(LFLAGS) -o $(DESTDIR_TARGET) $(OBJECTS)  $(LIBS)
 
 debug/Qt_comport_res.o: Qt_comport.rc
 	windres -i Qt_comport.rc -o debug/Qt_comport_res.o --include-dir=. $(DEFINES)
 
 qmake: FORCE
-	@$(QMAKE) -spec win32-g++ CONFIG+=debug CONFIG+=qml_debug -o Makefile.Debug Qt_comport.pro
+	@$(QMAKE) -spec win32-g++ -o Makefile.Debug Qt_comport.pro
 
 qmake_all: FORCE
 
 dist:
-	$(ZIP) Qt_comport.zip $(SOURCES) $(DIST) Qt_comport.pro D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/spec_pre.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/qdevice.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/device_config.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/common/angle.conf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/qconfig.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dcore.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dcore_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dextras.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dextras_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dinput.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dinput_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dlogic.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dlogic_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquick.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquick_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickextras.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickextras_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickinput.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickinput_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickrender.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickrender_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3drender.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3drender_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_axbase.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_axbase_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_axcontainer.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_axcontainer_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_axserver.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_axserver_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_bluetooth.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_bluetooth_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_bootstrap_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_clucene_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_concurrent.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_concurrent_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_core.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_core_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_dbus.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_dbus_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_designer.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_designer_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_designercomponents_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_gamepad.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_gamepad_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_gui.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_gui_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_help.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_help_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_location.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_location_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_multimedia.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_multimedia_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_multimediawidgets.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_multimediawidgets_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_network.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_network_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_nfc.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_nfc_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_opengl.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_opengl_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_openglextensions.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_openglextensions_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_packetprotocol_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_platformsupport_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_positioning.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_positioning_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_printsupport.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_printsupport_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_purchasing.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_purchasing_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_qml.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_qml_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_qmldebug_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_qmldevtools_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_qmltest.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_qmltest_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_qtmultimediaquicktools_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quick.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quick_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quickcontrols2.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quickcontrols2_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quickparticles_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quicktemplates2_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quickwidgets.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quickwidgets_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_script.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_script_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_scripttools.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_scripttools_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_scxml.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_scxml_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_sensors.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_sensors_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_serialbus.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_serialbus_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_serialport.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_serialport_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_sql.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_sql_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_svg.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_svg_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_testlib.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_testlib_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_uiplugin.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_uitools.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_uitools_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_webchannel.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_webchannel_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_websockets.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_websockets_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_widgets.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_widgets_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_winextras.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_winextras_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_xml.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_xml_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_xmlpatterns.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_xmlpatterns_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/qt_functions.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/qt_config.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/win32/qt_config.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/win32-g++/qmake.conf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/spec_post.prf .qmake.stash D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/exclusive_builds.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/default_pre.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/win32/default_pre.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/resolve_config.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/exclusive_builds_post.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/default_post.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/build_pass.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/qml_debug.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/win32/rtti.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/precompile_header.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/warn_on.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/qt.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/resources.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/moc.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/win32/opengl.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/uic.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/file_copies.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/win32/windows.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/testcase_targets.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/exceptions.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/yacc.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/lex.prf Qt_comport.pro debug/qmake_qmake_immediate.qrc D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/qtmaind.prl D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/Qt5Widgetsd.prl D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/Qt5Guid.prl D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/Qt5Networkd.prl D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/Qt5Cored.prl  NO_PCH_SOURCES RESOURCES HEADERS SOURCES OBJECTIVE_SOURCES FORMS YACCSOURCES YACCSOURCES LEXSOURCES 
+	$(ZIP) Qt_comport.zip $(SOURCES) $(DIST) Qt_comport.pro D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/spec_pre.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/qdevice.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/device_config.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/common/angle.conf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/qconfig.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dcore.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dcore_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dextras.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dextras_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dinput.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dinput_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dlogic.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dlogic_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquick.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquick_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickextras.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickextras_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickinput.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickinput_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickrender.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickrender_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3drender.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3drender_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_axbase.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_axbase_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_axcontainer.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_axcontainer_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_axserver.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_axserver_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_bluetooth.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_bluetooth_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_bootstrap_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_clucene_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_concurrent.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_concurrent_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_core.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_core_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_dbus.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_dbus_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_designer.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_designer_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_designercomponents_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_gamepad.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_gamepad_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_gui.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_gui_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_help.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_help_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_location.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_location_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_multimedia.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_multimedia_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_multimediawidgets.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_multimediawidgets_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_network.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_network_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_nfc.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_nfc_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_opengl.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_opengl_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_openglextensions.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_openglextensions_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_packetprotocol_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_platformsupport_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_positioning.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_positioning_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_printsupport.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_printsupport_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_purchasing.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_purchasing_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_qml.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_qml_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_qmldebug_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_qmldevtools_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_qmltest.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_qmltest_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_qtmultimediaquicktools_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quick.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quick_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quickcontrols2.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quickcontrols2_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quickparticles_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quicktemplates2_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quickwidgets.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quickwidgets_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_script.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_script_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_scripttools.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_scripttools_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_scxml.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_scxml_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_sensors.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_sensors_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_serialbus.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_serialbus_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_serialport.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_serialport_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_sql.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_sql_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_svg.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_svg_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_testlib.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_testlib_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_uiplugin.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_uitools.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_uitools_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_webchannel.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_webchannel_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_websockets.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_websockets_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_widgets.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_widgets_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_winextras.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_winextras_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_xml.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_xml_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_xmlpatterns.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_xmlpatterns_private.pri D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/qt_functions.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/qt_config.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/win32/qt_config.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/win32-g++/qmake.conf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/spec_post.prf .qmake.stash D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/exclusive_builds.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/default_pre.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/win32/default_pre.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/resolve_config.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/exclusive_builds_post.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/default_post.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/build_pass.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/win32/rtti.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/precompile_header.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/warn_on.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/qt.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/resources.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/moc.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/win32/opengl.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/uic.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/file_copies.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/win32/windows.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/testcase_targets.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/exceptions.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/yacc.prf D:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/features/lex.prf Qt_comport.pro debug/qmake_qmake_immediate.qrc D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/qtmaind.prl D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/Qt5Widgetsd.prl D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/Qt5Guid.prl D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/Qt5Networkd.prl D:/Qt/Qt5.7.0/5.7/mingw53_32/lib/Qt5Cored.prl  NO_PCH_SOURCES RESOURCES HEADERS SOURCES OBJECTIVE_SOURCES FORMS YACCSOURCES YACCSOURCES LEXSOURCES 
 
 clean: compiler_clean 
-	-$(DEL_FILE) debug/main.o debug/mainwindow.o debug/threadcomport.o debug/qextserialbase.o debug/qextserialport.o debug/user_md5.o debug/mangeid.o debug/mygraphicsitem.o debug/equation.o debug/win_qextserialport.o debug/qrc_qmake_qmake_immediate.o debug/moc_mainwindow.o debug/moc_threadcomport.o
+	-$(DEL_FILE) debug/main.o debug/mainwindow.o debug/user_md5.o debug/mangeid.o debug/mygraphicsitem.o debug/equation.o debug/qrc_qmake_qmake_immediate.o debug/moc_mainwindow.o
 	-$(DEL_FILE) debug/Qt_comport_res.o
 
 distclean: clean 
@@ -138,9 +120,9 @@ debug/qrc_qmake_qmake_immediate.cpp: debug/qmake_qmake_immediate.qrc \
 		resources.grc
 	'D:\Qt\Qt5.7.0\5.7\mingw53_32\bin\rcc.exe' -name qmake_qmake_immediate debug/qmake_qmake_immediate.qrc -o debug/qrc_qmake_qmake_immediate.cpp
 
-compiler_moc_header_make_all: debug/moc_mainwindow.cpp debug/moc_threadcomport.cpp
+compiler_moc_header_make_all: debug/moc_mainwindow.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) debug/moc_mainwindow.cpp debug/moc_threadcomport.cpp
+	-$(DEL_FILE) debug/moc_mainwindow.cpp
 debug/moc_mainwindow.cpp: D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QMainWindow \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qmainwindow.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qwidget.h \
@@ -294,6 +276,10 @@ debug/moc_mainwindow.cpp: D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QMainWi
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qitemselectionmodel.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QLabel \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qlabel.h \
+		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QLineEdit \
+		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qlineedit.h \
+		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui/qtextcursor.h \
+		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui/qtextformat.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QListWidget \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qlistwidget.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qlistview.h \
@@ -308,8 +294,6 @@ debug/moc_mainwindow.cpp: D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QMainWi
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qradiobutton.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QSlider \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QSpacerItem \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QSpinBox \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qspinbox.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QStatusBar \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qstatusbar.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QTabWidget \
@@ -317,23 +301,9 @@ debug/moc_mainwindow.cpp: D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QMainWi
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qtextbrowser.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qtextedit.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui/qtextdocument.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui/qtextcursor.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui/qtextformat.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QTextEdit \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QVBoxLayout \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QWidget \
-		threadcomport/threadcomport.h \
-		qextserialport/qextserialport.h \
-		qextserialport/posix_qextserialport.h \
-		qextserialport/qextserialbase.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QIODevice \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QFile \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QThread \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qthread.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QMutex \
-		qextserialport/win_qextserialport.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QTime \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qdatetime.h \
 		user_md5.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui/QtGui \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui/QtGuiDepends \
@@ -350,6 +320,7 @@ debug/moc_mainwindow.cpp: D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QMainWi
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qtextcodec.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qendian.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qlibraryinfo.h \
+		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qdatetime.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qbuffer.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qdir.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qfileinfo.h \
@@ -416,6 +387,7 @@ debug/moc_mainwindow.cpp: D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QMainWi
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qfuturewatcher.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qreadwritelock.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qsemaphore.h \
+		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qthread.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qthreadpool.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qthreadstorage.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qwaitcondition.h \
@@ -533,6 +505,7 @@ debug/moc_mainwindow.cpp: D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QMainWi
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QtDebug \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QRegExp \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QTextCodec \
+		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QTime \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QString \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QMessageBox \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qmessagebox.h \
@@ -545,6 +518,7 @@ debug/moc_mainwindow.cpp: D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QMainWi
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QUrl \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtNetwork/qhttpmultipart.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QByteArray \
+		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QIODevice \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtNetwork/QNetworkRequest \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtNetwork/qnetworkaccessmanager.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtNetwork/QSslConfiguration \
@@ -589,74 +563,7 @@ debug/moc_mainwindow.cpp: D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QMainWi
 		mangeid.h \
 		mainwindow.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/bin/moc.exe
-	'D:\Qt\Qt5.7.0\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -ID:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/win32-g++ -IE:/project/firmware_update_net/project -IE:/project/firmware_update_net/project/qextserialport -IE:/project/firmware_update_net/project/threadcomport -IE:/project/firmware_update_net/project/eigen-eigen-5a0156e40feb/Eigen -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtANGLE -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtNetwork -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore -ID:/Qt/Qt5.7.0/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -ID:/Qt/Qt5.7.0/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -ID:/Qt/Qt5.7.0/Tools/mingw530_32/i686-w64-mingw32/include -ID:/Qt/Qt5.7.0/Tools/mingw530_32/i686-w64-mingw32/include/c++ -ID:/Qt/Qt5.7.0/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -ID:/Qt/Qt5.7.0/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward mainwindow.h -o debug/moc_mainwindow.cpp
-
-debug/moc_threadcomport.cpp: qextserialport/qextserialport.h \
-		qextserialport/posix_qextserialport.h \
-		qextserialport/qextserialbase.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QIODevice \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qiodevice.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qglobal.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qconfig.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qfeatures.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qsystemdetection.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qprocessordetection.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qcompilerdetection.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qtypeinfo.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qtypetraits.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qisenum.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qsysinfo.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qlogging.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qflags.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qatomic.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qbasicatomic.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qatomic_bootstrap.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qgenericatomic.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qatomic_cxx11.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qatomic_msvc.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qglobalstatic.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qmutex.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qnumeric.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qversiontagging.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qobject.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qobjectdefs.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qnamespace.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qobjectdefs_impl.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qstring.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qchar.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qbytearray.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qrefcount.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qarraydata.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qstringbuilder.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qlist.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qalgorithms.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qiterator.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qhashfunctions.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qpair.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qbytearraylist.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qstringlist.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qregexp.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qstringmatcher.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qcoreevent.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qscopedpointer.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qmetatype.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qvarlengtharray.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qcontainerfwd.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qobject_impl.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QFile \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qfile.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qfiledevice.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QThread \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qthread.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QMutex \
-		qextserialport/win_qextserialport.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QTime \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qdatetime.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qshareddata.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qhash.h \
-		threadcomport/threadcomport.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/bin/moc.exe
-	'D:\Qt\Qt5.7.0\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -ID:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/win32-g++ -IE:/project/firmware_update_net/project -IE:/project/firmware_update_net/project/qextserialport -IE:/project/firmware_update_net/project/threadcomport -IE:/project/firmware_update_net/project/eigen-eigen-5a0156e40feb/Eigen -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtANGLE -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtNetwork -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore -ID:/Qt/Qt5.7.0/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -ID:/Qt/Qt5.7.0/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -ID:/Qt/Qt5.7.0/Tools/mingw530_32/i686-w64-mingw32/include -ID:/Qt/Qt5.7.0/Tools/mingw530_32/i686-w64-mingw32/include/c++ -ID:/Qt/Qt5.7.0/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -ID:/Qt/Qt5.7.0/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward threadcomport/threadcomport.h -o debug/moc_threadcomport.cpp
+	'D:\Qt\Qt5.7.0\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -ID:/Qt/Qt5.7.0/5.7/mingw53_32/mkspecs/win32-g++ -IE:/project/firmware_update_net/algorithm_ID8 -IE:/project/firmware_update_net/algorithm_ID8/qextserialport -IE:/project/firmware_update_net/algorithm_ID8/threadcomport -IE:/project/firmware_update_net/project/eigen-eigen-5a0156e40feb/Eigen -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtANGLE -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtNetwork -ID:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore -ID:/Qt/Qt5.7.0/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -ID:/Qt/Qt5.7.0/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -ID:/Qt/Qt5.7.0/Tools/mingw530_32/i686-w64-mingw32/include -ID:/Qt/Qt5.7.0/Tools/mingw530_32/i686-w64-mingw32/include/c++ -ID:/Qt/Qt5.7.0/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -ID:/Qt/Qt5.7.0/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward mainwindow.h -o debug/moc_mainwindow.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -833,6 +740,10 @@ debug/main.o: main.cpp D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QApplicati
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qitemselectionmodel.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QLabel \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qlabel.h \
+		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QLineEdit \
+		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qlineedit.h \
+		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui/qtextcursor.h \
+		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui/qtextformat.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QListWidget \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qlistwidget.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qlistview.h \
@@ -847,8 +758,6 @@ debug/main.o: main.cpp D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QApplicati
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qradiobutton.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QSlider \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QSpacerItem \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QSpinBox \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qspinbox.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QStatusBar \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qstatusbar.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QTabWidget \
@@ -856,23 +765,9 @@ debug/main.o: main.cpp D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QApplicati
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qtextbrowser.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qtextedit.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui/qtextdocument.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui/qtextcursor.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui/qtextformat.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QTextEdit \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QVBoxLayout \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QWidget \
-		threadcomport/threadcomport.h \
-		qextserialport/qextserialport.h \
-		qextserialport/posix_qextserialport.h \
-		qextserialport/qextserialbase.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QIODevice \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QFile \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QThread \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qthread.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QMutex \
-		qextserialport/win_qextserialport.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QTime \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qdatetime.h \
 		user_md5.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui/QtGui \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui/QtGuiDepends \
@@ -889,6 +784,7 @@ debug/main.o: main.cpp D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QApplicati
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qtextcodec.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qendian.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qlibraryinfo.h \
+		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qdatetime.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qbuffer.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qdir.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qfileinfo.h \
@@ -955,6 +851,7 @@ debug/main.o: main.cpp D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QApplicati
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qfuturewatcher.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qreadwritelock.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qsemaphore.h \
+		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qthread.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qthreadpool.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qthreadstorage.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qwaitcondition.h \
@@ -1072,6 +969,7 @@ debug/main.o: main.cpp D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QApplicati
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QtDebug \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QRegExp \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QTextCodec \
+		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QTime \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QString \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QMessageBox \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qmessagebox.h \
@@ -1084,6 +982,7 @@ debug/main.o: main.cpp D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QApplicati
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QUrl \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtNetwork/qhttpmultipart.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QByteArray \
+		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QIODevice \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtNetwork/QNetworkRequest \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtNetwork/qnetworkaccessmanager.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtNetwork/QSslConfiguration \
@@ -1447,212 +1346,212 @@ debug/mainwindow.o: mainwindow.cpp D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui/Qt
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qsizepolicy.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qfiledialog.h \
 		equation.h \
-		eigen-eigen-5a0156e40feb/Eigen/Core \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/util/DisableStupidWarnings.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/util/Macros.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/util/MKL_support.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/misc/blas.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/util/Constants.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/util/Meta.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/util/ForwardDeclarations.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/util/StaticAssert.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/util/XprHelper.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/util/Memory.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/NumTraits.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/MathFunctions.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/GenericPacketMath.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/MathFunctionsImpl.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/SSE/PacketMath.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX/PacketMath.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX512/PacketMath.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX512/MathFunctions.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/SSE/Complex.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/SSE/MathFunctions.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX/MathFunctions.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX/Complex.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX/TypeCasting.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/SSE/TypeCasting.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AltiVec/PacketMath.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AltiVec/MathFunctions.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AltiVec/Complex.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/NEON/PacketMath.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/NEON/MathFunctions.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/NEON/Complex.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/ZVector/PacketMath.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/ZVector/MathFunctions.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/ZVector/Complex.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/Half.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/PacketMathHalf.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/TypeCasting.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/PacketMath.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/MathFunctions.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/Default/Settings.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/TernaryFunctors.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/BinaryFunctors.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/UnaryFunctors.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/NullaryFunctors.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/StlFunctors.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/AssignmentFunctors.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/Complex.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/IO.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/DenseCoeffsBase.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/DenseBase.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/plugins/BlockMethods.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/MatrixBase.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/plugins/CommonCwiseUnaryOps.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/plugins/CommonCwiseBinaryOps.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/plugins/MatrixCwiseUnaryOps.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/plugins/MatrixCwiseBinaryOps.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/EigenBase.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Product.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/CoreEvaluators.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/AssignEvaluator.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Assign.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/ArrayBase.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/plugins/ArrayCwiseUnaryOps.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/plugins/ArrayCwiseBinaryOps.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/util/BlasUtil.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/DenseStorage.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/NestByValue.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/ReturnByValue.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/NoAlias.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/PlainObjectBase.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Matrix.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Array.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/CwiseTernaryOp.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/CwiseBinaryOp.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/CwiseUnaryOp.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/CwiseNullaryOp.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/CwiseUnaryView.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/SelfCwiseBinaryOp.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Dot.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/StableNorm.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Stride.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/MapBase.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Map.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Ref.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Block.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/VectorBlock.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Transpose.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/DiagonalMatrix.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Diagonal.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/DiagonalProduct.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Redux.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Visitor.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Fuzzy.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Swap.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/CommaInitializer.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/GeneralProduct.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Solve.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Inverse.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/SolverBase.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/PermutationMatrix.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Transpositions.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/TriangularMatrix.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/SelfAdjointView.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralBlockPanelKernel.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/Parallelizer.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/ProductEvaluators.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixVector.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixMatrix.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/SolveTriangular.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixMatrixTriangular.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointMatrixVector.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointMatrixMatrix.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointProduct.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointRank2Update.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularMatrixVector.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularMatrixMatrix.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularSolverMatrix.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularSolverVector.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/BandMatrix.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/CoreIterators.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/ConditionEstimator.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/BooleanRedux.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Select.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/VectorwiseOp.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Random.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Replicate.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Reverse.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/ArrayWrapper.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixMatrix_BLAS.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixVector_BLAS.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixMatrixTriangular_BLAS.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointMatrixMatrix_BLAS.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointMatrixVector_BLAS.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularMatrixMatrix_BLAS.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularMatrixVector_BLAS.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularSolverMatrix_BLAS.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Assign_MKL.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/GlobalFunctions.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/util/ReenableStupidWarnings.h \
-		eigen-eigen-5a0156e40feb/Eigen/Dense \
-		eigen-eigen-5a0156e40feb/Eigen/LU \
-		eigen-eigen-5a0156e40feb/Eigen/src/misc/Kernel.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/misc/Image.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/LU/FullPivLU.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/LU/PartialPivLU.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/misc/lapacke.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/misc/lapacke_mangling.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/LU/PartialPivLU_LAPACKE.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/LU/Determinant.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/LU/InverseImpl.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/LU/arch/Inverse_SSE.h \
-		eigen-eigen-5a0156e40feb/Eigen/Cholesky \
-		eigen-eigen-5a0156e40feb/Eigen/src/Cholesky/LLT.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Cholesky/LDLT.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Cholesky/LLT_LAPACKE.h \
-		eigen-eigen-5a0156e40feb/Eigen/QR \
-		eigen-eigen-5a0156e40feb/Eigen/Jacobi \
-		eigen-eigen-5a0156e40feb/Eigen/src/Jacobi/Jacobi.h \
-		eigen-eigen-5a0156e40feb/Eigen/Householder \
-		eigen-eigen-5a0156e40feb/Eigen/src/Householder/Householder.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Householder/HouseholderSequence.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Householder/BlockHouseholder.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/QR/HouseholderQR.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/QR/FullPivHouseholderQR.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/QR/ColPivHouseholderQR.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/QR/CompleteOrthogonalDecomposition.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/QR/HouseholderQR_LAPACKE.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/QR/ColPivHouseholderQR_LAPACKE.h \
-		eigen-eigen-5a0156e40feb/Eigen/SVD \
-		eigen-eigen-5a0156e40feb/Eigen/src/misc/RealSvd2x2.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/SVD/UpperBidiagonalization.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/SVD/SVDBase.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/SVD/JacobiSVD.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/SVD/BDCSVD.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/SVD/JacobiSVD_LAPACKE.h \
-		eigen-eigen-5a0156e40feb/Eigen/Geometry \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/OrthoMethods.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/EulerAngles.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Homogeneous.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/RotationBase.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Rotation2D.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Quaternion.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/AngleAxis.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Transform.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Translation.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Scaling.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Hyperplane.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/ParametrizedLine.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/AlignedBox.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Umeyama.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/arch/Geometry_SSE.h \
-		eigen-eigen-5a0156e40feb/Eigen/Eigenvalues \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/Tridiagonalization.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/RealSchur.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/HessenbergDecomposition.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/EigenSolver.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/GeneralizedSelfAdjointEigenSolver.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/ComplexSchur.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/ComplexEigenSolver.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/RealQZ.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/RealSchur_LAPACKE.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/ComplexSchur_LAPACKE.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/SelfAdjointEigenSolver_LAPACKE.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/Core \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/util/DisableStupidWarnings.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/util/Macros.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/util/MKL_support.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/misc/blas.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/util/Constants.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/util/Meta.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/util/ForwardDeclarations.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/util/StaticAssert.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/util/XprHelper.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/util/Memory.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/NumTraits.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/MathFunctions.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/GenericPacketMath.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/MathFunctionsImpl.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/SSE/PacketMath.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX/PacketMath.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX512/PacketMath.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX512/MathFunctions.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/SSE/Complex.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/SSE/MathFunctions.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX/MathFunctions.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX/Complex.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX/TypeCasting.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/SSE/TypeCasting.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AltiVec/PacketMath.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AltiVec/MathFunctions.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AltiVec/Complex.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/NEON/PacketMath.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/NEON/MathFunctions.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/NEON/Complex.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/ZVector/PacketMath.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/ZVector/MathFunctions.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/ZVector/Complex.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/Half.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/PacketMathHalf.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/TypeCasting.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/PacketMath.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/MathFunctions.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/Default/Settings.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/TernaryFunctors.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/BinaryFunctors.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/UnaryFunctors.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/NullaryFunctors.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/StlFunctors.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/AssignmentFunctors.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/Complex.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/IO.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/DenseCoeffsBase.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/DenseBase.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/plugins/BlockMethods.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/MatrixBase.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/plugins/CommonCwiseUnaryOps.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/plugins/CommonCwiseBinaryOps.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/plugins/MatrixCwiseUnaryOps.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/plugins/MatrixCwiseBinaryOps.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/EigenBase.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Product.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/CoreEvaluators.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/AssignEvaluator.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Assign.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/ArrayBase.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/plugins/ArrayCwiseUnaryOps.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/plugins/ArrayCwiseBinaryOps.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/util/BlasUtil.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/DenseStorage.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/NestByValue.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/ReturnByValue.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/NoAlias.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/PlainObjectBase.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Matrix.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Array.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/CwiseTernaryOp.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/CwiseBinaryOp.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/CwiseUnaryOp.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/CwiseNullaryOp.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/CwiseUnaryView.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/SelfCwiseBinaryOp.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Dot.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/StableNorm.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Stride.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/MapBase.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Map.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Ref.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Block.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/VectorBlock.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Transpose.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/DiagonalMatrix.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Diagonal.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/DiagonalProduct.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Redux.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Visitor.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Fuzzy.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Swap.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/CommaInitializer.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/GeneralProduct.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Solve.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Inverse.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/SolverBase.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/PermutationMatrix.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Transpositions.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/TriangularMatrix.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/SelfAdjointView.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralBlockPanelKernel.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/Parallelizer.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/ProductEvaluators.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixVector.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixMatrix.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/SolveTriangular.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixMatrixTriangular.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointMatrixVector.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointMatrixMatrix.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointProduct.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointRank2Update.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularMatrixVector.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularMatrixMatrix.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularSolverMatrix.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularSolverVector.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/BandMatrix.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/CoreIterators.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/ConditionEstimator.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/BooleanRedux.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Select.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/VectorwiseOp.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Random.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Replicate.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Reverse.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/ArrayWrapper.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixMatrix_BLAS.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixVector_BLAS.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixMatrixTriangular_BLAS.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointMatrixMatrix_BLAS.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointMatrixVector_BLAS.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularMatrixMatrix_BLAS.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularMatrixVector_BLAS.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularSolverMatrix_BLAS.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Assign_MKL.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/GlobalFunctions.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/util/ReenableStupidWarnings.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/Dense \
+		../project/eigen-eigen-5a0156e40feb/Eigen/LU \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/misc/Kernel.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/misc/Image.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/LU/FullPivLU.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/LU/PartialPivLU.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/misc/lapacke.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/misc/lapacke_mangling.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/LU/PartialPivLU_LAPACKE.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/LU/Determinant.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/LU/InverseImpl.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/LU/arch/Inverse_SSE.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/Cholesky \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Cholesky/LLT.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Cholesky/LDLT.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Cholesky/LLT_LAPACKE.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/QR \
+		../project/eigen-eigen-5a0156e40feb/Eigen/Jacobi \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Jacobi/Jacobi.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/Householder \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Householder/Householder.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Householder/HouseholderSequence.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Householder/BlockHouseholder.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/QR/HouseholderQR.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/QR/FullPivHouseholderQR.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/QR/ColPivHouseholderQR.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/QR/CompleteOrthogonalDecomposition.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/QR/HouseholderQR_LAPACKE.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/QR/ColPivHouseholderQR_LAPACKE.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/SVD \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/misc/RealSvd2x2.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/SVD/UpperBidiagonalization.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/SVD/SVDBase.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/SVD/JacobiSVD.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/SVD/BDCSVD.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/SVD/JacobiSVD_LAPACKE.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/Geometry \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/OrthoMethods.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/EulerAngles.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Homogeneous.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/RotationBase.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Rotation2D.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Quaternion.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/AngleAxis.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Transform.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Translation.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Scaling.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Hyperplane.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/ParametrizedLine.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/AlignedBox.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Umeyama.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/arch/Geometry_SSE.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/Eigenvalues \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/Tridiagonalization.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/RealSchur.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/HessenbergDecomposition.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/EigenSolver.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/GeneralizedSelfAdjointEigenSolver.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/ComplexSchur.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/ComplexEigenSolver.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/RealQZ.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/RealSchur_LAPACKE.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/ComplexSchur_LAPACKE.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/SelfAdjointEigenSolver_LAPACKE.h \
 		mainwindow.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QMainWindow \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qmainwindow.h \
@@ -1699,6 +1598,8 @@ debug/mainwindow.o: mainwindow.cpp D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui/Qt
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qabstractitemview.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QLabel \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qlabel.h \
+		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QLineEdit \
+		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qlineedit.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QListWidget \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qlistwidget.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qlistview.h \
@@ -1713,8 +1614,6 @@ debug/mainwindow.o: mainwindow.cpp D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui/Qt
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qradiobutton.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QSlider \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QSpacerItem \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QSpinBox \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qspinbox.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QStatusBar \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qstatusbar.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QTabWidget \
@@ -1724,15 +1623,6 @@ debug/mainwindow.o: mainwindow.cpp D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui/Qt
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QTextEdit \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QVBoxLayout \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QWidget \
-		threadcomport/threadcomport.h \
-		qextserialport/qextserialport.h \
-		qextserialport/posix_qextserialport.h \
-		qextserialport/qextserialbase.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QIODevice \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QFile \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QThread \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QMutex \
-		qextserialport/win_qextserialport.h \
 		user_md5.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtNetwork/QtNetwork \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtNetwork/QtNetworkDepends \
@@ -1741,6 +1631,7 @@ debug/mainwindow.o: mainwindow.cpp D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui/Qt
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QUrl \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtNetwork/qhttpmultipart.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QByteArray \
+		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QIODevice \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtNetwork/QNetworkRequest \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtNetwork/qnetworkaccessmanager.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtNetwork/QSslConfiguration \
@@ -1788,205 +1679,6 @@ debug/mainwindow.o: mainwindow.cpp D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui/Qt
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qgraphicsitem.h \
 		mygraphicsitem.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/mainwindow.o mainwindow.cpp
-
-debug/threadcomport.o: threadcomport/threadcomport.cpp threadcomport/threadcomport.h \
-		qextserialport/qextserialport.h \
-		qextserialport/posix_qextserialport.h \
-		qextserialport/qextserialbase.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QIODevice \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qiodevice.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qglobal.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qconfig.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qfeatures.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qsystemdetection.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qprocessordetection.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qcompilerdetection.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qtypeinfo.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qtypetraits.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qisenum.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qsysinfo.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qlogging.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qflags.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qatomic.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qbasicatomic.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qatomic_bootstrap.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qgenericatomic.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qatomic_cxx11.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qatomic_msvc.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qglobalstatic.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qmutex.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qnumeric.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qversiontagging.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qobject.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qobjectdefs.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qnamespace.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qobjectdefs_impl.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qstring.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qchar.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qbytearray.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qrefcount.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qarraydata.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qstringbuilder.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qlist.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qalgorithms.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qiterator.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qhashfunctions.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qpair.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qbytearraylist.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qstringlist.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qregexp.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qstringmatcher.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qcoreevent.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qscopedpointer.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qmetatype.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qvarlengtharray.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qcontainerfwd.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qobject_impl.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QFile \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qfile.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qfiledevice.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QThread \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qthread.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QMutex \
-		qextserialport/win_qextserialport.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QTime \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qdatetime.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qshareddata.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qhash.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QtDebug \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qdebug.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qmap.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qtextstream.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qlocale.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qvariant.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qvector.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qpoint.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qset.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qcontiguouscache.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qsharedpointer.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qsharedpointer_impl.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QObject \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QByteArray
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/threadcomport.o threadcomport/threadcomport.cpp
-
-debug/qextserialbase.o: qextserialport/qextserialbase.cpp qextserialport/qextserialbase.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QIODevice \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qiodevice.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qglobal.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qconfig.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qfeatures.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qsystemdetection.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qprocessordetection.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qcompilerdetection.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qtypeinfo.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qtypetraits.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qisenum.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qsysinfo.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qlogging.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qflags.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qatomic.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qbasicatomic.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qatomic_bootstrap.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qgenericatomic.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qatomic_cxx11.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qatomic_msvc.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qglobalstatic.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qmutex.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qnumeric.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qversiontagging.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qobject.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qobjectdefs.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qnamespace.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qobjectdefs_impl.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qstring.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qchar.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qbytearray.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qrefcount.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qarraydata.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qstringbuilder.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qlist.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qalgorithms.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qiterator.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qhashfunctions.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qpair.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qbytearraylist.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qstringlist.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qregexp.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qstringmatcher.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qcoreevent.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qscopedpointer.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qmetatype.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qvarlengtharray.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qcontainerfwd.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qobject_impl.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QFile \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qfile.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qfiledevice.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QThread \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qthread.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QMutex
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/qextserialbase.o qextserialport/qextserialbase.cpp
-
-debug/qextserialport.o: qextserialport/qextserialport.cpp qextserialport/qextserialport.h \
-		qextserialport/posix_qextserialport.h \
-		qextserialport/qextserialbase.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QIODevice \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qiodevice.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qglobal.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qconfig.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qfeatures.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qsystemdetection.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qprocessordetection.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qcompilerdetection.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qtypeinfo.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qtypetraits.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qisenum.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qsysinfo.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qlogging.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qflags.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qatomic.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qbasicatomic.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qatomic_bootstrap.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qgenericatomic.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qatomic_cxx11.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qatomic_msvc.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qglobalstatic.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qmutex.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qnumeric.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qversiontagging.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qobject.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qobjectdefs.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qnamespace.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qobjectdefs_impl.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qstring.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qchar.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qbytearray.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qrefcount.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qarraydata.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qstringbuilder.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qlist.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qalgorithms.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qiterator.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qhashfunctions.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qpair.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qbytearraylist.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qstringlist.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qregexp.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qstringmatcher.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qcoreevent.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qscopedpointer.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qmetatype.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qvarlengtharray.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qcontainerfwd.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qobject_impl.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QFile \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qfile.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qfiledevice.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QThread \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qthread.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QMutex \
-		qextserialport/win_qextserialport.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/qextserialport.o qextserialport/qextserialport.cpp
 
 debug/user_md5.o: user_md5.cpp user_md5.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtGui/QtGui \
@@ -2504,282 +2196,220 @@ debug/mygraphicsitem.o: mygraphicsitem.cpp mygraphicsitem.h \
 		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qcontiguouscache.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/mygraphicsitem.o mygraphicsitem.cpp
 
-debug/equation.o: equation.cpp eigen-eigen-5a0156e40feb/Eigen/Core \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/util/DisableStupidWarnings.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/util/Macros.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/util/MKL_support.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/misc/blas.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/util/Constants.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/util/Meta.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/util/ForwardDeclarations.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/util/StaticAssert.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/util/XprHelper.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/util/Memory.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/NumTraits.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/MathFunctions.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/GenericPacketMath.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/MathFunctionsImpl.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/SSE/PacketMath.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX/PacketMath.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX512/PacketMath.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX512/MathFunctions.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/SSE/Complex.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/SSE/MathFunctions.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX/MathFunctions.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX/Complex.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX/TypeCasting.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/SSE/TypeCasting.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AltiVec/PacketMath.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AltiVec/MathFunctions.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AltiVec/Complex.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/NEON/PacketMath.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/NEON/MathFunctions.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/NEON/Complex.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/ZVector/PacketMath.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/ZVector/MathFunctions.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/ZVector/Complex.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/Half.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/PacketMathHalf.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/TypeCasting.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/PacketMath.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/MathFunctions.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/Default/Settings.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/TernaryFunctors.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/BinaryFunctors.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/UnaryFunctors.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/NullaryFunctors.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/StlFunctors.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/AssignmentFunctors.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/Complex.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/IO.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/DenseCoeffsBase.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/DenseBase.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/plugins/BlockMethods.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/MatrixBase.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/plugins/CommonCwiseUnaryOps.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/plugins/CommonCwiseBinaryOps.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/plugins/MatrixCwiseUnaryOps.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/plugins/MatrixCwiseBinaryOps.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/EigenBase.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Product.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/CoreEvaluators.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/AssignEvaluator.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Assign.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/ArrayBase.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/plugins/ArrayCwiseUnaryOps.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/plugins/ArrayCwiseBinaryOps.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/util/BlasUtil.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/DenseStorage.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/NestByValue.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/ReturnByValue.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/NoAlias.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/PlainObjectBase.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Matrix.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Array.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/CwiseTernaryOp.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/CwiseBinaryOp.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/CwiseUnaryOp.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/CwiseNullaryOp.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/CwiseUnaryView.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/SelfCwiseBinaryOp.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Dot.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/StableNorm.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Stride.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/MapBase.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Map.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Ref.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Block.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/VectorBlock.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Transpose.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/DiagonalMatrix.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Diagonal.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/DiagonalProduct.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Redux.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Visitor.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Fuzzy.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Swap.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/CommaInitializer.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/GeneralProduct.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Solve.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Inverse.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/SolverBase.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/PermutationMatrix.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Transpositions.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/TriangularMatrix.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/SelfAdjointView.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralBlockPanelKernel.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/Parallelizer.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/ProductEvaluators.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixVector.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixMatrix.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/SolveTriangular.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixMatrixTriangular.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointMatrixVector.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointMatrixMatrix.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointProduct.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointRank2Update.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularMatrixVector.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularMatrixMatrix.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularSolverMatrix.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularSolverVector.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/BandMatrix.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/CoreIterators.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/ConditionEstimator.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/BooleanRedux.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Select.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/VectorwiseOp.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Random.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Replicate.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Reverse.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/ArrayWrapper.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixMatrix_BLAS.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixVector_BLAS.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixMatrixTriangular_BLAS.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointMatrixMatrix_BLAS.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointMatrixVector_BLAS.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularMatrixMatrix_BLAS.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularMatrixVector_BLAS.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularSolverMatrix_BLAS.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/Assign_MKL.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/GlobalFunctions.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Core/util/ReenableStupidWarnings.h \
-		eigen-eigen-5a0156e40feb/Eigen/Dense \
-		eigen-eigen-5a0156e40feb/Eigen/LU \
-		eigen-eigen-5a0156e40feb/Eigen/src/misc/Kernel.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/misc/Image.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/LU/FullPivLU.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/LU/PartialPivLU.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/misc/lapacke.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/misc/lapacke_mangling.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/LU/PartialPivLU_LAPACKE.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/LU/Determinant.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/LU/InverseImpl.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/LU/arch/Inverse_SSE.h \
-		eigen-eigen-5a0156e40feb/Eigen/Cholesky \
-		eigen-eigen-5a0156e40feb/Eigen/src/Cholesky/LLT.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Cholesky/LDLT.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Cholesky/LLT_LAPACKE.h \
-		eigen-eigen-5a0156e40feb/Eigen/QR \
-		eigen-eigen-5a0156e40feb/Eigen/Jacobi \
-		eigen-eigen-5a0156e40feb/Eigen/src/Jacobi/Jacobi.h \
-		eigen-eigen-5a0156e40feb/Eigen/Householder \
-		eigen-eigen-5a0156e40feb/Eigen/src/Householder/Householder.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Householder/HouseholderSequence.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Householder/BlockHouseholder.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/QR/HouseholderQR.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/QR/FullPivHouseholderQR.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/QR/ColPivHouseholderQR.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/QR/CompleteOrthogonalDecomposition.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/QR/HouseholderQR_LAPACKE.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/QR/ColPivHouseholderQR_LAPACKE.h \
-		eigen-eigen-5a0156e40feb/Eigen/SVD \
-		eigen-eigen-5a0156e40feb/Eigen/src/misc/RealSvd2x2.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/SVD/UpperBidiagonalization.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/SVD/SVDBase.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/SVD/JacobiSVD.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/SVD/BDCSVD.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/SVD/JacobiSVD_LAPACKE.h \
-		eigen-eigen-5a0156e40feb/Eigen/Geometry \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/OrthoMethods.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/EulerAngles.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Homogeneous.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/RotationBase.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Rotation2D.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Quaternion.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/AngleAxis.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Transform.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Translation.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Scaling.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Hyperplane.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/ParametrizedLine.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/AlignedBox.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Umeyama.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Geometry/arch/Geometry_SSE.h \
-		eigen-eigen-5a0156e40feb/Eigen/Eigenvalues \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/Tridiagonalization.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/RealSchur.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/HessenbergDecomposition.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/EigenSolver.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/GeneralizedSelfAdjointEigenSolver.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/ComplexSchur.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/ComplexEigenSolver.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/RealQZ.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/RealSchur_LAPACKE.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/ComplexSchur_LAPACKE.h \
-		eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/SelfAdjointEigenSolver_LAPACKE.h \
+debug/equation.o: equation.cpp ../project/eigen-eigen-5a0156e40feb/Eigen/Core \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/util/DisableStupidWarnings.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/util/Macros.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/util/MKL_support.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/misc/blas.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/util/Constants.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/util/Meta.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/util/ForwardDeclarations.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/util/StaticAssert.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/util/XprHelper.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/util/Memory.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/NumTraits.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/MathFunctions.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/GenericPacketMath.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/MathFunctionsImpl.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/SSE/PacketMath.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX/PacketMath.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX512/PacketMath.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX512/MathFunctions.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/SSE/Complex.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/SSE/MathFunctions.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX/MathFunctions.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX/Complex.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AVX/TypeCasting.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/SSE/TypeCasting.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AltiVec/PacketMath.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AltiVec/MathFunctions.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/AltiVec/Complex.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/NEON/PacketMath.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/NEON/MathFunctions.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/NEON/Complex.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/ZVector/PacketMath.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/ZVector/MathFunctions.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/ZVector/Complex.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/Half.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/PacketMathHalf.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/TypeCasting.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/PacketMath.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/MathFunctions.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/Default/Settings.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/TernaryFunctors.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/BinaryFunctors.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/UnaryFunctors.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/NullaryFunctors.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/StlFunctors.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/functors/AssignmentFunctors.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/arch/CUDA/Complex.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/IO.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/DenseCoeffsBase.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/DenseBase.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/plugins/BlockMethods.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/MatrixBase.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/plugins/CommonCwiseUnaryOps.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/plugins/CommonCwiseBinaryOps.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/plugins/MatrixCwiseUnaryOps.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/plugins/MatrixCwiseBinaryOps.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/EigenBase.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Product.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/CoreEvaluators.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/AssignEvaluator.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Assign.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/ArrayBase.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/plugins/ArrayCwiseUnaryOps.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/plugins/ArrayCwiseBinaryOps.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/util/BlasUtil.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/DenseStorage.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/NestByValue.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/ReturnByValue.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/NoAlias.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/PlainObjectBase.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Matrix.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Array.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/CwiseTernaryOp.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/CwiseBinaryOp.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/CwiseUnaryOp.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/CwiseNullaryOp.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/CwiseUnaryView.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/SelfCwiseBinaryOp.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Dot.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/StableNorm.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Stride.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/MapBase.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Map.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Ref.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Block.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/VectorBlock.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Transpose.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/DiagonalMatrix.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Diagonal.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/DiagonalProduct.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Redux.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Visitor.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Fuzzy.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Swap.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/CommaInitializer.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/GeneralProduct.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Solve.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Inverse.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/SolverBase.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/PermutationMatrix.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Transpositions.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/TriangularMatrix.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/SelfAdjointView.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralBlockPanelKernel.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/Parallelizer.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/ProductEvaluators.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixVector.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixMatrix.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/SolveTriangular.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixMatrixTriangular.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointMatrixVector.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointMatrixMatrix.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointProduct.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointRank2Update.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularMatrixVector.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularMatrixMatrix.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularSolverMatrix.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularSolverVector.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/BandMatrix.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/CoreIterators.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/ConditionEstimator.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/BooleanRedux.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Select.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/VectorwiseOp.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Random.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Replicate.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Reverse.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/ArrayWrapper.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixMatrix_BLAS.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixVector_BLAS.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/GeneralMatrixMatrixTriangular_BLAS.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointMatrixMatrix_BLAS.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/SelfadjointMatrixVector_BLAS.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularMatrixMatrix_BLAS.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularMatrixVector_BLAS.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/products/TriangularSolverMatrix_BLAS.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/Assign_MKL.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/GlobalFunctions.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Core/util/ReenableStupidWarnings.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/Dense \
+		../project/eigen-eigen-5a0156e40feb/Eigen/LU \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/misc/Kernel.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/misc/Image.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/LU/FullPivLU.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/LU/PartialPivLU.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/misc/lapacke.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/misc/lapacke_mangling.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/LU/PartialPivLU_LAPACKE.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/LU/Determinant.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/LU/InverseImpl.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/LU/arch/Inverse_SSE.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/Cholesky \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Cholesky/LLT.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Cholesky/LDLT.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Cholesky/LLT_LAPACKE.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/QR \
+		../project/eigen-eigen-5a0156e40feb/Eigen/Jacobi \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Jacobi/Jacobi.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/Householder \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Householder/Householder.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Householder/HouseholderSequence.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Householder/BlockHouseholder.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/QR/HouseholderQR.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/QR/FullPivHouseholderQR.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/QR/ColPivHouseholderQR.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/QR/CompleteOrthogonalDecomposition.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/QR/HouseholderQR_LAPACKE.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/QR/ColPivHouseholderQR_LAPACKE.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/SVD \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/misc/RealSvd2x2.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/SVD/UpperBidiagonalization.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/SVD/SVDBase.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/SVD/JacobiSVD.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/SVD/BDCSVD.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/SVD/JacobiSVD_LAPACKE.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/Geometry \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/OrthoMethods.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/EulerAngles.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Homogeneous.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/RotationBase.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Rotation2D.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Quaternion.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/AngleAxis.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Transform.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Translation.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Scaling.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Hyperplane.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/ParametrizedLine.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/AlignedBox.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/Umeyama.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Geometry/arch/Geometry_SSE.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/Eigenvalues \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/Tridiagonalization.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/RealSchur.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/HessenbergDecomposition.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/EigenSolver.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/GeneralizedSelfAdjointEigenSolver.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/ComplexSchur.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/ComplexEigenSolver.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/RealQZ.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/RealSchur_LAPACKE.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/ComplexSchur_LAPACKE.h \
+		../project/eigen-eigen-5a0156e40feb/Eigen/src/Eigenvalues/SelfAdjointEigenSolver_LAPACKE.h \
 		equation.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/equation.o equation.cpp
-
-debug/win_qextserialport.o: qextserialport/win_qextserialport.cpp qextserialport/win_qextserialport.h \
-		qextserialport/qextserialbase.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QIODevice \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qiodevice.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qglobal.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qconfig.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qfeatures.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qsystemdetection.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qprocessordetection.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qcompilerdetection.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qtypeinfo.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qtypetraits.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qisenum.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qsysinfo.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qlogging.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qflags.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qatomic.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qbasicatomic.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qatomic_bootstrap.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qgenericatomic.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qatomic_cxx11.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qatomic_msvc.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qglobalstatic.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qmutex.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qnumeric.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qversiontagging.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qobject.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qobjectdefs.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qnamespace.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qobjectdefs_impl.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qstring.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qchar.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qbytearray.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qrefcount.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qarraydata.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qstringbuilder.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qlist.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qalgorithms.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qiterator.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qhashfunctions.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qpair.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qbytearraylist.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qstringlist.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qregexp.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qstringmatcher.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qcoreevent.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qscopedpointer.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qmetatype.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qvarlengtharray.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qcontainerfwd.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qobject_impl.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QFile \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qfile.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qfiledevice.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QThread \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/qthread.h \
-		D:/Qt/Qt5.7.0/5.7/mingw53_32/include/QtCore/QMutex
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/win_qextserialport.o qextserialport/win_qextserialport.cpp
 
 debug/qrc_qmake_qmake_immediate.o: debug/qrc_qmake_qmake_immediate.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/qrc_qmake_qmake_immediate.o debug/qrc_qmake_qmake_immediate.cpp
 
 debug/moc_mainwindow.o: debug/moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/moc_mainwindow.o debug/moc_mainwindow.cpp
-
-debug/moc_threadcomport.o: debug/moc_threadcomport.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/moc_threadcomport.o debug/moc_threadcomport.cpp
 
 ####### Install
 

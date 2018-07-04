@@ -50,6 +50,7 @@ public:
     QString manuId(uchar *mac,ushort gateway_id,ushort device_id,ushort panid);
     QString getIdInf(ushort id);
     QString getIdMac(ushort id);
+    ushort getIdMac(uchar *mac);
     ID_SEND getIdSendInf(ushort id);
     void ExportIdInformation();
 

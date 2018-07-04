@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 #include "ui_main_window_form.h"
-#include <threadcomport.h>
 #include "user_md5.h"
 
 
@@ -26,6 +25,13 @@ enum
     update_step_finish
 };
 
+enum
+{
+    test_tamper          = 0x01,      //
+    test_shake           = 0x02,  //
+    test_txPower         = 0x03,//
+    test_reportPar       = 0x04
+};
 
 
 //rf cmd
@@ -80,7 +86,8 @@ enum
     dev_sosPanic                = 0x0C,  //不带定位SOS
     dev_863DriectModule         = 0x0D,  //蓝牙透传863模块
     dev_863ORModule             = 0x0E,  //手术室863模块
-
+    dev_863PDA                  = 0x0F,  //PDA863模块
+    dev_863DesktopRW            = 0x10,  //桌面读卡器863模块
 
 
 
@@ -119,7 +126,7 @@ struct UR_PAR
     ushort len;
     ushort dstAddr;
     ushort srcAddr;
-    char rssi;
+    short rssi;
     RF_PAR rf;
     ushort crc;
 };
@@ -164,18 +171,81 @@ struct APP_FRAME
 #define checkAlarm(n)  (BV(1)&n)
 #define checkLowBattery(n)  (BV(0)&n)
 
+
+enum {
+    locCmd_125KData = 0x01,
+    locCmd_outDoorData = 0x02,
+};
+
+
 struct LOCATION_FRAME
 {
     uchar head[2];
     ushort devie_id;
     ushort ant_id;
-    char rssi;
+    short rssi;
     uchar alarm;
     uchar checksum;
 };
 
+struct LOCATION_8_FRAME
+{
+    uchar head[2];
+    uchar mac[8];
+    uchar device_type;
+    uchar len;
+    uchar cmd;
+    uchar *data;
+    uchar checksum;
+};
 
 
+struct TEST_FRAME
+{
+    uchar head[2];
+    uchar cmd;
+    uchar mac[8];
+    uchar *data;
+};
+
+struct A125K_FRAME
+{
+    uchar head[2];
+    ushort device_id;
+    uchar nc0;
+    ushort reset_inf;
+    uchar nc1;
+    ushort ant0_previous;
+    ushort ant1_previous;
+    ushort ant2_previous;
+    uchar nc2;
+    ushort ant0_current;
+    ushort ant1_current;
+    ushort ant2_current;
+    uchar nc3;
+    ushort voltage;
+    uchar nc4;
+    uchar checksum;
+};
+
+struct SYS_PAR{
+    QTimer *netWorkTimer;
+
+    uchar tamper_0;
+    uchar tamper_1;
+    uchar shake;
+    short device_receive_rssi;
+    short device_tx_power;
+    short gateway_receive_rssi;
+    uchar battery;
+    ushort cal_previous_x;
+    ushort cal_previous_y;
+    ushort cal_previous_z;
+    ushort cal_now_x;
+    ushort cal_now_y;
+    ushort cal_now_z;
+    bool test_status;
+};
 
 
 struct LOC_PAR
@@ -206,7 +276,7 @@ struct BLE_LOCATION_FRAME
     uchar devie_id[8];
     uchar ant_ble_id[8];
     ushort ant_125k_id;
-    char rssi;
+    short rssi;
     uchar sensor_x;
     uchar sensor_y;
     uchar sensor_z;
@@ -239,6 +309,16 @@ enum
     coolCmdSetAlaVal = 0x09,//
     coolCmdSenError = 0x0A,//
     coolCmdStatus = 0xFE//
+};
+
+/************tempreture & humidity*************/
+enum
+{
+    TemThCmdSetRepTime = 0x05,//
+    TemThCmdGetSenVal = 0x08,//
+    TemThCmdSenError = 0x0A,//
+    TemThCmdSystemTime = 0x0B,//
+    TemThCmdStatus = 0xFE//
 };
 
 
@@ -288,17 +368,29 @@ enum
 enum
 {
     coolDevUnkown = 0x00,//ERROR
-    coolDevTempreture = 0x01,//
+    coolDevCoolChain = 0x01,//
     coolDevSiren = 0x02,//
     coolDevSosPanic = 0x03,//
     coolDevEnergy = 0x04,//
     coolDevInjection = 0x05,
-    coolDevSosNoLocationPanic = 0x06,//
+    coolDevTemTh = 0x06,//温湿度
+    coolDevSosNoLocationPanic = 0xFF,
 };
 
 
 
-struct COOL_FRAME
+struct COOL_FRAME_A55A
+{
+    uchar head[2];
+    uchar sensorMac[8];
+    uchar deviceType;
+    char len;
+    uchar cmd;
+    uchar *data;
+    uchar checksum;
+};
+
+struct COOL_FRAME_FACA
 {
     uchar head[2];
     ushort sensorId;
@@ -315,6 +407,12 @@ struct COO_PAR
     ushort filtId;
 };
 
+
+struct TEMTH_PAR
+{
+    QByteArray filtStr;
+    ushort filtId;
+};
 
 struct ENE_PAR
 {
@@ -343,7 +441,7 @@ struct IOT_FRAME
     uchar cmd;
     uchar length;
     uchar *data;
-    char rssi;
+    short rssi;
     uchar checkSum;
 };
 /*********************/
@@ -352,7 +450,7 @@ struct IOT_FRAME
 struct RF_SEND
 {
     ushort device_id;
-    char rssi;
+    short rssi;
     uchar sequence;
     uchar device;
 };
@@ -402,7 +500,6 @@ struct NET_PAR
     QTcpServer *Server;
     QTcpServer *locationServer;
     QTcpSocket *bind_socket[65536];
-    QTcpSocket *clientSocket;
     QTcpSocket *locationSocket;
 };
 
@@ -415,6 +512,7 @@ struct HISTORY_PAR
     QString Update_path;
     QString location_path;
     QString cool_path;
+    QString temTh_path;
     QString energy_path;
     QString injection_path;
     QString sos_path;
@@ -426,6 +524,7 @@ struct HISTORY_PAR
     QByteArray Update_buff;
     QByteArray location_buff;
     QByteArray cool_buff;
+    QByteArray temTh_buff;
     QByteArray energy_buff;
     QByteArray injection_buff;
     QByteArray sos_buff;
@@ -437,6 +536,7 @@ struct HISTORY_PAR
     QFile *Update_file;
     QFile *location_file;
     QFile *cool_file;
+    QFile *temTh_file;
     QFile *energy_file;
     QFile *injection_file;
     QFile *sos_file;
@@ -458,7 +558,7 @@ struct BLE_DEVICE_PAR
     uchar receive_count;
     bool update_flag;
     ushort ant_id[ALGORITHM_ANT_MAX];
-    char rssi[ALGORITHM_ANT_MAX];
+    short rssi[ALGORITHM_ANT_MAX];
 };
 
 
@@ -522,8 +622,7 @@ protected:
      void closeEvent(QCloseEvent *event);
 
 private:
-	Qthreadcomport *port;
-	QMainComThread *mainComThread;
+
 	QTimer *timerout;
 	QMenu *fileMenu;
 	QMenu *helpMenu;
@@ -532,8 +631,6 @@ private:
 	QAction *aboutAct;
 	QAction *calcTimeoutAct;
 	QTime *timeoutTime;
-	QLabel *labelReceive;
-	QLabel *labelTransmit;
 	int counter_in,counter_out;
     firmwares fir;
     TRANSPORT transport;
@@ -543,12 +640,12 @@ private:
     HISTORY_PAR history_par;
     DISPLAY_PAR display_par;
     BLE_ALGORITHM ble_algorithm;
+    SYS_PAR sys_par;
 
 	bool bRTS;
 	bool bDTR;
 	void createMainMenu();
 	void getdataout(QByteArray *data);
-	void readSettings(PortSettings *portsettings);
     QString transformInpData(const unsigned char *data, const int size);
     void writeSettings();
 
@@ -557,7 +654,7 @@ private:
     //add bye lekee
     void user_init();
     void UART_send(QByteArray src);
-    void pressCmdData(uchar *data , ushort size);
+    void pressCmdData(uchar *data , ushort size,QTcpSocket *socket);
     void processJsonData(QByteArray datas);
     void pressOldCmdData(uchar *data , ushort size);
     void DisplayWithTime(const QString &text);
@@ -574,11 +671,12 @@ private:
     void rcmdSystemReset(ushort gateway_id,ushort device_id);
     void rcmdSetNetPar(ushort gateway_id,ushort device_id);
     void rcmdRequestNetPar(ushort gateway_id,ushort device_id);
+    void rcmdRssiAckTest(ushort gateway_id,ushort device_id,short dBm);
 
     void IOT_cmdNetwork(ushort gateway_id,ushort device_id,QByteArray data);
     void IOT_cmdAsscessId(ushort gateway_id,ushort device_id,ID_SEND *id);
     void IOT_cmdHeartBeat(IOT_FRAME *ptr);
-    void IOT_cmdHeartBeat(ushort gateway_id,ushort device_id,ushort time,ushort bandwith,uchar rssi);
+    void IOT_cmdHeartBeat(ushort gateway_id,ushort device_id,ushort time,ushort bandwith,short rssi);
     void IOT_cmdApp(ushort gateway_id,ushort device_id,QByteArray data);
     void NET_TCPIP_SocketSend(QByteArray src,QTcpSocket *socket);
     void IOT_sendIdInformation(ushort id,QTcpSocket *socket);
@@ -613,11 +711,21 @@ private:
     void COO_ackError(ushort gateway_id,ushort device_id,uchar ack_cmd);
     void COO_setSnNumber(ushort gateway_id,ushort device_id);
     void COO_setReportTime(ushort gateway_id,ushort device_id);
+    void COO_setReportTime(ushort gateway_id,ushort device_id,uchar *mac);
     void COO_clearTemAlarm(ushort gateway_id,ushort device_id);
     void COO_tempretureVerfication(ushort gateway_id,ushort device_id);
     void COO_HumVerfication(ushort gateway_id,ushort device_id);
     void COO_tempretureAlarmHL(ushort gateway_id,ushort device_id);
     void COO_getSensorValue(ushort gateway_id,ushort device_id);
+
+    TEMTH_PAR temth_par;
+    void TEMTH_init();
+    void TEMTH_DisplayWithTime(const QString &text);
+    void TEMTH_DisplayWithNoTime(const QString &text);
+    void TEMTH_ackSuccess(ushort gateway_id,ushort device_id,uchar ack_cmd);
+    void TEMTH_ackError(ushort gateway_id,ushort device_id,uchar ack_cmd);
+    void TEMTH_setReportTime(ushort gateway_id,ushort device_id,uchar *mac);
+    void TEMTH_setSystemTime(ushort gateway_id,ushort device_id,uchar *mac);
 
 
     ENE_PAR ene_par;
@@ -667,29 +775,16 @@ private:
     void BLE_Set125KRssi(ushort gateway_id,ushort device_id);
     void BLE_displayUpdate();
     void BLE_DisplayDrawXY(uint xy_unit,uint xy_max,QGraphicsScene *scene);
-    void BLE_storeData(ushort device_id,ushort ant_id,uchar sequence,char rssi);
+    void BLE_storeData(ushort device_id,ushort ant_id,uchar sequence,short rssi);
     bool BLE_idInfoWriteInFile();
     bool BLE_idInfoReadFromFile();
 
 private slots:
-	void about();
-	void applyPortOptions();
-	void btsendClick();
-	void btstopsendClick();
-	void closePort();
-	void enabledPortBt();
-	void openPort();
-    void receiveMsg(const QTime timesl, const unsigned char *data, const int size);
-	void SetCurComboBState();
     unsigned short int Crc16Bit(const char *ptr, unsigned short int len);
     uchar checkSum(const char* puchData, ushort len);
     uchar checkSum(QByteArray puchData, ushort len);
-	void transmitMsg();
-	void intervalChange(int value);
-    void on_File_clicked();
-    void on_pushButton_clicked();
     void on_bt_openFile_clicked();
-    void on_comboBox_updateWay_currentIndexChanged(const QString &arg1);
+
 
 
     void on_bt_getDeviceInf_clicked();
@@ -711,9 +806,9 @@ private slots:
     void on_pb_deleteAddr_clicked();
 
 
-    void pressUartData();
+    void pressUartData(QTcpSocket *socket);
 
-    void NET_newListen(); //建立TCP监听事件
+    bool NET_newListen(); //建立TCP监听事件
     void NET_acceptConnection(); //接受客户端连接
     void NET_displayError(QAbstractSocket::SocketError); //显示错误信息
     void NET_revData();
@@ -737,13 +832,8 @@ private slots:
     void on_bt_clear_clicked();
     void on_comunication_protocal_currentTextChanged(const QString &arg1);
     void on_bt_search_net_clicked();
-    void on_localtionIdSelection_windowIconTextChanged(const QString &iconText);
-    void on_localtionIdSelection_4_windowIconTextChanged(const QString &iconText);
-    void on_localtionFiltId_windowIconTextChanged(const QString &iconText);
-    void on_localtionFiltStr_windowIconTextChanged(const QString &iconText);
     void on_localtionFiltId_textChanged();
     void on_localtionFiltStr_textChanged();
-    void on_locationStopDisplay_clicked(bool checked);
     void on_coolFiltId_textChanged();
     void on_coolFiltStr_textChanged();
     void on_coolGetSn_clicked();
@@ -815,6 +905,13 @@ private slots:
     void on_bt_stopListen_location_clicked();
     void on_BLE_setAlgorithmPar_clicked();
     void on_BLE_sendAntList_clicked();
+    void on_textEdit_MIN_ID_textChanged();
+    void on_textEdit_MAX_ID_textChanged();
+    void on_TemTHFiltId_textChanged();
+    void on_TemTHFiltStr_textChanged();
+    void on_TemTHSetRepTime_Bt_clicked();
+    void on_checkBox_productTest_stateChanged(int arg1);
+    void on_checkBox_125KTest_stateChanged(int arg1);
 };
 
  #endif
