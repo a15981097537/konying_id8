@@ -1064,11 +1064,78 @@ void MainWindow::pressCmdData(uchar *data , ushort size,QTcpSocket *socket)
                 BLE_displayUpdate();
 
                 break;
+            case locCmd_rssiCaculation:
+                str += "locCmd_rssiCaculation";
+                break;
+            case locCmd_bleData:
+                uchar locCmd_bleData_alarm     ;
+                uchar locCmd_bleData_voltage   ;
+                short locCmd_bleData_txPowr;
+                short locCmd_bleData_recRssi;
+                str += "locCmd_bleData";
+                str += "/ ant_mac:"+strToHex(&loc_8_frame.data[0],8).toUpper();
+                str += QString("/ seq:%1").arg(loc_8_frame.data[8],3);
+                locCmd_bleData_voltage = loc_8_frame.data[9];
+                str += QString("/ bat:%1.%2V").arg(locCmd_bleData_voltage/10).arg(locCmd_bleData_voltage%10);
+                str += QString("/ x:%1 y:%2 z:%3").arg(loc_8_frame.data[10]).arg(loc_8_frame.data[11]).arg(loc_8_frame.data[12]);
+                locCmd_bleData_alarm = loc_8_frame.data[13];
+                
+                locCmd_bleData_txPowr = (char)loc_8_frame.data[14];
+                locCmd_bleData_recRssi = (char)loc_8_frame.data[15];
+                
+                str += QString("/ txPower:%1dBm").arg(locCmd_bleData_txPowr,2);
+                str += QString("/ recRssi:%1dBm").arg(locCmd_bleData_recRssi,4);
+                
+                str += "/ alarm:0x"+uint8ToHex(locCmd_bleData_alarm).toUpper();
+                if(checkDrop(locCmd_bleData_alarm))str += " 跌落报警;";
+                if(checkAlarm(locCmd_bleData_alarm))str += " 紧急报警;";
+                if(checkLocation(locCmd_bleData_alarm))str += " 室外报警;";
+                if(checkLowBattery(locCmd_bleData_alarm))str += " 低电报警;";
+                if(checkTamper(locCmd_bleData_alarm))str += " 防拆报警;";
+                
+                
+
+
+
+
+                break;
+            case locCmd_heartRateData:
+                str += "locCmd_heartRateData";
+                str += QString("/ max:%1").arg((short)(loc_8_frame.data[0]*256+loc_8_frame.data[1]));
+                str += QString("/ avr:%1").arg((short)(loc_8_frame.data[2]*256+loc_8_frame.data[3]));
+                str += QString("/ min:%1").arg((short)(loc_8_frame.data[4]*256+loc_8_frame.data[5]));
+                str += QString("/ time report:%1S").arg(loc_8_frame.data[6]*256+loc_8_frame.data[7]);
+                uint time_utc;
+                time_utc =  (loc_8_frame.data[8]<<24)+
+                            (loc_8_frame.data[9]<<16)+
+                            (loc_8_frame.data[10]<<8)+
+                            (loc_8_frame.data[11]<<0);
+                str += QString("/ UTC:%1").arg(time_utc);
+
+                str += "/ "+ (QDateTime::fromTime_t(time_utc)).toString();
+                break;
+            case locCmd_setReportTime:
+                str += "locCmd_setReportTime";
+                ushort report_time;
+                report_time= loc_8_frame.data[0]*256+loc_8_frame.data[1];
+                str += QString("/ time:%1 S").arg(report_time);
+                break;
+            case locCmd_setRssiOffset:
+                str += "locCmd_setRssiOffset";
+                char rssi_offset;
+                rssi_offset= loc_8_frame.data[0];
+                str += QString("/ rssi offset:%1").arg((short)rssi_offset);
+                break;
             default :
                 str += "unknow cmd";
                 break;
             }
+            if(loc_par.filtStr.length()!=0)
+            {
 
+                if(str.contains(loc_par.filtStr) == false)
+                return;
+            }
             LOC_DisplayWithTime(str);
         }
         else if(iot_frame.data[0]==0xFA && iot_frame.data[1]==0xCA)
@@ -3279,7 +3346,7 @@ void  MainWindow::IOT_cmdHeartBeat(ushort gateway_id,
 
 
 
-void MainWindow::IOT_cmdNetwork(ushort gateway_id,ushort device_id,QByteArray data)
+QByteArray MainWindow::IOT_cmdNetwork(ushort gateway_id,ushort device_id,QByteArray data)
 {
 
     QByteArray send_buff;
@@ -3291,7 +3358,8 @@ void MainWindow::IOT_cmdNetwork(ushort gateway_id,ushort device_id,QByteArray da
     if(shortAddr->currentRow()<0)
     {
         DisplayWithTime("please select addr ");
-        return ;
+        send_buff.clear();
+        return send_buff;
     }
 
 
@@ -3320,23 +3388,22 @@ void MainWindow::IOT_cmdNetwork(ushort gateway_id,ushort device_id,QByteArray da
         NET_getBindSocket(device_id);
         NET_send(send_buff);
     }
-
+    return send_buff;
 }
 
 
-void MainWindow::IOT_cmdApp(ushort gateway_id,ushort device_id,QByteArray data)
+QByteArray MainWindow::IOT_cmdApp(ushort gateway_id,ushort device_id,QByteArray data)
 {
 
     QByteArray send_buff;
 
-    if(rf_send.sequence==255)rf_send.sequence=0;
-    else rf_send.sequence++;
 
 
     if(shortAddr->currentRow()<0)
     {
         DisplayWithTime("please select addr ");
-        return ;
+        send_buff.clear();
+        return send_buff;
     }
 
 
@@ -3363,7 +3430,7 @@ void MainWindow::IOT_cmdApp(ushort gateway_id,ushort device_id,QByteArray data)
         NET_getBindSocket(device_id);
         NET_send(send_buff);
     }
-
+    return send_buff;
 }
 
 
@@ -3547,7 +3614,7 @@ void MainWindow::rcmdSetHeartbeatTime(ushort gateway_id,ushort device_id)
     QString str;
     ushort time;
 
-    str = textEdit_heartbeat_time->toPlainText();
+    str = textEdit_heartbeat_time->text();
     time = str.toUShort();
 
 
@@ -4156,6 +4223,15 @@ void MainWindow::on_shortAddr_doubleClicked(const QModelIndex &index)
 {
     ushort i = index.row();
     te_addrEdit->setText(shortAddr->item(i)->text());
+    localtionFiltId_4->setText(shortAddr->item(i)->text());
+    BLE_FiltId_4->setText(shortAddr->item(i)->text());
+    sosFiltId->setText(shortAddr->item(i)->text());
+    injectionFiltId->setText(shortAddr->item(i)->text());
+    energyFiltId->setText(shortAddr->item(i)->text());
+    TemTHFiltId->setText(shortAddr->item(i)->text());
+    coolFiltId->setText(shortAddr->item(i)->text());
+    localtionFiltId_4->setText(shortAddr->item(i)->text());
+    localtionFiltId_4->setText(shortAddr->item(i)->text());
 }
 
 void MainWindow::on_pb_addAddr_clicked()
@@ -4292,7 +4368,7 @@ void MainWindow::NET_revData()
            {
                 display.insert( i+2, " ");
            }
-           infReceive->setPlainText(display);
+           infReceive->setText(display);
 
 
 
@@ -4355,7 +4431,7 @@ void MainWindow::NET_send(QByteArray src)
             return ;
         }
 
-        if(net_par.currentSocket ==NULL )
+        if(net_par.currentSocket == NULL )
         {
 
             for(ushort i=0;i<SOCKET_MAX;i++)
@@ -4388,7 +4464,7 @@ void MainWindow::NET_send(QByteArray src)
     {
         str.insert(i*3+2, " ");
     }
-    infEdit->setPlainText(str);
+    infEdit->setText(str);
 
 
 
@@ -4404,9 +4480,52 @@ void MainWindow::NET_send(QByteArray src)
 
 void MainWindow::on_bt_netSend_clicked()
 {
-    NET_getBindSocket(rf_send.device_id);
-    NET_send(infEdit->toPlainText().toLatin1());
 
+
+    QString str = lineEdit_manuel->text();
+    QByteArray byte;
+    for(int i =0;i<str.length();i+=3){
+        byte.append((uchar)hexToUint8(str,i));
+    }
+
+
+    if((uchar)byte[0] == 0x98 && (uchar)byte[1] == 0x89){
+
+        byte.append(checkSum(byte,byte.length()));
+        ushort device_id = (uchar)byte[4]*256+(uchar)byte[5];
+        NET_getBindSocket(device_id);
+        NET_send(byte);
+    }
+    else {
+
+        ID_SEND send = id_access.getIdSendInf(rf_send.device_id);
+        byte.append(checkSum(byte,byte.length()));
+
+        if(((uchar)byte[0] == 0xA5 && (uchar)byte[1] == 0x5A)||
+           ((uchar)byte[0] == 0xA6 && (uchar)byte[1] == 0x6A)||
+           ((uchar)byte[0] == 0xAA && (uchar)byte[1] == 0x55)||
+           ((uchar)byte[0] == 0xFA && (uchar)byte[1] == 0xCA)
+                )
+        {
+            byte = IOT_cmdApp(send.gateway_id,send.device_id,byte);
+        }
+        else {
+            byte = IOT_cmdNetwork(send.gateway_id,send.device_id,byte);
+        }
+    }
+
+
+
+
+
+
+    str.clear();
+    str = byte.toHex().toUpper();
+    for(ushort i =0; i*3<str.length();i++)
+    {
+        str.insert(i*3+2, " ");
+    }
+    infEdit->setText(str);
 }
 
 
@@ -4883,12 +5002,26 @@ void MainWindow::on_bt_setHeartBeatTime_clicked()
 }
 
 
+
+
 void MainWindow::on_bt_setHeartBeatTime_3_clicked()
 {
     ID_SEND send = id_access.getIdSendInf(rf_send.device_id);
     LOC_Set125KRssi(send.gateway_id,rf_send.device_id);
 }
 
+void MainWindow::on_bt_setDevRssi_clicked()
+{
+    ID_SEND send = id_access.getIdSendInf(rf_send.device_id);
+    LOC_SetDevRssiOffset(send.gateway_id,send.device_id,send.mac);
+}
+
+
+void MainWindow::on_pushButton_setHeartRateTime_clicked()
+{
+    ID_SEND send = id_access.getIdSendInf(rf_send.device_id);
+    LOC_SetDevHeartRateTime(send.gateway_id,rf_send.device_id,send.mac);
+}
 
 void MainWindow::on_checkBox_productTest_stateChanged(int arg1)
 {
@@ -4960,6 +5093,91 @@ void MainWindow::LOC_Set125KRssi(ushort gateway_id,ushort device_id)
         str += "  /RSSI = 0x"+uint8ToHex(ant125kRssi).toUpper();
         LOC_DisplayWithTime(str);
     }
+}
+
+void MainWindow::LOC_SetDevRssiOffset(ushort gateway_id,ushort device_id,uchar *mac)
+{
+
+    QString str;
+    char ant125kRssi;
+
+
+    locationDevIDtextEdit->setText(strToHex(mac,8).toUpper());
+    str = locationDevRssitextEdit->text();
+
+    ant125kRssi = (char)str.toShort(Q_NULLPTR,10);
+
+
+    QByteArray buff;
+    buff.clear();
+    buff[0] = 0xA6;
+    buff[1] = 0x6A;
+    buff[2] = mac[0];
+    buff[3] = mac[1];
+    buff[4] = mac[2];
+    buff[5] = mac[3];
+    buff[6] = mac[4];
+    buff[7] = mac[5];
+    buff[8] = mac[6];
+    buff[9] = mac[7];
+    buff[10] = rf_send.device_type;
+    buff[11] = 2;
+    buff[12] = locCmd_setRssiOffset;
+    buff[13] = ant125kRssi;
+    buff.append(checkSum(buff,buff.length()));
+
+    IOT_cmdApp(gateway_id,device_id,buff);
+    str = "locCmd_setRssiOffset/ device id = 0x"+uint16ToHex(device_id).toUpper();
+    str += "/ MAC:"+locationDevIDtextEdit->text();
+    str += QString("/ RSSI offset = %1").arg((short)ant125kRssi);
+    LOC_DisplayWithTime(str);
+}
+
+void MainWindow::LOC_SetDevHeartRateTime(ushort gateway_id,ushort device_id,uchar *mac)
+{
+
+    QString str;
+    uint time_utc;
+    ushort time_seconds;
+    QDateTime qtime;
+    time_utc = (uint)(qtime.currentDateTimeUtc().toMSecsSinceEpoch()/1000);
+
+    str = textEdit_heartRate_time->text();
+
+    time_seconds = str.toUShort(Q_NULLPTR,10);
+
+
+    QByteArray buff;
+    buff.clear();
+    buff[0] = 0xA6;
+    buff[1] = 0x6A;
+    buff[2] = mac[0];
+    buff[3] = mac[1];
+    buff[4] = mac[2];
+    buff[5] = mac[3];
+    buff[6] = mac[4];
+    buff[7] = mac[5];
+    buff[8] = mac[6];
+    buff[9] = mac[7];
+    buff[10] = rf_send.device_type;
+    buff[11] = 7;
+    buff[12] = locCmd_setReportTime;
+    buff[13] = (time_seconds>>8)&0xFF;
+    buff[14] = (time_seconds>>0)&0xFF;
+    //UTC TIME
+    buff[15] = (uchar)(time_utc>>24)&0xFF;
+    buff[16] = (uchar)(time_utc>>16)&0xFF;
+    buff[17] = (uchar)(time_utc>>8 )&0xFF;
+    buff[18] = (uchar)(time_utc>>0 )&0xFF;
+    buff.append(checkSum(buff,buff.length()));
+
+    IOT_cmdApp(gateway_id,device_id,buff);
+    str = "locCmd_setReportTime/ device id = 0x"+uint16ToHex(device_id).toUpper();
+    str += "/ MAC:"+strToHex(mac,8).toUpper();
+    str += QString("/ time report = %1S").arg(time_seconds);
+    str += "/ UTC:" + QString("%1").arg(time_utc);
+    //str += "/ "+ (QDateTime::fromTime_t(1533801743)).toString();
+    LOC_DisplayWithTime(str);
 }
 
 
@@ -5049,15 +5267,30 @@ void MainWindow::on_coolSetSn_Bt_clicked()
 void MainWindow::on_coolTemVerification_Bt_clicked()
 {
     ID_SEND send = id_access.getIdSendInf(rf_send.device_id);
-    COO_tempretureVerfication(send.gateway_id , rf_send.device_id);
-    COO_DisplayWithTime("温度校准");
+    if(coolAA55checkBox->isChecked()){
+        COO_tempretureVerfication(send.gateway_id , rf_send.device_id,send.mac);
+        COO_DisplayWithTime("AA55温度校准");
+    }
+    else{
+        COO_tempretureVerfication(send.gateway_id , rf_send.device_id);
+        COO_DisplayWithTime("温度校准");
+    }
+
 }
 
 void MainWindow::on_coolHumVerification_Bt_clicked()
 {
     ID_SEND send = id_access.getIdSendInf(rf_send.device_id);
-    COO_HumVerfication(send.gateway_id , rf_send.device_id);
-    COO_DisplayWithTime("湿度校准");
+    if(coolAA55checkBox->isChecked()){
+        COO_HumVerfication(send.gateway_id , rf_send.device_id,send.mac);
+        COO_DisplayWithTime("AA55湿度校准");
+    }
+    else{
+        COO_HumVerfication(send.gateway_id , rf_send.device_id);
+        COO_DisplayWithTime("湿度校准");
+    }
+
+
 }
 
 void MainWindow::on_coolDisarm_clicked()
@@ -5202,6 +5435,46 @@ void MainWindow::COO_tempretureVerfication(ushort gateway_id,ushort device_id)
     IOT_cmdApp(gateway_id,device_id,buff);
 }
 
+void MainWindow::COO_tempretureVerfication(ushort gateway_id,ushort device_id,uchar *mac)
+{
+    QByteArray buff;
+    short num;
+    QString str = coolTemVerification_Edit->toPlainText();
+
+
+    num = str.toShort();
+
+    buff.clear();
+    buff[0] = 0xAA;
+    buff[1] = 0x55;
+    buff[2] = mac[0];
+    buff[3] = mac[1];
+    buff[4] = mac[2];
+    buff[5] = mac[3];
+    buff[6] = mac[4];
+    buff[7] = mac[5];
+    buff[8] = mac[6];
+    buff[9] = mac[7];
+    buff[10] = coolDevCoolChain;
+    buff[11] = 0x03;//len
+    buff[12] = coolCmdTemVer;
+    if(num<0)
+    {
+        buff[13] = 1;
+        buff[14] = -num;
+    }
+    else
+    {
+        buff[13] = 0;
+        buff[14] = num;
+    }
+
+    buff[15] = checkSum(buff,buff.length());
+
+    IOT_cmdApp(gateway_id,device_id,buff);
+}
+
+
 
 void MainWindow::COO_HumVerfication(ushort gateway_id,ushort device_id)
 {
@@ -5240,7 +5513,44 @@ void MainWindow::COO_HumVerfication(ushort gateway_id,ushort device_id)
     IOT_cmdApp(gateway_id,device_id,buff);
 }
 
+void MainWindow::COO_HumVerfication(ushort gateway_id,ushort device_id,uchar *mac)
+{
+    QByteArray buff;
+    short num;
+    QString str = coolHumVerification_Edit->toPlainText();
 
+
+    num = str.toShort();
+
+    buff.clear();
+    buff[0] = 0xAA;
+    buff[1] = 0x55;
+    buff[2] = mac[0];
+    buff[3] = mac[1];
+    buff[4] = mac[2];
+    buff[5] = mac[3];
+    buff[6] = mac[4];
+    buff[7] = mac[5];
+    buff[8] = mac[6];
+    buff[9] = mac[7];
+    buff[10] = coolDevCoolChain;
+    buff[11] = 0x03;//len
+    buff[12] = coolCmdHumVer;
+    if(num<0)
+    {
+        buff[13] = 1;
+        buff[14] = -num;
+    }
+    else
+    {
+        buff[13] = 0;
+        buff[14] = num;
+    }
+
+    buff[15] = checkSum(buff,buff.length());
+
+    IOT_cmdApp(gateway_id,device_id,buff);
+}
 void MainWindow::COO_tempretureAlarmHL(ushort gateway_id,ushort device_id)
 {
     QByteArray buff;
@@ -5282,7 +5592,7 @@ void MainWindow::COO_tempretureAlarmHL(ushort gateway_id,ushort device_id)
     }
     if(tem_l<0)
     {
-        tem = -tem_l;
+        tem = (-tem_l)*100;
         buff[11] = 1;
         buff[12] = (tem/100)>>8;
         buff[13] = (tem/100)>>0;
@@ -5290,7 +5600,7 @@ void MainWindow::COO_tempretureAlarmHL(ushort gateway_id,ushort device_id)
     }
     else
     {
-        tem = (-tem_h)*100;
+        tem = (tem_l)*100;
         buff[11] = 0;
         buff[12] = (tem/100)>>8;
         buff[13] = (tem/100)>>0;
@@ -5468,6 +5778,21 @@ void MainWindow::on_TemTHSetRepTime_Bt_clicked()
     TEMTH_DisplayWithTime("设置采样时间");
 }
 
+void MainWindow::on_TemTHTemVerification_Bt_clicked()
+{
+    ID_SEND send = id_access.getIdSendInf(rf_send.device_id);
+    TEMTH_tempretureVerfication(send.gateway_id , rf_send.device_id,send.mac);
+    TEMTH_DisplayWithTime("温度校验");
+}
+
+void MainWindow::on_TemTHHumVerification_Bt_clicked()
+{
+    ID_SEND send = id_access.getIdSendInf(rf_send.device_id);
+    TEMTH_HumVerfication(send.gateway_id , rf_send.device_id,send.mac);
+    TEMTH_DisplayWithTime("湿度校验");
+}
+
+
 
 void MainWindow::TEMTH_setReportTime(ushort gateway_id,ushort device_id,uchar *mac)
 {
@@ -5493,6 +5818,85 @@ void MainWindow::TEMTH_setReportTime(ushort gateway_id,ushort device_id,uchar *m
     buff[14] = 0xFF&(time>>0);
     buff[15] = 0;
     buff[16] = checkSum(buff,buff.length());
+
+    IOT_cmdApp(gateway_id,device_id,buff);
+}
+
+
+void MainWindow::TEMTH_tempretureVerfication(ushort gateway_id,ushort device_id,uchar *mac)
+{
+    QByteArray buff;
+    short num;
+    QString str = TemTHTemVerification_Edit->toPlainText();
+
+
+    num = str.toShort();
+
+    buff.clear();
+    buff[0] = 0xAA;
+    buff[1] = 0x55;
+    buff[2] = mac[0];
+    buff[3] = mac[1];
+    buff[4] = mac[2];
+    buff[5] = mac[3];
+    buff[6] = mac[4];
+    buff[7] = mac[5];
+    buff[8] = mac[6];
+    buff[9] = mac[7];
+    buff[10] = coolDevTemTh;
+    buff[11] = 0x03;//len
+    buff[12] = TemThCmdTemVer;
+    if(num<0)
+    {
+        buff[13] = 1;
+        buff[14] = -num;
+    }
+    else
+    {
+        buff[13] = 0;
+        buff[14] = num;
+    }
+
+    buff[15] = checkSum(buff,buff.length());
+
+    IOT_cmdApp(gateway_id,device_id,buff);
+}
+
+void MainWindow::TEMTH_HumVerfication(ushort gateway_id,ushort device_id,uchar *mac)
+{
+    QByteArray buff;
+    short num;
+    QString str = TemTHHumVerification_Edit->toPlainText();
+
+
+    num = str.toShort();
+
+    buff.clear();
+    buff[0] = 0xAA;
+    buff[1] = 0x55;
+    buff[2] = mac[0];
+    buff[3] = mac[1];
+    buff[4] = mac[2];
+    buff[5] = mac[3];
+    buff[6] = mac[4];
+    buff[7] = mac[5];
+    buff[8] = mac[6];
+    buff[9] = mac[7];
+    buff[10] = coolDevTemTh;
+    buff[11] = 0x03;//len
+    buff[12] = TemThCmdHumVer;
+    if(num<0)
+    {
+        buff[13] = 1;
+        buff[14] = -num;
+    }
+    else
+    {
+        buff[13] = 0;
+        buff[14] = num;
+    }
+
+    buff[15] = checkSum(buff,buff.length());
 
     IOT_cmdApp(gateway_id,device_id,buff);
 }
@@ -7915,5 +8319,38 @@ void MainWindow::on_textEdit_MAX_ID_textChanged()
 
 
 
+
+
+
+
+
+
+
+void MainWindow::on_cb_deviceTypeLocation_currentTextChanged(const QString &arg1)
+{
+    if(arg1 == "网关")rf_send.device_type = 0x00;
+    else if(arg1 == "成人腕带")rf_send.device_type = 0x01;
+    else if(arg1 == "精神病腕带")rf_send.device_type = 0x02;
+    else if(arg1 == "婴儿腕带")rf_send.device_type = 0x03;
+    else if(arg1 == "SOS按键(带定位)")rf_send.device_type = 0x04;
+    else if(arg1 == "插座")rf_send.device_type = 0x05;
+    else if(arg1 == "温度传感器")rf_send.device_type = 0x06;
+    else if(arg1 == "湿度传感器")rf_send.device_type = 0x07;
+    else if(arg1 == "多功能传感器")rf_send.device_type = 0x08;
+    else if(arg1 == "资产标签")rf_send.device_type = 0x09;
+    else if(arg1 == "四通道读头")rf_send.device_type = 0x0A;
+    else if(arg1 == "125k资产标签")rf_send.device_type = 0x0B;
+    else if(arg1 == "SOS按键(不带定位)")rf_send.device_type = 0x0C;
+    else if(arg1  == "蓝牙透传863模块")rf_send.device_type = 0x0D;
+    else if(arg1  == "手术室863模块")rf_send.device_type = 0x0E;
+    else if(arg1  == "PDA863模块")rf_send.device_type = 0x0F;
+    else if(arg1  == "桌面读卡器863模块")rf_send.device_type = 0x10;
+    else if(arg1 == "蓝牙资产标签")rf_send.device_type = 0xA0;
+    else if(arg1 == "蓝牙定位天线")rf_send.device_type = 0xB0;
+    else if(arg1 == "中继器")rf_send.device_type = 0xFC;
+    else if(arg1 == "普通节点")rf_send.device_type = 0xFD;
+    else if(arg1 == "低功耗节点")rf_send.device_type = 0xFE;
+    else if(arg1 == "未知节点")rf_send.device_type = 0xFF;
+}
 
 

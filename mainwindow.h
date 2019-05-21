@@ -175,6 +175,11 @@ struct APP_FRAME
 enum {
     locCmd_125KData = 0x01,
     locCmd_outDoorData = 0x02,
+    locCmd_rssiCaculation = 0x03,
+    locCmd_bleData = 0x04,
+    locCmd_heartRateData = 0x05,
+    locCmd_setReportTime = 0x06,
+    locCmd_setRssiOffset = 0x07
 };
 
 
@@ -315,6 +320,8 @@ enum
 enum
 {
     TemThCmdSetRepTime = 0x05,//
+    TemThCmdTemVer = 0x06,//
+    TemThCmdHumVer = 0x07,//
     TemThCmdGetSenVal = 0x08,//
     TemThCmdSenError = 0x0A,//
     TemThCmdSystemTime = 0x0B,//
@@ -453,6 +460,7 @@ struct RF_SEND
     short rssi;
     uchar sequence;
     uchar device;
+    uchar device_type;
 };
 
 
@@ -673,11 +681,11 @@ private:
     void rcmdRequestNetPar(ushort gateway_id,ushort device_id);
     void rcmdRssiAckTest(ushort gateway_id,ushort device_id,short dBm);
 
-    void IOT_cmdNetwork(ushort gateway_id,ushort device_id,QByteArray data);
+    QByteArray IOT_cmdNetwork(ushort gateway_id,ushort device_id,QByteArray data);
     void IOT_cmdAsscessId(ushort gateway_id,ushort device_id,ID_SEND *id);
     void IOT_cmdHeartBeat(IOT_FRAME *ptr);
     void IOT_cmdHeartBeat(ushort gateway_id,ushort device_id,ushort time,ushort bandwith,short rssi);
-    void IOT_cmdApp(ushort gateway_id,ushort device_id,QByteArray data);
+    QByteArray IOT_cmdApp(ushort gateway_id,ushort device_id,QByteArray data);
     void NET_TCPIP_SocketSend(QByteArray src,QTcpSocket *socket);
     void IOT_sendIdInformation(ushort id,QTcpSocket *socket);
     void IOT_sendAlgorithm(QTcpSocket *socket);
@@ -701,6 +709,9 @@ private:
     void LOC_DisplayWithNoTime(const QString &text);
     void LOC_init();
     void LOC_Set125KRssi(ushort gateway_id,ushort device_id);
+    void LOC_SetDevRssiOffset(ushort gateway_id,ushort device_id,uchar *mac);
+    void LOC_SetDevHeartRateTime(ushort gateway_id,ushort device_id,uchar *mac);
+
 
     COO_PAR coo_par;
     void COO_init();
@@ -714,7 +725,9 @@ private:
     void COO_setReportTime(ushort gateway_id,ushort device_id,uchar *mac);
     void COO_clearTemAlarm(ushort gateway_id,ushort device_id);
     void COO_tempretureVerfication(ushort gateway_id,ushort device_id);
+    void COO_tempretureVerfication(ushort gateway_id,ushort device_id,uchar *mac);
     void COO_HumVerfication(ushort gateway_id,ushort device_id);
+    void COO_HumVerfication(ushort gateway_id,ushort device_id,uchar *mac);
     void COO_tempretureAlarmHL(ushort gateway_id,ushort device_id);
     void COO_getSensorValue(ushort gateway_id,ushort device_id);
 
@@ -726,6 +739,8 @@ private:
     void TEMTH_ackError(ushort gateway_id,ushort device_id,uchar ack_cmd);
     void TEMTH_setReportTime(ushort gateway_id,ushort device_id,uchar *mac);
     void TEMTH_setSystemTime(ushort gateway_id,ushort device_id,uchar *mac);
+    void TEMTH_tempretureVerfication(ushort gateway_id,ushort device_id,uchar *mac);
+    void TEMTH_HumVerfication(ushort gateway_id,ushort device_id,uchar *mac);
 
 
     ENE_PAR ene_par;
@@ -912,6 +927,11 @@ private slots:
     void on_TemTHSetRepTime_Bt_clicked();
     void on_checkBox_productTest_stateChanged(int arg1);
     void on_checkBox_125KTest_stateChanged(int arg1);
+    void on_bt_setDevRssi_clicked();
+    void on_pushButton_setHeartRateTime_clicked();
+    void on_cb_deviceTypeLocation_currentTextChanged(const QString &arg1);
+    void on_TemTHTemVerification_Bt_clicked();
+    void on_TemTHHumVerification_Bt_clicked();
 };
 
  #endif

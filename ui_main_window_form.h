@@ -139,12 +139,14 @@ public:
     QHBoxLayout *horizontalLayout_19;
     QVBoxLayout *verticalLayout_21;
     QLabel *label_20;
+    QLabel *label_2;
     QLabel *label_21;
     QVBoxLayout *verticalLayout_22;
     QHBoxLayout *horizontalLayout_20;
-    QTextEdit *infEdit;
+    QLineEdit *lineEdit_manuel;
     QPushButton *bt_netSend;
-    QTextBrowser *infReceive;
+    QLineEdit *infEdit;
+    QLineEdit *infReceive;
     QWidget *Firmware_update;
     QVBoxLayout *verticalLayout_5;
     QGroupBox *groupBox_5;
@@ -227,6 +229,10 @@ public:
     QHBoxLayout *horizontalLayout_28;
     QTextEdit *coolSetRepTime_Edit;
     QPushButton *coolSetRepTime_Bt;
+    QGroupBox *groupBox_2;
+    QVBoxLayout *verticalLayout_16;
+    QCheckBox *coolAA55checkBox;
+    QSpacerItem *verticalSpacer_9;
     QSpacerItem *horizontalSpacer_17;
     QSpacerItem *horizontalSpacer_18;
     QSpacerItem *horizontalSpacer_19;
@@ -254,7 +260,12 @@ public:
     QHBoxLayout *horizontalLayout_2;
     QLineEdit *TemTHSetRepTime_Edit_2;
     QPushButton *TemTHSetRepTime_Bt;
-    QSpacerItem *verticalSpacer_9;
+    QHBoxLayout *horizontalLayout_90;
+    QTextEdit *TemTHTemVerification_Edit;
+    QPushButton *TemTHTemVerification_Bt;
+    QHBoxLayout *horizontalLayout_91;
+    QTextEdit *TemTHHumVerification_Edit;
+    QPushButton *TemTHHumVerification_Bt;
     QSpacerItem *horizontalSpacer_41;
     QSpacerItem *horizontalSpacer_43;
     QSpacerItem *horizontalSpacer_44;
@@ -394,7 +405,7 @@ public:
     QWidget *location;
     QVBoxLayout *verticalLayout_28;
     QGroupBox *groupBox_7;
-    QHBoxLayout *horizontalLayout_5;
+    QHBoxLayout *horizontalLayout_7;
     QVBoxLayout *verticalLayout_26;
     QHBoxLayout *horizontalLayout_15;
     QLabel *label_9;
@@ -411,6 +422,7 @@ public:
     QGroupBox *groupBox_11;
     QVBoxLayout *verticalLayout_43;
     QRadioButton *locationStopDisplay;
+    QSpacerItem *verticalSpacer_3;
     QGroupBox *groupBox_12;
     QVBoxLayout *verticalLayout_44;
     QRadioButton *locationDisplayMac;
@@ -424,14 +436,28 @@ public:
     QTextEdit *location125KRssitextEdit;
     QPushButton *bt_setHeartBeatTime_3;
     QSpacerItem *horizontalSpacer_36;
-    QVBoxLayout *verticalLayout_34;
-    QHBoxLayout *horizontalLayout_18;
-    QTextEdit *textEdit_heartbeat_time;
-    QLabel *label_26;
-    QPushButton *bt_setHeartBeatTime;
-    QSpacerItem *verticalSpacer_3;
     QSpacerItem *horizontalSpacer_5;
     QSpacerItem *horizontalSpacer_12;
+    QVBoxLayout *verticalLayout_77;
+    QHBoxLayout *horizontalLayout_5;
+    QLabel *label_59;
+    QComboBox *cb_deviceTypeLocation;
+    QHBoxLayout *horizontalLayout_82;
+    QLabel *label_56;
+    QLineEdit *locationDevIDtextEdit;
+    QHBoxLayout *horizontalLayout_87;
+    QLabel *label_57;
+    QLineEdit *locationDevRssitextEdit;
+    QPushButton *bt_setDevRssi;
+    QVBoxLayout *verticalLayout_34;
+    QHBoxLayout *horizontalLayout_18;
+    QLineEdit *textEdit_heartbeat_time;
+    QLabel *label_26;
+    QPushButton *bt_setHeartBeatTime;
+    QHBoxLayout *horizontalLayout_22;
+    QLineEdit *textEdit_heartRate_time;
+    QLabel *label_58;
+    QPushButton *pushButton_setHeartRateTime;
     QSpacerItem *horizontalSpacer_10;
     QSpacerItem *horizontalSpacer_15;
     QSpacerItem *horizontalSpacer_40;
@@ -1021,6 +1047,11 @@ public:
 
         verticalLayout_21->addWidget(label_20);
 
+        label_2 = new QLabel(groupBox_6);
+        label_2->setObjectName(QStringLiteral("label_2"));
+
+        verticalLayout_21->addWidget(label_2);
+
         label_21 = new QLabel(groupBox_6);
         label_21->setObjectName(QStringLiteral("label_21"));
         label_21->setMaximumSize(QSize(16777215, 31));
@@ -1034,11 +1065,10 @@ public:
         verticalLayout_22->setObjectName(QStringLiteral("verticalLayout_22"));
         horizontalLayout_20 = new QHBoxLayout();
         horizontalLayout_20->setObjectName(QStringLiteral("horizontalLayout_20"));
-        infEdit = new QTextEdit(groupBox_6);
-        infEdit->setObjectName(QStringLiteral("infEdit"));
-        infEdit->setMaximumSize(QSize(16777215, 25));
+        lineEdit_manuel = new QLineEdit(groupBox_6);
+        lineEdit_manuel->setObjectName(QStringLiteral("lineEdit_manuel"));
 
-        horizontalLayout_20->addWidget(infEdit);
+        horizontalLayout_20->addWidget(lineEdit_manuel);
 
         bt_netSend = new QPushButton(groupBox_6);
         bt_netSend->setObjectName(QStringLiteral("bt_netSend"));
@@ -1049,9 +1079,15 @@ public:
 
         verticalLayout_22->addLayout(horizontalLayout_20);
 
-        infReceive = new QTextBrowser(groupBox_6);
+        infEdit = new QLineEdit(groupBox_6);
+        infEdit->setObjectName(QStringLiteral("infEdit"));
+        infEdit->setReadOnly(true);
+
+        verticalLayout_22->addWidget(infEdit);
+
+        infReceive = new QLineEdit(groupBox_6);
         infReceive->setObjectName(QStringLiteral("infReceive"));
-        infReceive->setMaximumSize(QSize(16777215, 25));
+        infReceive->setReadOnly(true);
 
         verticalLayout_22->addWidget(infReceive);
 
@@ -1485,6 +1521,24 @@ public:
 
         horizontalLayout_21->addLayout(verticalLayout_30);
 
+        groupBox_2 = new QGroupBox(groupBox_8);
+        groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
+        verticalLayout_16 = new QVBoxLayout(groupBox_2);
+        verticalLayout_16->setObjectName(QStringLiteral("verticalLayout_16"));
+        coolAA55checkBox = new QCheckBox(groupBox_2);
+        coolAA55checkBox->setObjectName(QStringLiteral("coolAA55checkBox"));
+        coolAA55checkBox->setEnabled(true);
+        coolAA55checkBox->setChecked(true);
+
+        verticalLayout_16->addWidget(coolAA55checkBox);
+
+        verticalSpacer_9 = new QSpacerItem(20, 55, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        verticalLayout_16->addItem(verticalSpacer_9);
+
+
+        horizontalLayout_21->addWidget(groupBox_2);
+
         horizontalSpacer_17 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
         horizontalLayout_21->addItem(horizontalSpacer_17);
@@ -1612,9 +1666,39 @@ public:
 
         verticalLayout_4->addLayout(horizontalLayout_2);
 
-        verticalSpacer_9 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+        horizontalLayout_90 = new QHBoxLayout();
+        horizontalLayout_90->setObjectName(QStringLiteral("horizontalLayout_90"));
+        TemTHTemVerification_Edit = new QTextEdit(groupBox_27);
+        TemTHTemVerification_Edit->setObjectName(QStringLiteral("TemTHTemVerification_Edit"));
+        TemTHTemVerification_Edit->setMinimumSize(QSize(60, 25));
+        TemTHTemVerification_Edit->setMaximumSize(QSize(60, 25));
 
-        verticalLayout_4->addItem(verticalSpacer_9);
+        horizontalLayout_90->addWidget(TemTHTemVerification_Edit);
+
+        TemTHTemVerification_Bt = new QPushButton(groupBox_27);
+        TemTHTemVerification_Bt->setObjectName(QStringLiteral("TemTHTemVerification_Bt"));
+
+        horizontalLayout_90->addWidget(TemTHTemVerification_Bt);
+
+
+        verticalLayout_4->addLayout(horizontalLayout_90);
+
+        horizontalLayout_91 = new QHBoxLayout();
+        horizontalLayout_91->setObjectName(QStringLiteral("horizontalLayout_91"));
+        TemTHHumVerification_Edit = new QTextEdit(groupBox_27);
+        TemTHHumVerification_Edit->setObjectName(QStringLiteral("TemTHHumVerification_Edit"));
+        TemTHHumVerification_Edit->setMinimumSize(QSize(60, 25));
+        TemTHHumVerification_Edit->setMaximumSize(QSize(60, 25));
+
+        horizontalLayout_91->addWidget(TemTHHumVerification_Edit);
+
+        TemTHHumVerification_Bt = new QPushButton(groupBox_27);
+        TemTHHumVerification_Bt->setObjectName(QStringLiteral("TemTHHumVerification_Bt"));
+
+        horizontalLayout_91->addWidget(TemTHHumVerification_Bt);
+
+
+        verticalLayout_4->addLayout(horizontalLayout_91);
 
 
         horizontalLayout_4->addLayout(verticalLayout_4);
@@ -2310,8 +2394,8 @@ public:
         groupBox_7->setObjectName(QStringLiteral("groupBox_7"));
         groupBox_7->setMinimumSize(QSize(0, 120));
         groupBox_7->setMaximumSize(QSize(16777215, 120));
-        horizontalLayout_5 = new QHBoxLayout(groupBox_7);
-        horizontalLayout_5->setObjectName(QStringLiteral("horizontalLayout_5"));
+        horizontalLayout_7 = new QHBoxLayout(groupBox_7);
+        horizontalLayout_7->setObjectName(QStringLiteral("horizontalLayout_7"));
         verticalLayout_26 = new QVBoxLayout();
         verticalLayout_26->setObjectName(QStringLiteral("verticalLayout_26"));
         horizontalLayout_15 = new QHBoxLayout();
@@ -2388,7 +2472,7 @@ public:
         verticalLayout_26->addLayout(horizontalLayout_10);
 
 
-        horizontalLayout_5->addLayout(verticalLayout_26);
+        horizontalLayout_7->addLayout(verticalLayout_26);
 
         verticalLayout_64 = new QVBoxLayout();
         verticalLayout_64->setObjectName(QStringLiteral("verticalLayout_64"));
@@ -2405,6 +2489,10 @@ public:
 
         verticalLayout_64->addWidget(groupBox_11);
 
+        verticalSpacer_3 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        verticalLayout_64->addItem(verticalSpacer_3);
+
         groupBox_12 = new QGroupBox(groupBox_7);
         groupBox_12->setObjectName(QStringLiteral("groupBox_12"));
         groupBox_12->setMinimumSize(QSize(0, 35));
@@ -2420,11 +2508,11 @@ public:
         verticalLayout_64->addWidget(groupBox_12);
 
 
-        horizontalLayout_5->addLayout(verticalLayout_64);
+        horizontalLayout_7->addLayout(verticalLayout_64);
 
         horizontalSpacer_9 = new QSpacerItem(15, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
 
-        horizontalLayout_5->addItem(horizontalSpacer_9);
+        horizontalLayout_7->addItem(horizontalSpacer_9);
 
         verticalLayout_71 = new QVBoxLayout();
         verticalLayout_71->setObjectName(QStringLiteral("verticalLayout_71"));
@@ -2471,19 +2559,89 @@ public:
         verticalLayout_71->addWidget(bt_setHeartBeatTime_3);
 
 
-        horizontalLayout_5->addLayout(verticalLayout_71);
+        horizontalLayout_7->addLayout(verticalLayout_71);
 
         horizontalSpacer_36 = new QSpacerItem(15, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
 
-        horizontalLayout_5->addItem(horizontalSpacer_36);
+        horizontalLayout_7->addItem(horizontalSpacer_36);
+
+        horizontalSpacer_5 = new QSpacerItem(85, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_7->addItem(horizontalSpacer_5);
+
+        horizontalSpacer_12 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_7->addItem(horizontalSpacer_12);
+
+        verticalLayout_77 = new QVBoxLayout();
+        verticalLayout_77->setObjectName(QStringLiteral("verticalLayout_77"));
+        horizontalLayout_5 = new QHBoxLayout();
+        horizontalLayout_5->setObjectName(QStringLiteral("horizontalLayout_5"));
+        label_59 = new QLabel(groupBox_7);
+        label_59->setObjectName(QStringLiteral("label_59"));
+        label_59->setAlignment(Qt::AlignCenter);
+
+        horizontalLayout_5->addWidget(label_59);
+
+        cb_deviceTypeLocation = new QComboBox(groupBox_7);
+        cb_deviceTypeLocation->setObjectName(QStringLiteral("cb_deviceTypeLocation"));
+        cb_deviceTypeLocation->setMinimumSize(QSize(80, 0));
+
+        horizontalLayout_5->addWidget(cb_deviceTypeLocation);
+
+
+        verticalLayout_77->addLayout(horizontalLayout_5);
+
+        horizontalLayout_82 = new QHBoxLayout();
+        horizontalLayout_82->setObjectName(QStringLiteral("horizontalLayout_82"));
+        label_56 = new QLabel(groupBox_7);
+        label_56->setObjectName(QStringLiteral("label_56"));
+        label_56->setMaximumSize(QSize(16777215, 16777215));
+        label_56->setAlignment(Qt::AlignCenter);
+
+        horizontalLayout_82->addWidget(label_56);
+
+        locationDevIDtextEdit = new QLineEdit(groupBox_7);
+        locationDevIDtextEdit->setObjectName(QStringLiteral("locationDevIDtextEdit"));
+        locationDevIDtextEdit->setReadOnly(true);
+
+        horizontalLayout_82->addWidget(locationDevIDtextEdit);
+
+
+        verticalLayout_77->addLayout(horizontalLayout_82);
+
+        horizontalLayout_87 = new QHBoxLayout();
+        horizontalLayout_87->setObjectName(QStringLiteral("horizontalLayout_87"));
+        label_57 = new QLabel(groupBox_7);
+        label_57->setObjectName(QStringLiteral("label_57"));
+        label_57->setMaximumSize(QSize(16777215, 16777215));
+        label_57->setAlignment(Qt::AlignCenter);
+
+        horizontalLayout_87->addWidget(label_57);
+
+        locationDevRssitextEdit = new QLineEdit(groupBox_7);
+        locationDevRssitextEdit->setObjectName(QStringLiteral("locationDevRssitextEdit"));
+
+        horizontalLayout_87->addWidget(locationDevRssitextEdit);
+
+
+        verticalLayout_77->addLayout(horizontalLayout_87);
+
+        bt_setDevRssi = new QPushButton(groupBox_7);
+        bt_setDevRssi->setObjectName(QStringLiteral("bt_setDevRssi"));
+        bt_setDevRssi->setMaximumSize(QSize(16777215, 25));
+
+        verticalLayout_77->addWidget(bt_setDevRssi);
+
+
+        horizontalLayout_7->addLayout(verticalLayout_77);
 
         verticalLayout_34 = new QVBoxLayout();
         verticalLayout_34->setObjectName(QStringLiteral("verticalLayout_34"));
         horizontalLayout_18 = new QHBoxLayout();
         horizontalLayout_18->setObjectName(QStringLiteral("horizontalLayout_18"));
-        textEdit_heartbeat_time = new QTextEdit(groupBox_7);
+        textEdit_heartbeat_time = new QLineEdit(groupBox_7);
         textEdit_heartbeat_time->setObjectName(QStringLiteral("textEdit_heartbeat_time"));
-        textEdit_heartbeat_time->setMaximumSize(QSize(80, 25));
 
         horizontalLayout_18->addWidget(textEdit_heartbeat_time);
 
@@ -2502,40 +2660,49 @@ public:
 
         verticalLayout_34->addWidget(bt_setHeartBeatTime);
 
-        verticalSpacer_3 = new QSpacerItem(95, 31, QSizePolicy::Minimum, QSizePolicy::Fixed);
+        horizontalLayout_22 = new QHBoxLayout();
+        horizontalLayout_22->setObjectName(QStringLiteral("horizontalLayout_22"));
+        textEdit_heartRate_time = new QLineEdit(groupBox_7);
+        textEdit_heartRate_time->setObjectName(QStringLiteral("textEdit_heartRate_time"));
 
-        verticalLayout_34->addItem(verticalSpacer_3);
+        horizontalLayout_22->addWidget(textEdit_heartRate_time);
+
+        label_58 = new QLabel(groupBox_7);
+        label_58->setObjectName(QStringLiteral("label_58"));
+        label_58->setMaximumSize(QSize(10, 16777215));
+
+        horizontalLayout_22->addWidget(label_58);
 
 
-        horizontalLayout_5->addLayout(verticalLayout_34);
+        verticalLayout_34->addLayout(horizontalLayout_22);
 
-        horizontalSpacer_5 = new QSpacerItem(85, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        pushButton_setHeartRateTime = new QPushButton(groupBox_7);
+        pushButton_setHeartRateTime->setObjectName(QStringLiteral("pushButton_setHeartRateTime"));
 
-        horizontalLayout_5->addItem(horizontalSpacer_5);
+        verticalLayout_34->addWidget(pushButton_setHeartRateTime);
 
-        horizontalSpacer_12 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-        horizontalLayout_5->addItem(horizontalSpacer_12);
+        horizontalLayout_7->addLayout(verticalLayout_34);
 
         horizontalSpacer_10 = new QSpacerItem(84, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-        horizontalLayout_5->addItem(horizontalSpacer_10);
+        horizontalLayout_7->addItem(horizontalSpacer_10);
 
         horizontalSpacer_15 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-        horizontalLayout_5->addItem(horizontalSpacer_15);
+        horizontalLayout_7->addItem(horizontalSpacer_15);
 
         horizontalSpacer_40 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-        horizontalLayout_5->addItem(horizontalSpacer_40);
+        horizontalLayout_7->addItem(horizontalSpacer_40);
 
         horizontalSpacer_27 = new QSpacerItem(37, 17, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-        horizontalLayout_5->addItem(horizontalSpacer_27);
+        horizontalLayout_7->addItem(horizontalSpacer_27);
 
         horizontalSpacer_13 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-        horizontalLayout_5->addItem(horizontalSpacer_13);
+        horizontalLayout_7->addItem(horizontalSpacer_13);
 
         verticalLayout_15 = new QVBoxLayout();
         verticalLayout_15->setObjectName(QStringLiteral("verticalLayout_15"));
@@ -2554,7 +2721,7 @@ public:
         verticalLayout_15->addItem(verticalSpacer_11);
 
 
-        horizontalLayout_5->addLayout(verticalLayout_15);
+        horizontalLayout_7->addLayout(verticalLayout_15);
 
 
         verticalLayout_28->addWidget(groupBox_7);
@@ -3001,12 +3168,12 @@ public:
         MainWindow->setStatusBar(statusbar);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QStringLiteral("menubar"));
-        menubar->setGeometry(QRect(0, 0, 1325, 22));
+        menubar->setGeometry(QRect(0, 0, 1325, 23));
         MainWindow->setMenuBar(menubar);
 
         retranslateUi(MainWindow);
 
-        function->setCurrentIndex(1);
+        function->setCurrentIndex(2);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -3094,9 +3261,10 @@ public:
         pushButton_requestNetPar->setText(QApplication::translate("MainWindow", " \346\237\245\350\257\242\347\275\221\347\273\234\345\217\202\346\225\260", 0));
         export_idList_3->setText(QApplication::translate("MainWindow", "system reset", 0));
         groupBox_6->setTitle(QString());
-        label_20->setText(QApplication::translate("MainWindow", "send message", 0));
-        label_21->setText(QApplication::translate("MainWindow", "receive message", 0));
-        bt_netSend->setText(QApplication::translate("MainWindow", "send", 0));
+        label_20->setText(QApplication::translate("MainWindow", "Manuel", 0));
+        label_2->setText(QApplication::translate("MainWindow", "Send", 0));
+        label_21->setText(QApplication::translate("MainWindow", "Receive", 0));
+        bt_netSend->setText(QApplication::translate("MainWindow", "Send", 0));
         function->setTabText(function->indexOf(Network), QApplication::translate("MainWindow", "Network", 0));
         groupBox_5->setTitle(QApplication::translate("MainWindow", "   \351\205\215\347\275\256\351\200\211\351\241\271", 0));
         label_8->setText(QApplication::translate("MainWindow", "\346\250\241\345\274\217", 0));
@@ -3212,6 +3380,8 @@ public:
         label_38->setText(QApplication::translate("MainWindow", "L", 0));
         coolTemAlarm_Bt->setText(QApplication::translate("MainWindow", "\350\256\276\347\275\256\344\270\212\344\270\213\351\231\220\346\270\251\345\272\246", 0));
         coolSetRepTime_Bt->setText(QApplication::translate("MainWindow", "\344\277\256\346\224\271\344\270\212\346\212\245\346\227\266\351\227\264", 0));
+        groupBox_2->setTitle(QString());
+        coolAA55checkBox->setText(QApplication::translate("MainWindow", "\346\225\260\346\215\256 \345\244\264AA55", 0));
         function->setTabText(function->indexOf(cool), QApplication::translate("MainWindow", "cool", 0));
         groupBox_27->setTitle(QString());
         label_54->setText(QApplication::translate("MainWindow", "ID    \347\255\233\351\200\211", 0));
@@ -3221,6 +3391,8 @@ public:
         groupBox_29->setTitle(QString());
         TemTHDisplayMac->setText(QApplication::translate("MainWindow", " \346\230\276\347\244\272MAC\345\234\260\345\235\200", 0));
         TemTHSetRepTime_Bt->setText(QApplication::translate("MainWindow", "\344\277\256\346\224\271\344\270\212\346\212\245\346\227\266\351\227\264", 0));
+        TemTHTemVerification_Bt->setText(QApplication::translate("MainWindow", "\346\270\251\345\272\246\346\240\241\346\255\243", 0));
+        TemTHHumVerification_Bt->setText(QApplication::translate("MainWindow", " \346\271\277\345\272\246\346\240\241\346\255\243", 0));
         function->setTabText(function->indexOf(tab_2), QApplication::translate("MainWindow", "TemTH", 0));
         groupBox_9->setTitle(QString());
         label_15->setText(QApplication::translate("MainWindow", "ID    \347\255\233\351\200\211", 0));
@@ -3336,10 +3508,50 @@ public:
         groupBox_12->setTitle(QString());
         locationDisplayMac->setText(QApplication::translate("MainWindow", " \346\230\276\347\244\272MAC\345\234\260\345\235\200", 0));
         label_46->setText(QApplication::translate("MainWindow", "125K ID", 0));
-        label_47->setText(QApplication::translate("MainWindow", "RSSI", 0));
+        label_47->setText(QApplication::translate("MainWindow", "RSSI   ", 0));
+        location125KRssitextEdit->setHtml(QApplication::translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'SimSun'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", 0));
         bt_setHeartBeatTime_3->setText(QApplication::translate("MainWindow", "\350\256\276\347\275\256125K\345\244\251\347\272\277\347\201\265\346\225\217\345\272\246", 0));
+        label_59->setText(QApplication::translate("MainWindow", "\350\256\276\345\244\207\347\261\273\345\236\213", 0));
+        cb_deviceTypeLocation->clear();
+        cb_deviceTypeLocation->insertItems(0, QStringList()
+         << QApplication::translate("MainWindow", "\347\275\221\345\205\263", 0)
+         << QApplication::translate("MainWindow", "\346\210\220\344\272\272\350\205\225\345\270\246", 0)
+         << QApplication::translate("MainWindow", "\347\262\276\347\245\236\347\227\205\350\205\225\345\270\246", 0)
+         << QApplication::translate("MainWindow", "\345\251\264\345\204\277\350\205\225\345\270\246", 0)
+         << QApplication::translate("MainWindow", "SOS\346\214\211\351\224\256(\345\270\246\345\256\232\344\275\215)", 0)
+         << QApplication::translate("MainWindow", "\346\217\222\345\272\247", 0)
+         << QApplication::translate("MainWindow", "\346\270\251\345\272\246\344\274\240\346\204\237\345\231\250", 0)
+         << QApplication::translate("MainWindow", "\346\271\277\345\272\246\344\274\240\346\204\237\345\231\250", 0)
+         << QApplication::translate("MainWindow", "\345\244\232\345\212\237\350\203\275\344\274\240\346\204\237\345\231\250", 0)
+         << QApplication::translate("MainWindow", "\350\265\204\344\272\247\346\240\207\347\255\276", 0)
+         << QApplication::translate("MainWindow", "\345\233\233\351\200\232\351\201\223\350\257\273\345\244\264", 0)
+         << QApplication::translate("MainWindow", "125k\350\265\204\344\272\247\346\240\207\347\255\276", 0)
+         << QApplication::translate("MainWindow", "SOS\346\214\211\351\224\256(\344\270\215\345\270\246\345\256\232\344\275\215)", 0)
+         << QApplication::translate("MainWindow", "\350\223\235\347\211\231\351\200\217\344\274\240863\346\250\241\345\235\227", 0)
+         << QApplication::translate("MainWindow", "\346\211\213\346\234\257\345\256\244863\346\250\241\345\235\227", 0)
+         << QApplication::translate("MainWindow", "\350\223\235\347\211\231\350\265\204\344\272\247\346\240\207\347\255\276", 0)
+         << QApplication::translate("MainWindow", "\350\223\235\347\211\231\345\256\232\344\275\215\345\244\251\347\272\277", 0)
+         << QApplication::translate("MainWindow", "\344\270\255\347\273\247\345\231\250", 0)
+         << QApplication::translate("MainWindow", "\346\231\256\351\200\232\350\212\202\347\202\271", 0)
+         << QApplication::translate("MainWindow", "\344\275\216\345\212\237\350\200\227\350\212\202\347\202\271", 0)
+         << QApplication::translate("MainWindow", "PDA863\346\250\241\345\235\227", 0)
+         << QApplication::translate("MainWindow", "\346\241\214\351\235\242\350\257\273\345\215\241\345\231\250863\346\250\241\345\235\227", 0)
+         << QApplication::translate("MainWindow", "\346\234\252\347\237\245\350\212\202\347\202\271", 0)
+        );
+        label_56->setText(QApplication::translate("MainWindow", "MAC ", 0));
+        label_57->setText(QApplication::translate("MainWindow", "RSSI", 0));
+        locationDevRssitextEdit->setText(QString());
+        bt_setDevRssi->setText(QApplication::translate("MainWindow", "\350\256\276\347\275\256RSSI\345\201\217\347\247\273\351\207\217", 0));
+        textEdit_heartbeat_time->setText(QString());
         label_26->setText(QApplication::translate("MainWindow", "S ", 0));
         bt_setHeartBeatTime->setText(QApplication::translate("MainWindow", "\350\256\276\347\275\256\345\277\203\350\267\263\345\214\205\346\227\266\351\227\264", 0));
+        textEdit_heartRate_time->setText(QString());
+        label_58->setText(QApplication::translate("MainWindow", "S ", 0));
+        pushButton_setHeartRateTime->setText(QApplication::translate("MainWindow", " \350\256\276\347\275\256\345\277\203\347\216\207\344\270\212\344\274\240\346\227\266\351\227\264", 0));
         checkBox_productTest->setText(QApplication::translate("MainWindow", "\347\224\237\344\272\247\346\265\213\350\257\225\346\250\241\345\274\217", 0));
         checkBox_125KTest->setText(QApplication::translate("MainWindow", "125K\344\270\211\350\275\264\346\265\213\350\257\225", 0));
         function->setTabText(function->indexOf(location), QApplication::translate("MainWindow", "location", 0));
