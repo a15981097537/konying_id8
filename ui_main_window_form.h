@@ -48,9 +48,15 @@ public:
     QHBoxLayout *horizontalLayout_12;
     QGroupBox *groupBox;
     QVBoxLayout *verticalLayout_3;
-    QVBoxLayout *verticalLayout_19;
     QLabel *label_12;
     QComboBox *comunication_protocal;
+    QHBoxLayout *horizontalLayout_23;
+    QLabel *label_3;
+    QLineEdit *lineEditIpAppConect;
+    QHBoxLayout *horizontalLayout_24;
+    QLabel *label_4;
+    QLineEdit *lineEditPortAppConnect;
+    QPushButton *pushButtonAppConnect;
     QPushButton *StoreDir;
     QTextEdit *te_addrEdit;
     QHBoxLayout *horizontalLayout_6;
@@ -580,22 +586,52 @@ public:
         groupBox->setMaximumSize(QSize(150, 16777215));
         verticalLayout_3 = new QVBoxLayout(groupBox);
         verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
-        verticalLayout_19 = new QVBoxLayout();
-        verticalLayout_19->setObjectName(QStringLiteral("verticalLayout_19"));
         label_12 = new QLabel(groupBox);
         label_12->setObjectName(QStringLiteral("label_12"));
         label_12->setAlignment(Qt::AlignCenter);
 
-        verticalLayout_19->addWidget(label_12);
+        verticalLayout_3->addWidget(label_12);
 
         comunication_protocal = new QComboBox(groupBox);
         comunication_protocal->setObjectName(QStringLiteral("comunication_protocal"));
         comunication_protocal->setMinimumSize(QSize(0, 0));
 
-        verticalLayout_19->addWidget(comunication_protocal);
+        verticalLayout_3->addWidget(comunication_protocal);
+
+        horizontalLayout_23 = new QHBoxLayout();
+        horizontalLayout_23->setObjectName(QStringLiteral("horizontalLayout_23"));
+        label_3 = new QLabel(groupBox);
+        label_3->setObjectName(QStringLiteral("label_3"));
+
+        horizontalLayout_23->addWidget(label_3);
+
+        lineEditIpAppConect = new QLineEdit(groupBox);
+        lineEditIpAppConect->setObjectName(QStringLiteral("lineEditIpAppConect"));
+
+        horizontalLayout_23->addWidget(lineEditIpAppConect);
 
 
-        verticalLayout_3->addLayout(verticalLayout_19);
+        verticalLayout_3->addLayout(horizontalLayout_23);
+
+        horizontalLayout_24 = new QHBoxLayout();
+        horizontalLayout_24->setObjectName(QStringLiteral("horizontalLayout_24"));
+        label_4 = new QLabel(groupBox);
+        label_4->setObjectName(QStringLiteral("label_4"));
+
+        horizontalLayout_24->addWidget(label_4);
+
+        lineEditPortAppConnect = new QLineEdit(groupBox);
+        lineEditPortAppConnect->setObjectName(QStringLiteral("lineEditPortAppConnect"));
+
+        horizontalLayout_24->addWidget(lineEditPortAppConnect);
+
+
+        verticalLayout_3->addLayout(horizontalLayout_24);
+
+        pushButtonAppConnect = new QPushButton(groupBox);
+        pushButtonAppConnect->setObjectName(QStringLiteral("pushButtonAppConnect"));
+
+        verticalLayout_3->addWidget(pushButtonAppConnect);
 
         StoreDir = new QPushButton(groupBox);
         StoreDir->setObjectName(QStringLiteral("StoreDir"));
@@ -1374,7 +1410,8 @@ public:
         verticalLayout_48->setObjectName(QStringLiteral("verticalLayout_48"));
         coolDisplayMac = new QRadioButton(groupBox_16);
         coolDisplayMac->setObjectName(QStringLiteral("coolDisplayMac"));
-        coolDisplayMac->setChecked(true);
+        coolDisplayMac->setEnabled(true);
+        coolDisplayMac->setChecked(false);
 
         verticalLayout_48->addWidget(coolDisplayMac);
 
@@ -1636,7 +1673,7 @@ public:
         verticalLayout_76->setObjectName(QStringLiteral("verticalLayout_76"));
         TemTHDisplayMac = new QRadioButton(groupBox_29);
         TemTHDisplayMac->setObjectName(QStringLiteral("TemTHDisplayMac"));
-        TemTHDisplayMac->setChecked(true);
+        TemTHDisplayMac->setChecked(false);
 
         verticalLayout_76->addWidget(TemTHDisplayMac);
 
@@ -1800,7 +1837,7 @@ public:
         verticalLayout_46->setObjectName(QStringLiteral("verticalLayout_46"));
         energyDisplayMac = new QRadioButton(groupBox_14);
         energyDisplayMac->setObjectName(QStringLiteral("energyDisplayMac"));
-        energyDisplayMac->setChecked(true);
+        energyDisplayMac->setChecked(false);
 
         verticalLayout_46->addWidget(energyDisplayMac);
 
@@ -1953,7 +1990,7 @@ public:
         verticalLayout_50->setObjectName(QStringLiteral("verticalLayout_50"));
         injectionDisplayMac = new QRadioButton(groupBox_18);
         injectionDisplayMac->setObjectName(QStringLiteral("injectionDisplayMac"));
-        injectionDisplayMac->setChecked(true);
+        injectionDisplayMac->setChecked(false);
 
         verticalLayout_50->addWidget(injectionDisplayMac);
 
@@ -2310,7 +2347,7 @@ public:
         verticalLayout_53->setObjectName(QStringLiteral("verticalLayout_53"));
         sosDisplayMac = new QRadioButton(groupBox_21);
         sosDisplayMac->setObjectName(QStringLiteral("sosDisplayMac"));
-        sosDisplayMac->setChecked(true);
+        sosDisplayMac->setChecked(false);
 
         verticalLayout_53->addWidget(sosDisplayMac);
 
@@ -2500,7 +2537,7 @@ public:
         verticalLayout_44->setObjectName(QStringLiteral("verticalLayout_44"));
         locationDisplayMac = new QRadioButton(groupBox_12);
         locationDisplayMac->setObjectName(QStringLiteral("locationDisplayMac"));
-        locationDisplayMac->setChecked(true);
+        locationDisplayMac->setChecked(false);
 
         verticalLayout_44->addWidget(locationDisplayMac);
 
@@ -2842,7 +2879,7 @@ public:
         verticalLayout_68->setObjectName(QStringLiteral("verticalLayout_68"));
         BLE_DisplayMac = new QRadioButton(groupBox_24);
         BLE_DisplayMac->setObjectName(QStringLiteral("BLE_DisplayMac"));
-        BLE_DisplayMac->setChecked(true);
+        BLE_DisplayMac->setChecked(false);
 
         verticalLayout_68->addWidget(BLE_DisplayMac);
 
@@ -3173,7 +3210,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        function->setCurrentIndex(2);
+        function->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -3191,6 +3228,9 @@ public:
          << QApplication::translate("MainWindow", "Server", 0)
          << QApplication::translate("MainWindow", "Client", 0)
         );
+        label_3->setText(QApplication::translate("MainWindow", "IP", 0));
+        label_4->setText(QApplication::translate("MainWindow", "PORT", 0));
+        pushButtonAppConnect->setText(QApplication::translate("MainWindow", "\347\233\221\345\220\254", 0));
         StoreDir->setText(QApplication::translate("MainWindow", "Store History Dir", 0));
         pb_addAddr->setText(QApplication::translate("MainWindow", "Add", 0));
         pb_deleteAddr->setText(QApplication::translate("MainWindow", "Clear", 0));

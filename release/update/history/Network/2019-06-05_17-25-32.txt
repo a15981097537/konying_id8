@@ -1,0 +1,17 @@
+2019-06-05 17:15:51/ iot server stop listening
+2019-06-05 17:15:51/ location server stop listening
+2019-06-05 17:15:51/ App server stop listening
+2019-06-05 17:15:51/ App client stop connect
+2019-06-05 17:16:04/ App client try to connect  IP:172.16.1.151  PORT:6003
+2019-06-05 17:16:10/ App client stop connect
+2019-06-05 17:16:54/ App client try to connect  IP:172.16.1.151  PORT:6003
+2019-06-05 17:16:57/ App client stop connect
+2019-06-05 17:17:52/ App client try to connect  IP:172.16.1.151  PORT:6003
+2019-06-05 17:17:53/ App client stop connect
+2019-06-05 17:18:09/ App client try to connect  IP:172.16.1.151  PORT:6003
+2019-06-05 17:18:23/ App client stop connect
+2019-06-05 17:20:11/ App client try to connect  IP:172.16.1.151  PORT:6003
+2019-06-05 17:20:17/ App client stop connect
+2019-06-05 17:20:26/ App client try to connect  IP:172.16.1.151  PORT:6003
+2019-06-05 17:20:30/ App client stop connect
+2019-06-05 17:22:15/ App client try to connect  IP:172.16.1.151  PORT:6003

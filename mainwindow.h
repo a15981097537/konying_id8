@@ -500,6 +500,7 @@ struct TRANSPORT
 
 
 #define SOCKET_MAX 100
+#define APP_SOCKET_MAX 10
 
 struct NET_PAR
 {
@@ -509,6 +510,9 @@ struct NET_PAR
     QTcpServer *locationServer;
     QTcpSocket *bind_socket[65536];
     QTcpSocket *locationSocket;
+    QTcpServer *appServer;
+    QTcpSocket *appSocket[APP_SOCKET_MAX];
+    QTcpSocket *appClientSocket;
 };
 
 
@@ -822,17 +826,17 @@ private slots:
 
 
     void pressUartData(QTcpSocket *socket);
-
     bool NET_newListen(); //建立TCP监听事件
+    bool NET_newListendAppConnect();
+    void NET_newListenLocation(); //建立TCP监听事件
     void NET_acceptConnection(); //接受客户端连接
+    void NET_acceptAppConnection(); //接受客户端连接
+    void NET_acceptConnectionLocation(); //接受客户端连接
     void NET_displayError(QAbstractSocket::SocketError); //显示错误信息
     void NET_revData();
-
-
-    void NET_newListenLocation(); //建立TCP监听事件
-    void NET_acceptConnectionLocation(); //接受客户端连接
+    void NET_revAppServerData();
+    void NET_revAppClientData();
     void NET_revDataLocation();
-
     void BLE_locationCalculator(ushort id);
 
 
@@ -932,6 +936,7 @@ private slots:
     void on_cb_deviceTypeLocation_currentTextChanged(const QString &arg1);
     void on_TemTHTemVerification_Bt_clicked();
     void on_TemTHHumVerification_Bt_clicked();
+    void on_pushButtonAppConnect_clicked();
 };
 
  #endif

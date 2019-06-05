@@ -291,6 +291,7 @@ void MainWindow::pressUartData(QTcpSocket *socket)
                 if(ptr[length-1]==check_sum)
                 {
                     pressCmdData(ptr,length,socket);
+
                     size -= length;
                     ptr += length;
                 }
@@ -344,10 +345,9 @@ void MainWindow::pressCmdData(uchar *data , ushort size,QTcpSocket *socket)
         {
             str.insert(i*3+2, " ");
         }
-        if(comunication_protocal->currentText() == "Server")
-        {
-            DisplayWithTime(QString("tcp/ip Server receive %1 byte").arg(buff.length()));
-        }
+
+        DisplayWithTime(QString("tcp/ip receive %1 byte").arg(buff.length()));
+
 
 
 
@@ -409,33 +409,63 @@ void MainWindow::pressCmdData(uchar *data , ushort size,QTcpSocket *socket)
     }
     else if(iot_frame.cmd == cmd_idRequest)
     {
-        if(networkAutoIdStatus->isChecked()==true)
-        {
-            //send = id_access.accessId(iot_frame.data);
-            send = id_access.accessId(iot_frame.data,
-                                      textEdit_MAX_ID->toPlainText().toUShort(),
-                                      textEdit_MIN_ID->toPlainText().toUShort());
-            NET_DisplayWithTime("自动分配");
-        }
-        else if(networkManuIdStatus->isChecked()==true)
-        {
-            send = id_access.checkId(iot_frame.data);
-            NET_DisplayWithTime("固定分配");
-        }
-        if(send.device_id == 0xFFFF)return;
+        if(comunication_protocal->currentText() == "Server"){
+            if(networkAutoIdStatus->isChecked()==true)
+            {
+                //send = id_access.accessId(iot_frame.data);
+                send = id_access.accessId(iot_frame.data,
+                                          textEdit_MAX_ID->toPlainText().toUShort(),
+                                          textEdit_MIN_ID->toPlainText().toUShort());
+                NET_DisplayWithTime("自动分配");
+            }
+            else if(networkManuIdStatus->isChecked()==true)
+            {
+                send = id_access.checkId(iot_frame.data);
+                NET_DisplayWithTime("固定分配");
+            }
+            if(send.device_id == 0xFFFF)return;
 
-        str0 = "0x" + uint16ToHex(send.device_id).toUpper();
-        if(shortAddr->findItems(str0 , Qt::MatchExactly).isEmpty())
-        {
-            shortAddr->insertItem(0,tr(""));
-            shortAddr->item(0)->setText(str0);
-            total_id_display->setText(QString("select:%1 total:%2").arg(shortAddr->currentRow()).arg(shortAddr->count()));
-        }
+            str0 = "0x" + uint16ToHex(send.device_id).toUpper();
+            if(shortAddr->findItems(str0 , Qt::MatchExactly).isEmpty())
+            {
+                shortAddr->insertItem(0,tr(""));
+                shortAddr->item(0)->setText(str0);
+                total_id_display->setText(QString("select:%1 total:%2").arg(shortAddr->currentRow()).arg(shortAddr->count()));
+            }
 
-        NET_setBindSocket(send.device_id);
-        IOT_cmdAsscessId(iot_frame.gateway_id,iot_frame.device_id,&send);
-        id_access.getIdInf(send.device_id);
-        NET_DisplayWithTime(id_access.getIdInf(send.device_id));
+            NET_setBindSocket(send.device_id);
+            IOT_cmdAsscessId(iot_frame.gateway_id,iot_frame.device_id,&send);
+            id_access.getIdInf(send.device_id);
+            NET_DisplayWithTime(id_access.getIdInf(send.device_id));
+        }
+        else {
+            uchar *ptr = iot_frame.data;
+            str+="/ MAC:"+strToHex(ptr,8).toUpper();
+
+
+            ptr+=8;
+            str+="/ gateway_id:"+strToHex(ptr,2);
+
+
+            ptr+=2;
+            str+="/ panid:"+strToHex(ptr,2);
+
+
+            ptr+=2;
+            ushort client_frequence;
+            client_frequence = (ptr[0]<<8)+ptr[1];
+            str+="/ frequence:"+QString("%1").arg(client_frequence);
+
+            ptr+=2;
+            ushort client_channel;
+            client_channel = *ptr;
+            str+="/ channel:"+QString("%1").arg(client_channel);
+
+
+            ptr++;
+            str+="/ un:"+strToHex(ptr,4);
+            NET_DisplayWithTime(str);
+        }
     }
     else if(iot_frame.cmd == cmd_app)
     {
@@ -1517,7 +1547,9 @@ void MainWindow::pressCmdData(uchar *data , ushort size,QTcpSocket *socket)
             }
             else if(cool_frame_faca.deviceType == coolDevInjection)
             {
-                if(cool_frame_faca.cmd != 0xFE)INJ_ackSuccess(iot_frame.gateway_id,iot_frame.device_id,cool_frame_faca.cmd);
+                if(cool_frame_faca.cmd != 0xFE){
+                    if(comunication_protocal->currentText() == "Server")INJ_ackSuccess(iot_frame.gateway_id,iot_frame.device_id,cool_frame_faca.cmd);
+                }
                 if(injectionStopDisplay->isChecked() == true)return;
                 if(injectionDisplayMac->isChecked() == true)
                 {
@@ -2223,7 +2255,9 @@ void MainWindow::pressCmdData(uchar *data , ushort size,QTcpSocket *socket)
             }
             else if(cool_frame.deviceType == coolDevInjection)
             {
-                if(cool_frame.cmd != 0xFE)INJ_ackSuccess(iot_frame.gateway_id,iot_frame.device_id,cool_frame.cmd);
+                if(cool_frame.cmd != 0xFE){
+                    if(comunication_protocal->currentText() == "Server")INJ_ackSuccess(iot_frame.gateway_id,iot_frame.device_id,cool_frame.cmd);
+                }
                 if(injectionStopDisplay->isChecked() == true)return;
                 if(injectionDisplayMac->isChecked() == true)
                 {
@@ -3269,11 +3303,10 @@ void  MainWindow::IOT_cmdAsscessId(ushort gateway_id,ushort device_id,ID_SEND *i
     buff.append(checkSum(buff,buff.length()));
 
 
-    if(comunication_protocal->currentText() == "Server")
-    {
-        //NET_getBindSocket(id->device_id);
-        NET_send(buff);
-    }
+
+    //NET_getBindSocket(id->device_id);
+    NET_send(buff);
+
 }
 
 
@@ -3299,11 +3332,9 @@ void  MainWindow::IOT_cmdHeartBeat(IOT_FRAME *ptr)
     buff[15]=ptr->checkSum;
 
 
-    if(comunication_protocal->currentText() == "Server")
-    {
-        NET_getBindSocket(ptr->device_id);
-        NET_send(buff);
-    }
+    NET_getBindSocket(ptr->device_id);
+    NET_send(buff);
+
 }
 
 
@@ -3335,11 +3366,9 @@ void  MainWindow::IOT_cmdHeartBeat(ushort gateway_id,
     buff.append(checkSum(buff,buff.length()));
 
 
-    if(comunication_protocal->currentText() == "Server")
-    {
-        NET_getBindSocket(device_id);
-        NET_send(buff);
-    }
+
+    NET_getBindSocket(device_id);
+    NET_send(buff);
 
 }
 
@@ -3383,11 +3412,10 @@ QByteArray MainWindow::IOT_cmdNetwork(ushort gateway_id,ushort device_id,QByteAr
 
 
 
-    if(comunication_protocal->currentText() == "Server")
-    {
-        NET_getBindSocket(device_id);
-        NET_send(send_buff);
-    }
+
+    NET_getBindSocket(device_id);
+    NET_send(send_buff);
+
     return send_buff;
 }
 
@@ -3425,11 +3453,10 @@ QByteArray MainWindow::IOT_cmdApp(ushort gateway_id,ushort device_id,QByteArray 
 
 
 
-    if(comunication_protocal->currentText() == "Server")
-    {
-        NET_getBindSocket(device_id);
-        NET_send(send_buff);
-    }
+
+    NET_getBindSocket(device_id);
+    NET_send(send_buff);
+
     return send_buff;
 }
 
@@ -4157,22 +4184,21 @@ void MainWindow::on_shortAddr_itemSelectionChanged()
 {
     QString str = shortAddr->currentItem()->text();
     rf_send.device_id = str.toUShort(0,16);
-    if(comunication_protocal->currentText() == "Server")
+
+    if(net_par.bind_socket[rf_send.device_id]!=NULL)
     {
-        if(net_par.bind_socket[rf_send.device_id]!=NULL)
-        {
-            str+=" / bind IP" + net_par.bind_socket[rf_send.device_id]->peerAddress().toString();
-            str+=" / bind port"+QString("%1").arg(net_par.bind_socket[rf_send.device_id]->peerPort());
-        }
-        else
-        {
-            if(rf_send.device_id == 0xFFFF)str+=" / brocast message to all gateway and all node";
-            else str+=" / no gateway bind";
-        }
+        str+=" / Bind IP: " + net_par.bind_socket[rf_send.device_id]->peerAddress().toString();
+        str+=" / Bind port: "+QString("%1").arg(net_par.bind_socket[rf_send.device_id]->peerPort());
+    }
+    else
+    {
+        if(rf_send.device_id == 0xFFFF)str+=" / brocast message to all gateway and all node";
+        else str+=" / No socket bind";
     }
 
 
-    DisplayWithTime(QString("Dest addr:")+str);
+
+    NET_DisplayWithTime(QString("Dest addr:")+str);
 
 
     total_id_display->setText(QString("select:%1 total:%2").arg(shortAddr->currentRow()).arg(shortAddr->count()));
@@ -4292,7 +4318,8 @@ void MainWindow::NET_Init()
     textEdit_Port->setText("6002");
     textEdit_IP_location->setText(str);
     textEdit_Port_location->setText("5999");
-
+    lineEditIpAppConect->setText(str);
+    lineEditPortAppConnect->setText("6003");
 
     textEdit_ID->setPlainText("0");
     textEdit_ID2->setText("0");
@@ -4306,6 +4333,13 @@ void MainWindow::NET_Init()
     net_par.Server=NULL;
     net_par.locationServer = NULL;
 
+    for(i=0;i<APP_SOCKET_MAX;i++)
+    {
+        net_par.appSocket[i]=NULL;
+    }
+    net_par.appServer=NULL;
+
+
     for(i=0;i<65536;i++)
     {
         net_par.bind_socket[i] = NULL;
@@ -4313,7 +4347,14 @@ void MainWindow::NET_Init()
     comunication_protocal->setCurrentText("Server");
 
     net_par.Server = new QTcpServer(this);
+    net_par.appServer = new QTcpServer(this);
+    net_par.appClientSocket = new QTcpSocket(this);
     connect(net_par.Server,SIGNAL(newConnection()),this,SLOT(NET_acceptConnection()));
+    connect(net_par.appServer,SIGNAL(newConnection()),this,SLOT(NET_acceptAppConnection()));
+    connect(net_par.appClientSocket,SIGNAL(readyRead()),this,SLOT(NET_revAppClientData()));
+
+
+
 
 //    uchar aa = 0xFF;
 //    ushort bb = 0xFFFF;
@@ -4379,13 +4420,113 @@ void MainWindow::NET_revData()
                transport.r_count++;
            }
            //receiveTimer->start(20);
+
+           for(i=0;i<APP_SOCKET_MAX;i++){
+               if(net_par.appSocket[i]==NULL)continue;
+               if(net_par.appSocket[i]->state() == QAbstractSocket::ConnectedState){
+                  net_par.appSocket[i]->write(datas);
+              }
+           }
            pressUartData(net_par.Socket[j]);
 
        }
    }
-
 }
 
+
+void MainWindow::NET_revAppServerData()
+
+{
+
+   ushort i,j;
+   QByteArray display;
+   QByteArray datas;
+   uchar appServerbuff[10000];
+   uchar *ptr;
+   ushort length;
+   uchar check_sum;
+
+   if(comunication_protocal->currentText() == "Server")
+   {
+        for(j = 0 ; j < APP_SOCKET_MAX ; j ++)
+        {
+
+            if(net_par.appSocket[j] == NULL)continue;
+            datas.clear();
+            datas = net_par.appSocket[j]->readAll();
+            if(datas.length() == 0)continue;
+
+            //net_par.currentSocket = net_par.appSocket[j];
+            //接收字符串数据。
+            display = datas.toHex().toUpper();
+            for(i=0;i<display.length();i+=3)
+            {
+                display.insert( i+2, " ");
+            }
+            infReceive->setText(display);
+
+
+            //receiveTimer->start(20);
+            //pressUartData(net_par.appSocket[j]);
+
+
+
+            for(i = 0;i<datas.length();i++){
+               appServerbuff[i] = datas[i];
+            }
+
+            ptr = appServerbuff;
+            length = datas.length();
+
+            if((ptr[0] == 0x98) && (ptr[1] == 0x89))
+            {
+                check_sum=checkSum((char *)ptr,length-1);
+                if(ptr[length-1]==check_sum)
+                {
+                    NET_send(datas);
+                }
+            }
+        }
+    }
+}
+
+void MainWindow::NET_revAppClientData()
+
+{
+
+   ushort i;
+   QByteArray display;
+   QByteArray datas;
+
+   if(comunication_protocal->currentText() == "Client")
+   {
+       if(net_par.appClientSocket == NULL)return ;
+       datas.clear();
+       datas = net_par.appClientSocket->readAll();
+       if(datas.length() == 0)return;
+
+       net_par.currentSocket = net_par.appClientSocket;
+       //接收字符串数据。
+       display = datas.toHex().toUpper();
+       for(i=0;i<display.length();i+=3)
+       {
+            display.insert( i+2, " ");
+       }
+       infReceive->setText(display);
+
+
+
+
+       for(i = 0; i < datas.length();i++)
+       {
+           transport.receive[transport.r_count] = datas[i];
+           transport.r_count++;
+       }
+       //receiveTimer->start(20);
+       pressUartData(net_par.appClientSocket);
+
+   }
+}
 
 void MainWindow::NET_revDataLocation()
 
@@ -4423,36 +4564,35 @@ void MainWindow::NET_revDataLocation()
 void MainWindow::NET_send(QByteArray src)
 {
 
-    if(comunication_protocal->currentText() == "Server")
-    {
-        if(net_par.Server ==NULL)
-        {
+    if(net_par.currentSocket != NULL ){
+        if(net_par.currentSocket->state() == QAbstractSocket::ConnectedState){
+            net_par.currentSocket->write(src);
+            NET_DisplayWithTime("send message to IP:"+net_par.currentSocket->peerAddress().toString());
+        }
+    }
+    else if(comunication_protocal->currentText() == "Server"){
+        if(net_par.Server ==NULL){
             infDisplay->append("no server operation");
             return ;
         }
-
-        if(net_par.currentSocket == NULL )
-        {
-
-            for(ushort i=0;i<SOCKET_MAX;i++)
-            {
-                if(net_par.Socket[i]!=NULL)
-                {
+        for(ushort i=0;i<SOCKET_MAX;i++){
+            if(net_par.Socket[i]!=NULL){
+                if(net_par.Socket[i]->state() == QAbstractSocket::ConnectedState){
                     net_par.Socket[i]->write(src);
                     NET_DisplayWithTime("send message to IP:"+net_par.Socket[i]->peerAddress().toString());
                 }
             }
-
         }
-        else
-        {
-            net_par.currentSocket->write(src);
-            NET_DisplayWithTime("send message to IP:"+net_par.currentSocket->peerAddress().toString());
+    }
+    else if(comunication_protocal->currentText() == "Client"){
+        if(net_par.appClientSocket->state() == QAbstractSocket::ConnectedState){
+            net_par.appClientSocket->write(src);
+            NET_DisplayWithTime("send message to IP:"+net_par.appClientSocket->peerAddress().toString());
         }
-
     }
     else
     {
+        NET_DisplayWithTime("no socket conncted");
         return;
     }
 
@@ -4559,7 +4699,7 @@ bool MainWindow::NET_newListen()
 
    //监听是否有客户端来访，且对任何来访者监听，端口为
    if(net_par.Server->listen(ip,port)){
-       str = "Server listening";
+       str = "iot server listening";
        str += "  IP:" + net_par.Server->serverAddress().toString();
        str += QString("  PORT:%1").arg(net_par.Server->serverPort());
        NET_DisplayWithTime(str);
@@ -4570,6 +4710,47 @@ bool MainWindow::NET_newListen()
        return false;
    }
 }
+
+bool MainWindow::NET_newListendAppConnect()
+{
+    ushort port;
+    QString str = lineEditPortAppConnect->text();
+    port = str.toUShort();
+
+    str = lineEditIpAppConect->text();
+
+   QHostAddress ip;
+   ip.setAddress(str);
+
+
+   for(ushort i = 0;i<APP_SOCKET_MAX;i++)
+   {
+       if(net_par.appSocket[i]!=NULL){
+           if(net_par.appSocket[i]->ConnectedState == QAbstractSocket::ConnectedState){
+               net_par.appSocket[i]->close();
+           }
+           net_par.appSocket[i] = NULL;
+       }
+   }
+   if(net_par.appServer->isListening())net_par.appServer->close();
+
+
+
+   //监听是否有客户端来访，且对任何来访者监听，端口为
+   if(net_par.appServer->listen(ip,port)){
+       str = "App server listening";
+       str += "  IP:" + net_par.appServer->serverAddress().toString();
+       str += QString("  PORT:%1").arg(net_par.appServer->serverPort());
+       NET_DisplayWithTime(str);
+       return true;
+   }
+   else{
+       NET_DisplayWithTime(net_par.appServer->errorString());
+       return false;
+   }
+}
+
+
 void MainWindow::NET_newListenLocation()
 {
     ushort port;
@@ -4607,14 +4788,15 @@ void MainWindow::NET_acceptConnection()
     {
         if(net_par.Socket[i] == NULL)
         {
-            net_par.Socket[i] = new QTcpSocket(this);
+            //net_par.Socket[i] = new QTcpSocket(this);
             //net_par.currentSocket = net_par.Socket[i];
             //当tcpSocket在接受客户端连接时出现错误时，NET_displayError(QAbstractSocket::SocketError)进行错误提醒并关闭tcpSocket。
-            connect(net_par.Socket[i],SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(NET_displayError(QAbstractSocket::SocketError)));
+            //connect(net_par.Socket[i],SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(NET_displayError(QAbstractSocket::SocketError)));
 
             //当有客户来访时将tcpSocket接受tcpServer建立的socket
             net_par.Socket[i] = net_par.Server->nextPendingConnection();
             connect(net_par.Socket[i],SIGNAL(readyRead()),this,SLOT(NET_revData()));
+            connect(net_par.Socket[i],SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(NET_displayError(QAbstractSocket::SocketError)));
             str = "new client connection";
             str +=" / peerName:"+net_par.Socket[i]->peerName();
             str +=" / peerAddress:"+net_par.Socket[i]->peerAddress().toString();
@@ -4624,12 +4806,49 @@ void MainWindow::NET_acceptConnection()
 
             break;
         }
+        else if(net_par.Socket[i]->state() == QAbstractSocket::UnconnectedState){
+            net_par.Socket[i]->close();
+            net_par.Socket[i] = NULL;
+        }
+    }
+}
+void MainWindow::NET_acceptAppConnection()
+{
+    ushort i;
+    QString str;
+
+    for(i=0;i<APP_SOCKET_MAX;i++)
+    {
+        if(net_par.appSocket[i] == NULL)
+        {
+            //net_par.appSocket[i] = new QTcpSocket(this);
+            //net_par.currentSocket = net_par.Socket[i];
+            //当tcpSocket在接受客户端连接时出现错误时，NET_displayError(QAbstractSocket::SocketError)进行错误提醒并关闭tcpSocket。
+            //connect(net_par.appSocket[i],SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(NET_displayError(QAbstractSocket::SocketError)));
+
+            //当有客户来访时将tcpSocket接受tcpServer建立的socket
+            net_par.appSocket[i] = net_par.appServer->nextPendingConnection();
+            connect(net_par.appSocket[i],SIGNAL(readyRead()),this,SLOT(NET_revAppServerData()));
+            connect(net_par.appSocket[i],SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(NET_displayError(QAbstractSocket::SocketError)));
+            str = "new client connection";
+            str +=" / peerName:"+net_par.appSocket[i]->peerName();
+            str +=" / peerAddress:"+net_par.appSocket[i]->peerAddress().toString();
+            str +=QString(" / peerPort:%1").arg(net_par.appSocket[i]->peerPort());
+            NET_DisplayWithTime(str);
+
+
+            break;
+        }
+        else if(net_par.appSocket[i]->state() == QAbstractSocket::UnconnectedState){
+            net_par.appSocket[i]->close();
+            net_par.appSocket[i] = NULL;
+        }
     }
 }
 
 void MainWindow::NET_acceptConnectionLocation()
 {
-    ushort i;
+
     QString str;
 
 
@@ -4653,16 +4872,204 @@ void MainWindow::NET_acceptConnectionLocation()
 void MainWindow::NET_displayError(QAbstractSocket::SocketError)
 {
     ushort i;
-    for(i=0;i<SOCKET_MAX;i++)
-    {
-        if(net_par.Socket[i]!=NULL){
-            net_par.Socket[i]->close();
-            net_par.Socket[i] = NULL;
+    QString str;
+    if(comunication_protocal->currentText() == "Server"){
+        for(i=0;i<SOCKET_MAX;i++){
+            if(net_par.Socket[i]==NULL)continue;
+            str = "Iot client ";
+            str += "  IP:" + net_par.Socket[i]->peerAddress().toString();
+            str += QString("  PORT:%1").arg(net_par.Socket[i]->peerPort());
+            switch(net_par.Socket[i]->state()){
+                case QAbstractSocket::UnconnectedState:
+                net_par.Socket[i]->close();
+                net_par.Socket[i]=NULL;
+                str +="  state:UnconnectedState";
+                break;
+                case QAbstractSocket::HostLookupState :
+                str +="  state:HostLookupState";
+                break;
+                case QAbstractSocket::ConnectingState :
+                str +="  state:ConnectingState";
+                break;
+                case QAbstractSocket::ConnectedState  :
+                str +="  state:ConnectedState";
+                break;
+                case QAbstractSocket::BoundState      :
+                str +="  state:BoundState";
+                break;
+                case QAbstractSocket::ListeningState  :
+                str +="  state:ListeningState";
+                break;
+                case QAbstractSocket::ClosingState    :
+                str +="  state:ClosingState";
+                break;
+                default:
+                str +="  state:unknow";
+                break;
+            }
+            NET_DisplayWithTime(str);
         }
+        for(i=0;i<APP_SOCKET_MAX;i++){
+            if(net_par.appSocket[i]==NULL)continue;
+            str = "App client ";
+            str += "  IP:" + net_par.appSocket[i]->peerAddress().toString();
+            str += QString("  PORT:%1").arg(net_par.appSocket[i]->peerPort());
+            switch(net_par.appSocket[i]->state()){
+                case QAbstractSocket::UnconnectedState:
+                net_par.appSocket[i]->close();
+                net_par.appSocket[i]=NULL;
+                str +="  state:UnconnectedState";
+                break;
+                case QAbstractSocket::HostLookupState :
+                str +="  state:HostLookupState";
+                break;
+                case QAbstractSocket::ConnectingState :
+                str +="  state:ConnectingState";
+                break;
+                case QAbstractSocket::ConnectedState  :
+                str +="  state:ConnectedState";
+                break;
+                case QAbstractSocket::BoundState      :
+                str +="  state:BoundState";
+                break;
+                case QAbstractSocket::ListeningState  :
+                str +="  state:ListeningState";
+                break;
+                case QAbstractSocket::ClosingState    :
+                str +="  state:ClosingState";
+                break;
+                default:
+                str +="  state:unknow";
+                break;
+            }
+            NET_DisplayWithTime(str);
+        }
+
+
+        if(net_par.locationSocket==NULL)return;
+        str = "App server ";
+        str += "  IP:" + net_par.locationSocket->peerAddress().toString();
+        str += QString("  PORT:%1").arg(net_par.locationSocket->peerPort());
+        switch(net_par.locationSocket->state()){
+            case QAbstractSocket::UnconnectedState:
+            str +="  state:UnconnectedState";
+            break;
+            case QAbstractSocket::HostLookupState :
+            str +="  state:HostLookupState";
+            break;
+            case QAbstractSocket::ConnectingState :
+            str +="  state:ConnectingState";
+            break;
+            case QAbstractSocket::ConnectedState  :
+            str +="  state:ConnectedState";
+            break;
+            case QAbstractSocket::BoundState      :
+            str +="  state:BoundState";
+            break;
+            case QAbstractSocket::ListeningState  :
+            str +="  state:ListeningState";
+            break;
+            case QAbstractSocket::ClosingState    :
+            str +="  state:ClosingState";
+            break;
+            default:
+            str +="  state:unknow";
+            break;
+        }
+        NET_DisplayWithTime(str);
+    }
+    else {
+        if(net_par.appClientSocket==NULL)return;
+        str = "App server ";
+        str += "  IP:" + net_par.appClientSocket->peerAddress().toString();
+        str += QString("  PORT:%1").arg(net_par.appClientSocket->peerPort());
+        switch(net_par.appClientSocket->state()){
+            case QAbstractSocket::UnconnectedState:
+            str +="  state:UnconnectedState";
+            break;
+            case QAbstractSocket::HostLookupState :
+            str +="  state:HostLookupState";
+            break;
+            case QAbstractSocket::ConnectingState :
+            str +="  state:ConnectingState";
+            break;
+            case QAbstractSocket::ConnectedState  :
+            str +="  state:ConnectedState";
+            break;
+            case QAbstractSocket::BoundState      :
+            str +="  state:BoundState";
+            break;
+            case QAbstractSocket::ListeningState  :
+            str +="  state:ListeningState";
+            break;
+            case QAbstractSocket::ClosingState    :
+            str +="  state:ClosingState";
+            break;
+            default:
+            str +="  state:unknow";
+            break;
+        }
+        NET_DisplayWithTime(str);
     }
 }
 
+void MainWindow::on_pushButtonAppConnect_clicked()
+{
 
+    QString str;
+    for(ushort i = 0;i<APP_SOCKET_MAX;i++)
+    {
+        if(net_par.appSocket[i]!=NULL)
+        {
+            net_par.appSocket[i]->close();
+        }
+    }
+
+    if(net_par.appServer != NULL)net_par.appServer->close();
+    if(net_par.appClientSocket != NULL) net_par.appClientSocket->abort();
+
+
+    if(comunication_protocal->currentText() == "Server")
+    {
+        if(pushButtonAppConnect->text() == "监听"){
+            if(NET_newListendAppConnect()==true){
+                pushButtonAppConnect->setText("停止监听");
+                //str = "App server listening";
+                return ;
+            }
+        }
+        else {
+            pushButtonAppConnect->setText("监听");
+            str = "App server stop listening";
+        }
+    }
+    else if(comunication_protocal->currentText() == "Client"){
+        if(pushButtonAppConnect->text() == "连接"){
+           pushButtonAppConnect->setText("停止连接");
+           ushort port;
+           QString appIp,appPort;
+
+
+           appPort = lineEditPortAppConnect->text();
+           appIp = lineEditIpAppConect->text();
+           port = appPort.toUShort();
+
+           net_par.appClientSocket->connectToHost(appIp,port);
+           connect(net_par.appClientSocket,SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(NET_displayError(QAbstractSocket::SocketError)));
+
+
+           str = "App client try to connect";
+           str += "  IP:" + appIp +"  PORT:"+appPort;
+
+        }
+        else {
+           pushButtonAppConnect->setText("连接");
+           str = "App client stop connect";
+
+        }
+    }
+    NET_DisplayWithTime(str);
+}
 
 void MainWindow::on_bt_listen_clicked()
 {
@@ -4678,6 +5085,7 @@ void MainWindow::on_bt_listen_clicked()
             bt_stopListen->setDisabled(false);
         }
     }
+
 }
 
 void MainWindow::on_bt_stopListen_clicked()
@@ -4696,6 +5104,8 @@ void MainWindow::on_bt_stopListen_clicked()
 
     bt_listen->setDisabled(false);
 
+    NET_DisplayWithTime("iot server stop listening");
+
 
 
 }
@@ -4712,7 +5122,7 @@ void MainWindow::on_bt_listen_location_clicked()
     NET_newListenLocation();
     //newConnection()用于当有客户端访问时发出信号，NET_acceptConnection()信号处理函数
     connect(net_par.locationServer,SIGNAL(newConnection()),this,SLOT(NET_acceptConnectionLocation()));
-
+    NET_DisplayWithTime("location server listening");
 }
 
 void MainWindow::on_bt_stopListen_location_clicked()
@@ -4724,6 +5134,7 @@ void MainWindow::on_bt_stopListen_location_clicked()
     net_par.locationServer = NULL;
 
     bt_listen_location->setDisabled(false);
+    NET_DisplayWithTime("location server stop listening");
 }
 
 void MainWindow::on_bt_searchId_clicked()
@@ -4778,27 +5189,20 @@ void MainWindow::NET_DisplayWithNoTime(const QString &text)
 
 void MainWindow::NET_setBindSocket(ushort id)
 {
-     if(comunication_protocal->currentText() == "Server")
      net_par.bind_socket[id] = net_par.currentSocket;
 }
 
 void MainWindow::NET_getBindSocket(ushort id)
 {
-    if(comunication_protocal->currentText() == "Server")
-    {
-        if(id = 0xFFFF)
-        {
-            net_par.currentSocket = NULL;
-        }
-        else
-        {
-            net_par.currentSocket = net_par.bind_socket[id];
-        }
-    }
-    else
+    if(id = 0xFFFF)
     {
         net_par.currentSocket = NULL;
     }
+    else
+    {
+        net_par.currentSocket = net_par.bind_socket[id];
+    }
+
 }
 
 
@@ -6178,23 +6582,46 @@ void MainWindow::on_comunication_protocal_currentTextChanged(const QString &arg1
 {
     transport.r_count = 0;
     transport.s_count = 0;
+
     if(arg1=="Server")
     {
-        bt_listen->setText("监听");
-        bt_stopListen->setText("停止监听");
+        on_bt_stopListen_clicked();
+        on_bt_stopListen_location_clicked();
+        bt_listen->setDisabled(false);
+        bt_listen_location->setDisabled(false);
     }
     else if(arg1=="Client")
     {
-        bt_listen->setText("连接");
-        bt_stopListen->setText("断开连接");
+        on_bt_stopListen_clicked();
+        on_bt_stopListen_location_clicked();
+        bt_listen->setDisabled(true);
+        bt_listen_location->setDisabled(true);
     }
-    else if(arg1=="Uart")
-    {
 
+
+    for(ushort i = 0;i<APP_SOCKET_MAX;i++)
+    {
+        if(net_par.appSocket[i]!=NULL)
+        {
+            net_par.appSocket[i]->close();
+        }
     }
-    else
-    {
 
+    if(net_par.appServer != NULL){
+        net_par.appServer->close();
+        NET_DisplayWithTime("App server stop listening");
+    }
+    if(net_par.appClientSocket != NULL) {
+        net_par.appClientSocket->abort();
+        NET_DisplayWithTime("App client stop connect");
+    }
+
+
+    if(comunication_protocal->currentText() == "Server"){
+        pushButtonAppConnect->setText("监听");
+    }
+    else if(comunication_protocal->currentText() == "Client"){
+       pushButtonAppConnect->setText("连接");
     }
 
 }
@@ -8352,5 +8779,7 @@ void MainWindow::on_cb_deviceTypeLocation_currentTextChanged(const QString &arg1
     else if(arg1 == "低功耗节点")rf_send.device_type = 0xFE;
     else if(arg1 == "未知节点")rf_send.device_type = 0xFF;
 }
+
+
 
 
